@@ -1,0 +1,7 @@
+﻿Asset,Asset_KR,Account,Weight_In_Account,Target_Weight
+Domestic_Equity,국내주식,ISA,26.77,
+Foreign_Equity,해외주식,ISA,16.86,
+Bond,채권형,ISA,52.42,
+Cash,유동성,ISA,1.91,
+Other,기타,ISA,2.04,
+Gold,금,GOLD,100.0,10.0

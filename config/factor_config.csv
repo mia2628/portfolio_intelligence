@@ -1,0 +1,7 @@
+﻿Factor_Group,Factor_Weight,Min_Cap,Max_Cap
+RATE,1.0,-5,5
+INFLATION,0.9,-5,5
+FX,0.9,-5,5
+RISK,1.0,-5,5
+GROWTH,0.9,-5,5
+GOLD_SPECIFIC,0.7,-5,5

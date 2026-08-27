@@ -1,0 +1,10 @@
+﻿Parameter,Value
+Lookback_Years,15
+Recent_Window_Years,5
+Rolling_Window_Months,36
+Forward_Return_Months,3
+Similar_Episode_Count,5
+Min_Observations,36
+Confidence_Direction_Weight,0.50
+Confidence_R2_Weight,0.25
+Confidence_Stability_Weight,0.25
