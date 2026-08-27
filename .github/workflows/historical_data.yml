@@ -1,0 +1,36 @@
+name: Build historical data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 2 2 * *"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install packages
+        run: pip install pandas numpy requests
+
+      - name: Collect historical data
+        run: python engines/step04_collect_historical_data.py
+
+      - name: Commit historical_data.csv
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/historical/historical_data.csv
+          git diff --cached --quiet || git commit -m "Update historical macro data"
+          git push
