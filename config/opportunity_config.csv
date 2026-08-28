@@ -1,0 +1,6 @@
+﻿Component,Weight,Description
+Target_Gap,0.3,목표비중 대비 언더웨이트 정도
+Macro_Environment,0.25,STEP3 자산별 거시환경 점수
+Risk_Adjustment,0.2,STEP5 자산별 위험점수의 역점수
+Historical_Context,0.15,STEP4 과거 백분위/회귀 신뢰도 기반 기회 점수
+Drawdown,0.1,최근 낙폭이 클수록 분할매수 기회 가점
