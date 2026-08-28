@@ -1,0 +1,7 @@
+﻿Component,Weight,Description
+Concentration,0.25,자산 비중 집중도(HHI)
+Volatility,0.2,과거 월별 수익률 기반 연환산 포트폴리오 변동성
+Max_Drawdown,0.2,과거 월별 수익률 기반 최대낙폭
+Correlation_Diversification,0.15,자산 간 상관관계에 따른 분산효과
+Target_Drift,0.1,설정된 목표비중 대비 이탈 정도
+FX_Exposure,0.1,외화 노출 수준. 목표범위 미설정 시 중립 처리

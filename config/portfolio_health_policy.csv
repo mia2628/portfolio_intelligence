@@ -1,0 +1,7 @@
+﻿Parameter,Value,Description
+FX_Target_Min_Pct,,원하는 전체 포트폴리오 외화노출 하한. 미설정 시 중립
+FX_Target_Max_Pct,,원하는 전체 포트폴리오 외화노출 상한. 미설정 시 중립
+Gold_FX_Exposure_Ratio,1.0,금의 원달러 영향 노출 비율 가정
+Foreign_Equity_FX_Exposure_Ratio,1.0,해외주식의 원달러 영향 노출 비율 가정
+Bond_FX_Exposure_Ratio,0.0,현재 채권형은 원화자산으로 가정
+Domestic_Equity_FX_Exposure_Ratio,0.0,국내주식 직접 FX노출은 0으로 단순화
