@@ -1,0 +1,63 @@
+name: Portfolio Data Auto Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 평일 오전 7:30 KST = 전날 22:30 UTC
+    - cron: "30 22 * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portfolio-data-auto-update
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pandas numpy requests
+
+      - name: STEP4 - Refresh historical data
+        run: python engines/step04_collect_historical_data.py
+
+      - name: STEP11 - Build actual STEP3 input
+        run: python engines/step11_auto_bridge.py --apply
+
+      - name: STEP11 - Validate connection
+        run: python engines/step11_auto_connection_check.py
+
+      - name: STEP3 - Recalculate shock and factor results
+        run: python engines/step03_shock_factor_engine.py
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/historical/historical_data.csv
+          git add data/step11_current_market_data.csv
+          git add data/step11_data_diagnostics.csv
+          git add data/step03_market_inputs_actual.csv
+          git add data/step03_market_inputs.csv
+          git add data/step03_market_inputs_template.csv || true
+          git add data/step03_results.csv || true
+
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "Auto refresh portfolio market data"
+            git push
+          fi
