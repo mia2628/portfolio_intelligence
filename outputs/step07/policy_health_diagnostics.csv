@@ -1,0 +1,2 @@
+﻿Gold_Current_Weight,Gold_Target,Gold_Lower,Gold_Upper,Target_Policy_Health_Score,Concentration,Volatility,Max_Drawdown,Correlation,FX_Exposure_Effective_Weight,Portfolio_Health_Recomputed,Formula
+6.4223,20.0,18.0,22.0,35.6795,80.03,90.0,67.05,76.46,0.0,73.8383,(.25*C+.20*V+.20*DD+.15*Corr+.10*TargetPolicy)/.90; FX is REPORT_ONLY

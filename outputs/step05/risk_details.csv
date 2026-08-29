@@ -1,7 +1,7 @@
-﻿Indicator,Risk_Block,Observed_Change,Historical_Percentile,Empirical_Confidence,Current_Risk,Historical_Risk,Blended_Risk,Adjusted_Risk,Raw_Weight,Normalized_Weight,Weighted_Contribution,Signal_Status
-VIX,RISK,12.0,37.63,0.3709,100.0,37.63,75.05,59.29,0.22,0.2683,15.9074,OK
-US_HY_SPREAD,RISK,,75.81,0.3861,50.0,75.81,60.32,53.99,0.18,0.2195,11.8505,MISSING_CURRENT
-FCI_TIGHTENING,RISK,,27.96,0.3891,50.0,27.96,41.18,46.57,0.14,0.1707,7.9508,MISSING_CURRENT
-US10Y,RATE,18.0,75.81,0.3715,100.0,75.81,90.32,64.98,0.08,0.0976,6.3394,OK
-US_REAL10Y,RATE,-8.0,86.02,0.4006,10.0,86.02,40.41,46.16,0.1,0.122,5.629,OK
-USDKRW,FX,1.2,6.45,0.3266,100.0,6.45,62.58,54.11,0.1,0.122,6.5985,OK
+﻿Indicator,Risk_Block,Observed_Change,Historical_Percentile,Empirical_Confidence,Current_Risk,Historical_Risk,Blended_Risk,Adjusted_Risk,Raw_Weight,Normalized_Weight,Weighted_Contribution,Signal_Status,Korean_Comment,Corrected_Explanation
+VIX,RISK,-10.5493452,37.63,0.3709,0.0,37.63,15.05,37.04,0.22,0.2683,9.9372,OK,VIX가 하락해 시장의 불안·변동성 신호가 커지면서 주식 중심의 위험도를 높였습니다.,VIX 신호가 기준보다 낮은 위험 방향으로 작용해 시장 변동성 위험을 낮췄습니다.
+US_HY_SPREAD,RISK,5.30382775,75.81,0.3861,76.52,75.81,76.24,60.13,0.18,0.2195,13.1989,OK,미국 하이일드 스프레드가 상승해 기업 신용위험과 자금조달 부담 변화를 반영하며 위험을 높였습니다.,
+FCI_TIGHTENING,RISK,-0.02886667,27.96,0.3891,44.23,27.96,37.72,45.22,0.14,0.1707,7.7207,OK,금융여건지수가 하락해 금융시장 유동성과 자금조달 환경 변화를 반영하며 위험을 낮췄습니다.,
+US10Y,RATE,13.0,75.81,0.3715,100.0,75.81,90.32,64.98,0.08,0.0976,6.3394,OK,미국 10년물 금리가 상승해 할인율과 채권가격 부담 변화를 통해 포트폴리오 위험에 영향을 줬습니다.,
+US_REAL10Y,RATE,17.0,86.02,0.4005,100.0,86.02,94.41,67.79,0.1,0.122,8.2668,OK,미국 실질금리가 상승해 주식의 할인율과 금의 기회비용 변화가 위험점수에 반영됐습니다.,
+USDKRW,FX,-2.84078342,6.45,0.3266,0.0,6.45,2.58,34.51,0.1,0.122,4.2091,OK,원·달러 환율이 하락해 원화 약세·강세에 따른 해외자산 환산효과와 국내시장 부담이 반영됐습니다.,

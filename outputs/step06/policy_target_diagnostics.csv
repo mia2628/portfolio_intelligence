@@ -1,0 +1,2 @@
+﻿Asset,Current_Weight,Target,Lower,Upper,Gap_to_Target_pp,Gap_to_Lower_pp,Target_Opportunity_Score,Formula
+Gold,6.4223,20.0,18.0,22.0,-13.5777,-11.5777,82.1602,below lower: 50+50*(lower-current)/lower; in range:50; above upper:50-50*(current-upper)/(100-upper)
