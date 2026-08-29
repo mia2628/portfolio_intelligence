@@ -1,213 +1,110 @@
 from pathlib import Path
 import argparse, csv, shutil
+from datetime import datetime
 
-BASE = Path(__file__).resolve().parents[1]
-DATA = BASE / "data"
-HISTORICAL = DATA / "historical" / "historical_data.csv"
+BASE=Path(__file__).resolve().parents[1]
+DATA=BASE/"data"
+HIST=DATA/"historical"/"historical_data.csv"
+STEP3=DATA/"step03_market_inputs.csv"
+BACKUP=DATA/"step03_market_inputs_template.csv"
+ACTUAL=DATA/"step03_market_inputs_actual.csv"
+CURRENT=DATA/"step11_current_market_data.csv"
+DIAG=DATA/"step11_data_diagnostics.csv"
 
-MAPPING = BASE / "config" / "step11_historical_bridge_mapping.csv"
-STEP3_INPUT = DATA / "step03_market_inputs.csv"
-STEP3_BACKUP = DATA / "step03_market_inputs_template.csv"
-STEP3_ACTUAL = DATA / "step03_market_inputs_actual.csv"
-
-OUT_CURRENT = DATA / "step11_current_market_data.csv"
-OUT_DIAG = DATA / "step11_data_diagnostics.csv"
-
-MIN_ACTUAL = 10
-
-ALL_INDICATORS = [
-    "US10Y","US2Y","US_REAL10Y","US_10Y2Y_SPREAD",
-    "KR3Y","KR10Y","FED_HIKE_EXPECTATION","BOK_HIKE_EXPECTATION",
-    "US_CPI","US_CORE_CPI","US_CORE_PCE","US_BREAKEVEN_10Y","KR_CPI",
-    "USDKRW","DXY","VIX","MOVE","US_HY_SPREAD","FCI_TIGHTENING",
-    "GEOPOLITICAL_RISK","US_ISM_MFG","US_UNEMPLOYMENT","US_INITIAL_CLAIMS",
-    "US_NFP_SURPRISE","KR_EXPORT_GROWTH","KR_SEMI_EXPORT_GROWTH",
-    "CB_GOLD_NET_BUYING"
+ALL=[
+"US10Y","US2Y","US_REAL10Y","US_10Y2Y_SPREAD","KR3Y","KR10Y",
+"FED_HIKE_EXPECTATION","BOK_HIKE_EXPECTATION","US_CPI","US_CORE_CPI",
+"US_CORE_PCE","US_BREAKEVEN_10Y","KR_CPI","USDKRW","DXY","VIX","MOVE",
+"US_HY_SPREAD","FCI_TIGHTENING","GEOPOLITICAL_RISK","US_ISM_MFG",
+"US_UNEMPLOYMENT","US_INITIAL_CLAIMS","US_NFP_SURPRISE","KR_EXPORT_GROWTH",
+"KR_SEMI_EXPORT_GROWTH","CB_GOLD_NET_BUYING"
 ]
 
-def read_csv(path):
-    with path.open("r", encoding="utf-8-sig", newline="") as f:
-        return list(csv.DictReader(f))
+MIN_ACTUAL=10
+MAX_STALE_MONTHS=3
 
-def to_float(v):
+def read(p):
+    with p.open("r",encoding="utf-8-sig",newline="") as f:return list(csv.DictReader(f))
+
+def fnum(v):
     try:
-        s = str(v).strip().replace(",", "")
-        if s in ("", ".", "NA", "N/A", "None", "null"):
-            return None
-        return float(s)
-    except:
-        return None
+        s=str(v).strip().replace(",","")
+        return None if s in ("",".","NA","N/A","None","null") else float(s)
+    except:return None
 
-def write_csv(path, rows, fields):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8-sig", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=fields)
-        w.writeheader()
-        w.writerows(rows)
+def parse_date(s):
+    try:return datetime.strptime(str(s)[:10],"%Y-%m-%d")
+    except:return None
 
-def find_column(headers, candidates):
-    for c in candidates:
-        if c in headers:
-            return c
-    lower = {h.lower(): h for h in headers}
-    for c in candidates:
-        if c.lower() in lower:
-            return lower[c.lower()]
-    return None
+def month_gap(a,b):
+    return (b.year-a.year)*12+(b.month-a.month)
 
-def extract_series(rows, column):
-    date_col = next(
-        (c for c in ["Date","DATE","date","Month","MONTH","observation_date"] if c in rows[0]),
-        None
-    )
-    out = []
-    for i, r in enumerate(rows):
-        v = to_float(r.get(column))
-        if v is None:
-            continue
-        d = r.get(date_col) if date_col else str(i)
-        out.append((d, v))
-    return out
-
-def observed_change(series, mode, lag):
-    lag = max(1, int(lag))
-    if len(series) <= lag:
-        raise ValueError("insufficient observations")
-    latest_date, latest = series[-1]
-    ref_date, ref = series[-1-lag]
-
-    if mode == "LEVEL_CHANGE":
-        change = latest - ref
-    elif mode == "PCT_CHANGE":
-        if ref == 0:
-            raise ValueError("zero reference")
-        change = (latest / ref - 1.0) * 100.0
-    else:
-        raise ValueError("unknown transform")
-
-    return latest_date, latest, ref_date, ref, change
+def write(p,rows,fields):
+    p.parent.mkdir(parents=True,exist_ok=True)
+    with p.open("w",encoding="utf-8-sig",newline="") as f:
+        w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--apply", action="store_true")
-    args = ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument("--apply",action="store_true");args=ap.parse_args()
+    if not HIST.exists():raise SystemExit("[STOP] historical_data.csv 없음")
+    rows=read(HIST)
+    if not rows:raise SystemExit("[STOP] historical_data.csv 비어 있음")
 
-    if not HISTORICAL.exists():
-        print("[STOP] historical_data.csv가 없습니다.")
-        print("STEP4 collector가 먼저 정상 실행되어야 합니다.")
-        raise SystemExit(1)
+    dataset_dates=[parse_date(r.get("Date")) for r in rows if parse_date(r.get("Date"))]
+    dataset_latest=max(dataset_dates) if dataset_dates else datetime.today()
 
-    rows = read_csv(HISTORICAL)
-    if not rows:
-        raise SystemExit("[STOP] historical_data.csv가 비어 있습니다.")
+    actual=[]; diag=[]; step3=[]
+    for ind in ALL:
+        found=None
+        for r in reversed(rows):
+            v=fnum(r.get(ind))
+            d=parse_date(r.get("Date"))
+            if v is not None and d:
+                found=(d,v);break
 
-    headers = list(rows[0].keys())
-    actual = {}
-    audit = []
-    diag = []
+        if found is None:
+            status="UNAVAILABLE"; value=0.0; obs_date=""; age=""
+            msg="historical_data에 유효값 없음"
+        else:
+            d,v=found; age=month_gap(d,dataset_latest)
+            if age>MAX_STALE_MONTHS:
+                status="STALE"; value=0.0
+                msg=f"latest value is {age} months old"
+            else:
+                status="ACTUAL"; value=v
+                msg="OK: STEP4에서 이미 변환된 최신값을 직접 사용"
+            obs_date=d.strftime("%Y-%m-%d")
 
-    for m in read_csv(MAPPING):
-        indicator = m["Indicator"]
-        candidates = [x.strip() for x in m["Candidate_Columns"].split(";") if x.strip()]
-        col = find_column(headers, candidates)
+        if status=="ACTUAL":
+            actual.append({"Indicator":ind,"Observed_Change":round(value,8),
+                           "Observation_Date":obs_date,"Age_Months":age,"Status":status})
+        diag.append({"Indicator":ind,"Status":status,"Observation_Date":obs_date,
+                     "Age_Months":age,"Message":msg})
+        # Canonical file keeps every indicator, but STEP3 will use diagnostics to exclude non-ACTUAL.
+        step3.append({"Indicator":ind,"Observed_Change":round(value,8) if status=="ACTUAL" else 0.0})
 
-        if not col:
-            diag.append({
-                "Indicator": indicator,
-                "Status": "UNAVAILABLE",
-                "Source_Column": "",
-                "Message": "column not found"
-            })
-            continue
+    write(CURRENT,actual,["Indicator","Observed_Change","Observation_Date","Age_Months","Status"])
+    write(DIAG,diag,["Indicator","Status","Observation_Date","Age_Months","Message"])
+    write(ACTUAL,step3,["Indicator","Observed_Change"])
 
-        try:
-            s = extract_series(rows, col)
-            d1, v1, d0, v0, ch = observed_change(
-                s, m["Transform"], int(float(m["Lookback_Obs"]))
-            )
-            actual[indicator] = ch
-            audit.append({
-                "Indicator": indicator,
-                "Status": "ACTUAL",
-                "Source": "STEP4_HISTORICAL",
-                "Source_Column": col,
-                "Observation_Date": d1,
-                "Current_Value": round(v1, 8),
-                "Reference_Date": d0,
-                "Reference_Value": round(v0, 8),
-                "Observed_Change": round(ch, 8),
-                "Output_Unit": m["Output_Unit"]
-            })
-            diag.append({
-                "Indicator": indicator,
-                "Status": "ACTUAL",
-                "Source_Column": col,
-                "Message": "OK"
-            })
-        except Exception as e:
-            diag.append({
-                "Indicator": indicator,
-                "Status": "ERROR",
-                "Source_Column": col,
-                "Message": str(e)[:500]
-            })
+    ac=sum(x["Status"]=="ACTUAL" for x in diag)
+    er=sum(x["Status"] in ("ERROR","STALE") for x in diag)
+    un=sum(x["Status"]=="UNAVAILABLE" for x in diag)
 
-    step3_rows = [
-        {"Indicator": ind, "Observed_Change": round(actual.get(ind, 0.0), 8)}
-        for ind in ALL_INDICATORS
-    ]
-
-    write_csv(
-        OUT_CURRENT, audit,
-        ["Indicator","Status","Source","Source_Column","Observation_Date",
-         "Current_Value","Reference_Date","Reference_Value","Observed_Change","Output_Unit"]
-    )
-    write_csv(
-        OUT_DIAG, diag,
-        ["Indicator","Status","Source_Column","Message"]
-    )
-    write_csv(
-        STEP3_ACTUAL, step3_rows,
-        ["Indicator","Observed_Change"]
-    )
-
-    ac = sum(d["Status"] == "ACTUAL" for d in diag)
-    er = sum(d["Status"] == "ERROR" for d in diag)
-    un = len(ALL_INDICATORS) - ac - er
-
-    print("="*78)
-    print("STEP 11 - AUTOMATIC STEP4 -> STEP3 BRIDGE")
-    print("="*78)
+    print("="*78);print("STEP 11 - VALIDATED LATEST-SIGNAL BRIDGE");print("="*78)
     print(f"Historical rows : {len(rows)}")
     print(f"ACTUAL          : {ac}")
-    print(f"ERROR           : {er}")
+    print(f"STALE/ERROR     : {er}")
     print(f"UNAVAILABLE     : {un}")
-    print()
-
-    for a in audit:
-        print(
-            f"{a['Indicator']:<22} "
-            f"{a['Observed_Change']:>12} {a['Output_Unit']:<5} "
-            f"| {a['Source_Column']:<22} | {a['Observation_Date']}"
-        )
+    print("→ STEP4 값은 이미 변화량이므로 STEP11에서 재차분하지 않습니다.")
 
     if args.apply:
-        if ac < MIN_ACTUAL:
-            print()
-            print(f"[STOP] ACTUAL {ac} < minimum {MIN_ACTUAL}")
-            print("기존 STEP3 입력파일은 변경하지 않습니다.")
+        if ac<MIN_ACTUAL:
+            print(f"[STOP] ACTUAL {ac} < {MIN_ACTUAL}; 기존 STEP3 입력 유지")
             raise SystemExit(2)
+        if STEP3.exists() and not BACKUP.exists():shutil.copy2(STEP3,BACKUP)
+        shutil.copy2(ACTUAL,STEP3)
+        print("[APPLIED] step03_market_inputs.csv 갱신")
+    else: print("[VALIDATION ONLY]")
 
-        if STEP3_INPUT.exists() and not STEP3_BACKUP.exists():
-            shutil.copy2(STEP3_INPUT, STEP3_BACKUP)
-            print(f"Backup : {STEP3_BACKUP}")
-
-        shutil.copy2(STEP3_ACTUAL, STEP3_INPUT)
-        print()
-        print("[APPLIED]")
-        print("data/step03_market_inputs.csv가 실제 최신 데이터로 갱신되었습니다.")
-    else:
-        print("[VALIDATION ONLY]")
-
-if __name__ == "__main__":
-    main()
+if __name__=="__main__":main()

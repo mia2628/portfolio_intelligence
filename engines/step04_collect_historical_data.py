@@ -8,7 +8,7 @@ BASE = Path(__file__).resolve().parents[1]
 OUT = BASE / "data" / "historical" / "historical_data.csv"
 
 START = "2011-01-01"
-END = "2026-07-31"
+END = pd.Timestamp.today().normalize().strftime("%Y-%m-%d")
 
 
 def fred_csv(series):
@@ -101,9 +101,10 @@ def safe_assign(out, column, func):
 
 def main():
 
+    current_month_start = pd.Timestamp.today().normalize().replace(day=1)
     idx = pd.date_range(
-        "2011-01-01",
-        "2026-07-01",
+        START,
+        current_month_start,
         freq="MS"
     )
 

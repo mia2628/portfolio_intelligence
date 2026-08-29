@@ -1,332 +1,175 @@
 from pathlib import Path
-import csv
+import csv, math
 from collections import defaultdict
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-CONFIG_DIR = BASE_DIR / "config"
-DATA_DIR = BASE_DIR / "data"
-OUTPUT_DIR = BASE_DIR / "data"
+BASE=Path(__file__).resolve().parents[1]; CFG=BASE/"config"; DATA=BASE/"data"
+IMPACT=CFG/"impact_matrix.csv"; FACTOR_CFG=CFG/"factor_config.csv"
+INPUT=DATA/"step03_market_inputs.csv"; DIAG=DATA/"step11_data_diagnostics.csv"
+HIST=DATA/"historical"/"historical_data.csv"
+OUT=DATA/"step03_results.csv"; COV=DATA/"step03_factor_coverage.csv"
+SUM=DATA/"step03_coverage_summary.csv"; EXC=DATA/"step03_excluded_indicators.csv"
 
-IMPACT_MATRIX_FILE = CONFIG_DIR / "impact_matrix.csv"
-INDICATOR_CONFIG_FILE = CONFIG_DIR / "indicator_config.csv"
-FACTOR_CONFIG_FILE = CONFIG_DIR / "factor_config.csv"
-MARKET_INPUT_FILE = DATA_DIR / "step03_market_inputs.csv"
-OUTPUT_FILE = OUTPUT_DIR / "step03_results.csv"
+ASSETS={"Domestic_Equity_Score":"국내주식","Foreign_Equity_Score":"해외주식","Bond_Score":"채권","Gold_Score":"금"}
+MULT={"NORMAL":0.0,"MILD":0.5,"STRONG":1.0,"EXTREME":1.5}
 
-ASSETS = {
-    "Domestic_Equity_Score": "국내주식",
-    "Foreign_Equity_Score": "해외주식",
-    "Bond_Score": "채권",
-    "Gold_Score": "금",
-}
+# Empirical magnitude cutoffs: same transformed series vs its own history.
+P_MILD=.50; P_STRONG=.75; P_EXTREME=.90
+MIN_HISTORY=24
 
-SHOCK_MULTIPLIERS = {
-    "NORMAL": 0.0,
-    "MILD": 0.5,
-    "STRONG": 1.0,
-    "EXTREME": 1.5,
-}
+def read(p):
+    with p.open("r",encoding="utf-8-sig",newline="") as f:return list(csv.DictReader(f))
+def dct(p,k):return {r[k]:r for r in read(p)}
+def fnum(v):
+    try:
+        s=str(v).strip().replace(",","")
+        return None if s in ("",".","NA","N/A","None","null") else float(s)
+    except:return None
+def clamp(v,a,b):return max(a,min(b,v))
+def conf(w,c):return math.sqrt(w*c) if w>0 and c>0 else 0.0
+def label(x):return "HIGH" if x>=.8 else "MEDIUM" if x>=.6 else "LOW" if x>=.4 else "VERY_LOW" if x>0 else "NONE"
 
+def percentile_rank_abs(value, history):
+    vals=sorted(abs(x) for x in history if x is not None)
+    if len(vals)<MIN_HISTORY:return None
+    x=abs(value)
+    return sum(v<=x for v in vals)/len(vals)
 
-def read_csv(path):
-    with path.open("r", encoding="utf-8-sig", newline="") as f:
-        return list(csv.DictReader(f))
-
-
-def read_csv_dict(path, key):
-    return {row[key]: row for row in read_csv(path)}
-
-
-def classify_shock(value, mild, strong, extreme):
-    x = abs(float(value))
-
-    if x < mild:
-        return "NORMAL"
-    if x < strong:
-        return "MILD"
-    if x < extreme:
-        return "STRONG"
+def shock_from_percentile(p):
+    if p is None:return "UNRATED"
+    if p<P_MILD:return "NORMAL"
+    if p<P_STRONG:return "MILD"
+    if p<P_EXTREME:return "STRONG"
     return "EXTREME"
 
-
-def clamp(value, low, high):
-    return max(low, min(high, value))
-
-
-def load_all():
-    matrix = read_csv_dict(IMPACT_MATRIX_FILE, "Indicator")
-    indicator_cfg = read_csv_dict(INDICATOR_CONFIG_FILE, "Indicator")
-    factor_cfg = read_csv_dict(FACTOR_CONFIG_FILE, "Factor_Group")
-    market_inputs = read_csv(MARKET_INPUT_FILE)
-
-    for indicator in matrix:
-        if indicator not in indicator_cfg:
-            raise ValueError(
-                f"indicator_config.csv에 {indicator}가 없습니다."
-            )
-
-    return matrix, indicator_cfg, factor_cfg, market_inputs
-
-
-def calculate_indicator_impacts(matrix, indicator_cfg, market_inputs):
-    details = []
-
-    for item in market_inputs:
-        indicator = item["Indicator"]
-        observed = float(item["Observed_Change"])
-
-        if indicator not in matrix:
-            raise KeyError(
-                f"impact_matrix.csv에 {indicator}가 없습니다."
-            )
-
-        if indicator not in indicator_cfg:
-            raise KeyError(
-                f"indicator_config.csv에 {indicator}가 없습니다."
-            )
-
-        m = matrix[indicator]
-        cfg = indicator_cfg[indicator]
-
-        mild = float(cfg["Mild_Threshold"])
-        strong = float(cfg["Strong_Threshold"])
-        extreme = float(cfg["Extreme_Threshold"])
-
-        shock_class = classify_shock(
-            observed, mild, strong, extreme
-        )
-        shock_multiplier = SHOCK_MULTIPLIERS[shock_class]
-
-        if observed > 0:
-            direction = 1.0
-        elif observed < 0:
-            direction = -1.0
-        else:
-            direction = 0.0
-
-        importance = float(m["Importance"])
-        importance_weight = importance / 5.0
-
-        impacts = {}
-
-        for score_col, asset_name in ASSETS.items():
-            base_score = float(m[score_col])
-
-            raw_impact = (
-                base_score
-                * direction
-                * shock_multiplier
-                * importance_weight
-            )
-
-            impacts[asset_name] = raw_impact
-
-        details.append({
-            "Indicator": indicator,
-            "Indicator_KR": m["Indicator_KR"],
-            "Factor_Group": m["Factor_Group"],
-            "Observed_Change": observed,
-            "Shock_Class": shock_class,
-            "Shock_Multiplier": shock_multiplier,
-            "Importance": importance,
-            "Impacts": impacts,
-        })
-
-    return details
-
-
-def aggregate_factors(details, factor_cfg):
-    grouped = defaultdict(list)
-
-    for d in details:
-        grouped[d["Factor_Group"]].append(d)
-
-    factor_scores = {}
-
-    for factor, items in grouped.items():
-        cfg = factor_cfg[factor]
-        factor_weight = float(cfg["Factor_Weight"])
-        min_cap = float(cfg["Min_Cap"])
-        max_cap = float(cfg["Max_Cap"])
-
-        factor_scores[factor] = {}
-
-        for asset_name in ASSETS.values():
-            weighted_sum = 0.0
-            total_weight = 0.0
-
-            for d in items:
-                indicator_weight = d["Importance"] / 5.0
-                weighted_sum += (
-                    d["Impacts"][asset_name] * indicator_weight
-                )
-                total_weight += indicator_weight
-
-            if total_weight == 0:
-                avg = 0.0
-            else:
-                avg = weighted_sum / total_weight
-
-            weighted_factor = avg * factor_weight
-            capped = clamp(
-                weighted_factor,
-                min_cap,
-                max_cap
-            )
-
-            factor_scores[factor][asset_name] = capped
-
-    return factor_scores
-
-
-def aggregate_asset_environment(factor_scores):
-    totals = defaultdict(float)
-    counts = defaultdict(int)
-
-    for factor, scores in factor_scores.items():
-        for asset_name, score in scores.items():
-            totals[asset_name] += score
-            counts[asset_name] += 1
-
-    final = {}
-
-    for asset_name in ASSETS.values():
-        if counts[asset_name] == 0:
-            final[asset_name] = 0.0
-        else:
-            # Average across active factors so the score remains stable.
-            final[asset_name] = (
-                totals[asset_name] / counts[asset_name]
-            )
-
-    return final
-
-
-def save_results(details, factor_scores, final_scores):
-    rows = []
-
-    for d in details:
-        for asset_name, score in d["Impacts"].items():
-            rows.append({
-                "Level": "INDICATOR",
-                "Name": d["Indicator"],
-                "Factor_Group": d["Factor_Group"],
-                "Asset": asset_name,
-                "Score": round(score, 4),
-                "Shock_Class": d["Shock_Class"],
-                "Observed_Change": d["Observed_Change"],
-            })
-
-    for factor, scores in factor_scores.items():
-        for asset_name, score in scores.items():
-            rows.append({
-                "Level": "FACTOR",
-                "Name": factor,
-                "Factor_Group": factor,
-                "Asset": asset_name,
-                "Score": round(score, 4),
-                "Shock_Class": "",
-                "Observed_Change": "",
-            })
-
-    for asset_name, score in final_scores.items():
-        rows.append({
-            "Level": "ASSET_ENVIRONMENT",
-            "Name": "FINAL",
-            "Factor_Group": "",
-            "Asset": asset_name,
-            "Score": round(score, 4),
-            "Shock_Class": "",
-            "Observed_Change": "",
-        })
-
-    with OUTPUT_FILE.open(
-        "w", encoding="utf-8-sig", newline=""
-    ) as f:
-        writer = csv.DictWriter(
-            f,
-            fieldnames=[
-                "Level","Name","Factor_Group","Asset",
-                "Score","Shock_Class","Observed_Change"
-            ]
-        )
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def print_results(details, factor_scores, final_scores):
-    print()
-    print("=" * 86)
-    print("PORTFOLIO INTELLIGENCE SYSTEM - STEP 03")
-    print("Shock & Factor Engine")
-    print("=" * 86)
-
-    for d in details:
-        print()
-        print(
-            f"[{d['Indicator']}] {d['Indicator_KR']} | "
-            f"변화={d['Observed_Change']:+.3f} | "
-            f"Shock={d['Shock_Class']} | "
-            f"Multiplier={d['Shock_Multiplier']:.1f} | "
-            f"Factor={d['Factor_Group']}"
-        )
-
-        for asset_name, score in d["Impacts"].items():
-            print(f"  {asset_name:<8}: {score:+.2f}")
-
-    print()
-    print("-" * 86)
-    print("FACTOR SCORES")
-    print("-" * 86)
-
-    for factor, scores in factor_scores.items():
-        print(f"[{factor}]")
-        for asset_name, score in scores.items():
-            print(f"  {asset_name:<8}: {score:+.2f}")
-
-    print()
-    print("-" * 86)
-    print("ASSET MACRO ENVIRONMENT")
-    print("-" * 86)
-
-    for asset_name, score in final_scores.items():
-        print(f"{asset_name:<8}: {score:+.2f}")
-
-    print()
-    print(f"상세 결과 저장: {OUTPUT_FILE.name}")
-    print("=" * 86)
-
+def factor_relevance(matrix):
+    rel=defaultdict(lambda:defaultdict(bool))
+    for _,m in matrix.items():
+        f=m["Factor_Group"]
+        for col,a in ASSETS.items():
+            if float(m[col])!=0: rel[f][a]=True
+    return rel
 
 def main():
-    matrix, indicator_cfg, factor_cfg, market_inputs = load_all()
+    matrix=dct(IMPACT,"Indicator"); fc=dct(FACTOR_CFG,"Factor_Group")
+    inputs=read(INPUT); diag={r["Indicator"]:(r.get("Status") or "").upper() for r in read(DIAG)}
+    hist=read(HIST)
 
-    details = calculate_indicator_impacts(
-        matrix,
-        indicator_cfg,
-        market_inputs,
-    )
+    hist_by={}
+    for ind in matrix:
+        hist_by[ind]=[fnum(r.get(ind)) for r in hist if fnum(r.get(ind)) is not None]
 
-    factor_scores = aggregate_factors(
-        details,
-        factor_cfg,
-    )
+    details=[]; excluded=[]
+    for x in inputs:
+        ind=x["Indicator"].strip()
+        if diag.get(ind)!="ACTUAL":
+            excluded.append({"Indicator":ind,"Status":diag.get(ind,"NO_STATUS"),"Reason":"실제 최신값이 아니므로 계산 제외"});continue
+        if ind not in matrix:
+            excluded.append({"Indicator":ind,"Status":"CONFIG_MISSING","Reason":"impact_matrix 누락"});continue
+        obs=float(x["Observed_Change"])
+        p=percentile_rank_abs(obs,hist_by.get(ind,[]))
+        sc=shock_from_percentile(p)
+        if sc=="UNRATED":
+            excluded.append({"Indicator":ind,"Status":"INSUFFICIENT_HISTORY","Reason":"Shock 분류용 역사자료 24개월 미만"});continue
+        direction=1 if obs>0 else -1 if obs<0 else 0
+        impacts={a:float(matrix[ind][col])*direction*MULT[sc] for col,a in ASSETS.items()}
+        details.append({"Indicator":ind,"Factor_Group":matrix[ind]["Factor_Group"],"Observed_Change":obs,
+                        "Shock_Class":sc,"Shock_Percentile":p,"Importance":float(matrix[ind]["Importance"]),"Impacts":impacts})
 
-    final_scores = aggregate_asset_environment(
-        factor_scores
-    )
+    if not details:raise RuntimeError("사용 가능한 ACTUAL 지표가 없습니다.")
 
-    save_results(
-        details,
-        factor_scores,
-        final_scores,
-    )
+    all_imp=defaultdict(float); all_cnt=defaultdict(int)
+    for _,m in matrix.items():
+        f=m["Factor_Group"];all_imp[f]+=float(m["Importance"]);all_cnt[f]+=1
 
-    print_results(
-        details,
-        factor_scores,
-        final_scores,
-    )
+    grouped=defaultdict(list)
+    for d in details:grouped[d["Factor_Group"]].append(d)
 
+    fs={}; cov={}
+    for f,cfg in fc.items():
+        items=grouped.get(f,[]); ai=sum(i["Importance"] for i in items)
+        wc=ai/all_imp[f] if all_imp[f] else 0; cc=len(items)/all_cnt[f] if all_cnt[f] else 0; cf=conf(wc,cc)
+        cov[f]={"Available":len(items),"Total":all_cnt[f],"WeightedCoverage":wc,"CountCoverage":cc,
+                "Confidence":cf,"Label":label(cf),"FactorWeight":float(cfg["Factor_Weight"])}
+        fs[f]={}
+        for a in ASSETS.values():
+            if ai<=0:fs[f][a]=None
+            else:
+                # Importance exactly once; available weights sum to 1.
+                signal=sum(i["Impacts"][a]*i["Importance"] for i in items)/ai
+                fs[f][a]=clamp(signal,float(cfg["Min_Cap"]),float(cfg["Max_Cap"]))
 
-if __name__ == "__main__":
-    main()
+    rel=factor_relevance(matrix)
+    raw={}; adjusted={}; aconf={}
+    for a in ASSETS.values():
+        intended=sum(cov[f]["FactorWeight"] for f in cov if rel[f][a])
+        raw_num=raw_den=adj_num=0.0
+        for f,scores in fs.items():
+            if not rel[f][a]:continue
+            s=scores[a]
+            if s is None:continue
+            fw=cov[f]["FactorWeight"];cf=cov[f]["Confidence"]
+            raw_num+=s*fw;raw_den+=fw
+            adj_num+=s*fw*cf
+        raw[a]=raw_num/raw_den if raw_den else 0.0
+        # Critical correction: denominator is intended relevant factor weight,
+        # so incomplete confidence shrinks decision score toward neutral.
+        adjusted[a]=adj_num/intended if intended else 0.0
+        aconf[a]=sum(cov[f]["FactorWeight"]*cov[f]["Confidence"] for f in cov if rel[f][a])/intended if intended else 0.0
+
+    rows=[]
+    for d in details:
+        for a,s in d["Impacts"].items():
+            rows.append({"Level":"INDICATOR","Name":d["Indicator"],"Factor_Group":d["Factor_Group"],"Asset":a,
+                         "Score":round(s,4),"Shock_Class":d["Shock_Class"],"Observed_Change":d["Observed_Change"],
+                         "Shock_Percentile":round(d["Shock_Percentile"]*100,2),"Coverage":"","Confidence":"",
+                         "Confidence_Label":"","Raw_Score":""})
+    for f,scores in fs.items():
+        c=cov[f]
+        for a,s in scores.items():
+            rows.append({"Level":"FACTOR","Name":f,"Factor_Group":f,"Asset":a,"Score":"" if s is None else round(s,4),
+                         "Shock_Class":"","Observed_Change":"","Shock_Percentile":"","Coverage":round(c["WeightedCoverage"],4),
+                         "Confidence":round(c["Confidence"],4),"Confidence_Label":c["Label"],"Raw_Score":""})
+    for a in ASSETS.values():
+        rows.append({"Level":"ASSET_ENVIRONMENT","Name":"FINAL","Factor_Group":"","Asset":a,"Score":round(adjusted[a],4),
+                     "Shock_Class":"","Observed_Change":"","Shock_Percentile":"","Coverage":"","Confidence":round(aconf[a],4),
+                     "Confidence_Label":label(aconf[a]),"Raw_Score":round(raw[a],4)})
+    fields=["Level","Name","Factor_Group","Asset","Score","Shock_Class","Observed_Change","Shock_Percentile",
+            "Coverage","Confidence","Confidence_Label","Raw_Score"]
+    with OUT.open("w",encoding="utf-8-sig",newline="") as f:
+        w=csv.DictWriter(f,fieldnames=fields);w.writeheader();w.writerows(rows)
+
+    cr=[]
+    for f,c in cov.items():
+        cr.append({"Factor_Group":f,"Available_Indicators":c["Available"],"Total_Indicators":c["Total"],
+                   "Count_Coverage_Pct":round(c["CountCoverage"]*100,2),"Weighted_Coverage_Pct":round(c["WeightedCoverage"]*100,2),
+                   "Data_Confidence_Score":round(c["Confidence"]*100,2),"Data_Confidence_Label":c["Label"],
+                   "Factor_Weight":c["FactorWeight"]})
+    with COV.open("w",encoding="utf-8-sig",newline="") as f:
+        w=csv.DictWriter(f,fieldnames=list(cr[0]));w.writeheader();w.writerows(cr)
+
+    actual=len({d["Indicator"] for d in details});total=len(matrix)
+    wi=sum(d["Importance"] for d in details);ti=sum(float(m["Importance"]) for m in matrix.values())
+    wc=wi/ti;cc=actual/total;oc=conf(wc,cc)
+    sr={"Actual_Indicators":actual,"Total_Indicators":total,"Count_Coverage_Pct":round(cc*100,2),
+        "Weighted_Coverage_Pct":round(wc*100,2),"Data_Confidence_Score":round(oc*100,2),
+        "Data_Confidence_Label":label(oc),"Shock_Method":"EMPIRICAL_ABS_PERCENTILE_50_75_90",
+        "Scoring_Mode":"AVAILABLE_ONLY_RENORMALIZED_WITH_CONFIDENCE_SHRINKAGE","Missing_As_Zero":"NO"}
+    with SUM.open("w",encoding="utf-8-sig",newline="") as f:
+        w=csv.DictWriter(f,fieldnames=list(sr));w.writeheader();w.writerow(sr)
+    with EXC.open("w",encoding="utf-8-sig",newline="") as f:
+        w=csv.DictWriter(f,fieldnames=["Indicator","Status","Reason"]);w.writeheader();w.writerows(excluded)
+
+    print("="*94);print("STEP 03 - VALIDATED COVERAGE-AWARE ENGINE v2");print("="*94)
+    print(f"실제 사용지표 : {actual}/{total}")
+    for f,c in cov.items():
+        print(f"{f:<15} {c['Available']}/{c['Total']} | Coverage={c['WeightedCoverage']*100:5.1f}% | DataConfidence={c['Confidence']*100:5.1f}% ({c['Label']})")
+    print()
+    for a in ASSETS.values():
+        print(f"{a:<8} Raw={raw[a]:+6.2f} | Decision={adjusted[a]:+6.2f} | DataConfidence={aconf[a]*100:5.1f}% ({label(aconf[a])})")
+    print("→ STEP4 최신 변환값 직접 사용")
+    print("→ Shock는 동일 지표 역사적 절대변화 percentile로 분류")
+    print("→ Importance 1회 적용 + ACTUAL 내부 재정규화")
+    print("→ 부족한 정보는 최종 Decision 점수를 중립(0) 방향으로 축소")
+    print("→ Confidence는 통계적 확률이 아니라 Data Coverage Confidence")
+
+if __name__=="__main__":main()
