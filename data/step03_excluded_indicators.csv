@@ -1,0 +1,6 @@
+﻿Indicator,Status,Reason
+KR_CPI,UNAVAILABLE,실제 최신값이 아니므로 계산 제외
+MOVE,UNAVAILABLE,실제 최신값이 아니므로 계산 제외
+GEOPOLITICAL_RISK,UNAVAILABLE,실제 최신값이 아니므로 계산 제외
+KR_SEMI_EXPORT_GROWTH,UNAVAILABLE,실제 최신값이 아니므로 계산 제외
+CB_GOLD_NET_BUYING,UNAVAILABLE,실제 최신값이 아니므로 계산 제외
