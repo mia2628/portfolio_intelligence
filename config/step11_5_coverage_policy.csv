@@ -1,0 +1,8 @@
+﻿Setting,Value,Reason
+mode,STRICT_27,STEP12로 넘어가기 전 27개 지표의 상태와 정의를 모두 검증
+minimum_total_coverage_pct,100,27개 모두 SOURCE_READY 상태 요구
+minimum_exact_or_defined_pct,100,proxy를 exact로 간주하지 않음
+allow_proxy_for_scoring,0,proxy는 화면 참고용만 허용
+allow_unavailable_as_zero,0,누락지표를 0으로 조용히 대체하지 않음
+block_on_definition_required,1,BOK_HIKE_EXPECTATION 등 정의 미확정 시 차단
+block_on_license_required,1,정확한 지표가 라이선스를 요구하면 확보 전 READY 아님

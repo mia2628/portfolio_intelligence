@@ -1,0 +1,2 @@
+﻿Risk_Score,Risk_State,Best_Opportunity_Asset,Best_Opportunity_Score,Portfolio_Health_Score,Portfolio_Health_State,Rebalancing_Decision,Action_Level,Current_Situation,Final_Recommendation
+54.28,UNKNOWN,Gold,58.13,67.89,GOOD,NEW_MONEY_CORRECTION,MEDIUM,"아직 정기점검일 전이지만, 금 비중이 6.42%로 정책범위 18~22%보다 낮습니다. 포트폴리오 건강도는 67.9점으로 비교적 양호하므로 기존자산 매도보다 신규자금으로 금을 우선 보충하는 단계입니다.","현재는 금 비중이 정책 하한에 크게 못 미치므로 이번 달 신규자금 1,000,000원은 전액 금 보충에 사용하는 것이 우선입니다. 기존 보유자산은 매도하지 않습니다."

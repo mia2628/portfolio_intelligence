@@ -1,0 +1,7 @@
+﻿Asset,Current_Weight,Policy_Type,Target_Pct,Lower_Bound_Pct,Upper_Bound_Pct,Status,Policy_Score,Comment
+Domestic_Equity,25.0507,FLEXIBLE,,,,FLEXIBLE,50.0,고정 목표 없이 유연하게 운용하는 자산입니다.
+Foreign_Equity,15.7772,FLEXIBLE,,,,FLEXIBLE,50.0,고정 목표 없이 유연하게 운용하는 자산입니다.
+Bond,49.0534,FLEXIBLE,,,,FLEXIBLE,50.0,고정 목표 없이 유연하게 운용하는 자산입니다.
+Cash,1.7873,FLEXIBLE,,,,FLEXIBLE,50.0,고정 목표 없이 유연하게 운용하는 자산입니다.
+Other,1.909,FLEXIBLE,,,,FLEXIBLE,50.0,고정 목표 없이 유연하게 운용하는 자산입니다.
+Gold,6.4223,HARD_RANGE,20.0,18.0,22.0,BELOW_RANGE,0.0,허용하한 18.0%보다 11.6%p 낮아 신규자금으로 보충이 필요합니다.

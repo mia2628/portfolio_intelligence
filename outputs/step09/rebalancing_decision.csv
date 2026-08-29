@@ -1,0 +1,2 @@
+﻿Current_Date,Last_Rebalance_Date,Next_Scheduled_Review,Calendar_Due,Threshold_Trigger,Gold_Weight_Pct,Gold_Range,Portfolio_Health,Concentration_Score,Correlation_Score,Decision,Action_Level,Reason
+2026-08-29,2026-08-29,2027-02-28,False,True,6.42,18~22%,67.89,80.03,76.46,NEW_MONEY_CORRECTION,MEDIUM,Gold가 허용하한 18% 미만이므로 매도 없이 신규자금으로 우선 보충합니다.

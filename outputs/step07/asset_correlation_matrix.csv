@@ -1,0 +1,5 @@
+﻿Asset,Domestic_Equity,Foreign_Equity,Bond,Gold
+Domestic_Equity,1.0,0.6306,-0.1253,0.1451
+Foreign_Equity,0.6306,1.0,-0.0129,0.0432
+Bond,-0.1253,-0.0129,1.0,0.198
+Gold,0.1451,0.0432,0.198,1.0

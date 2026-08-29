@@ -1,5 +1,5 @@
 ﻿Asset,Policy_Type,Target_Pct,Lower_Bound_Pct,Upper_Bound_Pct,Description
-Gold,HARD_RANGE,10.0,8.0,12.0,금은 전체 포트폴리오의 10%를 중심으로 8~12% 허용범위 관리
+Gold,HARD_RANGE,20.0,18.0,22.0,금은 전체 포트폴리오의 20%를 중심으로 18~22% 허용범위 관리
 Domestic_Equity,FLEXIBLE,,,,고정 목표 없음
 Foreign_Equity,FLEXIBLE,,,,고정 목표 없음
 Bond,FLEXIBLE,,,,고정 목표 없음

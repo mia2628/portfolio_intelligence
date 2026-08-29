@@ -1,23 +1,28 @@
-﻿Indicator,Status,Source_Column,Message
-US10Y,ACTUAL,US10Y,OK
-US2Y,ACTUAL,US2Y,OK
-US_REAL10Y,ACTUAL,US_REAL10Y,OK
-US_10Y2Y_SPREAD,ACTUAL,US_10Y2Y_SPREAD,OK
-US_CPI,ACTUAL,US_CPI,OK
-US_CORE_CPI,ACTUAL,US_CORE_CPI,OK
-US_CORE_PCE,ACTUAL,US_CORE_PCE,OK
-US_BREAKEVEN_10Y,ACTUAL,US_BREAKEVEN_10Y,OK
-USDKRW,ACTUAL,USDKRW,OK
-DXY,ACTUAL,DXY,OK
-VIX,ACTUAL,VIX,OK
-US_HY_SPREAD,ACTUAL,US_HY_SPREAD,OK
-FCI_TIGHTENING,ACTUAL,FCI_TIGHTENING,OK
-US_UNEMPLOYMENT,ACTUAL,US_UNEMPLOYMENT,OK
-US_INITIAL_CLAIMS,ACTUAL,US_INITIAL_CLAIMS,OK
-US_ISM_MFG,ACTUAL,US_ISM_MFG,OK
-KR_EXPORT_GROWTH,ACTUAL,KR_EXPORT_GROWTH,OK
-KR_CPI,ERROR,KR_CPI,insufficient observations
-MOVE,ERROR,MOVE,insufficient observations
-GEOPOLITICAL_RISK,ERROR,GEOPOLITICAL_RISK,insufficient observations
-KR_SEMI_EXPORT_GROWTH,ERROR,KR_SEMI_EXPORT_GROWTH,insufficient observations
-CB_GOLD_NET_BUYING,ERROR,CB_GOLD_NET_BUYING,insufficient observations
+﻿Indicator,Status,Source,Series_ID,Message
+US10Y,ERROR,FRED,DGS10,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US2Y,ERROR,FRED,DGS2,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_REAL10Y,ERROR,FRED,DFII10,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_10Y2Y_SPREAD,ERROR,FRED,T10Y2,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_CPI,ERROR,FRED,CPIAUCSL,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_CORE_CPI,ERROR,FRED,CPILFESL,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+US_CORE_PCE,ERROR,FRED,PCEPILFE,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+US_BREAKEVEN_10Y,ERROR,FRED,T10YIE,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+USDKRW,ERROR,FRED,DEXKOUS,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+DXY,ERROR,FRED,DTWEXBGS,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+VIX,ERROR,FRED,VIXCLS,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_HY_SPREAD,ERROR,FRED,BAMLH0A0HYM2,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+FCI_TIGHTENING,ERROR,FRED,NFCI,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+US_UNEMPLOYMENT,ERROR,FRED,UNRATE,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+US_INITIAL_CLAIMS,ERROR,FRED,ICSA,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+KR3Y,UNAVAILABLE,,,안정적 공개 자동수집 소스 추가 필요
+KR10Y,UNAVAILABLE,,,안정적 공개 자동수집 소스 추가 필요
+FED_HIKE_EXPECTATION,UNAVAILABLE,,,시장기대 전용 소스 필요
+BOK_HIKE_EXPECTATION,UNAVAILABLE,,,시장기대 전용 소스 필요
+KR_CPI,UNAVAILABLE,,,한국 전용 수집기 추가 예정
+MOVE,UNAVAILABLE,,,안정적 공개 자동수집 소스 추가 필요
+GEOPOLITICAL_RISK,UNAVAILABLE,,,전용 GPR 데이터 수집기 추가 예정
+US_ISM_MFG,UNAVAILABLE,,,ISM 원자료 자동수집 경로 별도 필요
+US_NFP_SURPRISE,UNAVAILABLE,,,실제치-컨센서스 surprise 데이터 소스 필요
+KR_EXPORT_GROWTH,UNAVAILABLE,,,한국 수출 전용 수집기 추가 예정
+KR_SEMI_EXPORT_GROWTH,UNAVAILABLE,,,한국 반도체 수출 전용 수집기 추가 예정
+CB_GOLD_NET_BUYING,UNAVAILABLE,,,중앙은행 금매입 전용 데이터 소스 필요

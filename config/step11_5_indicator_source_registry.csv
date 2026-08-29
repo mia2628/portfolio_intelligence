@@ -1,0 +1,28 @@
+﻿Indicator,Factor_Group,Definition,Primary_Source,Cost,Update_Frequency,Automation,Exactness,Data_Accuracy,Credential_or_License,Implementation,Caveat
+US10Y,RATE,U.S. 10Y Treasury yield,U.S. Treasury / FRED DGS10,FREE,DAILY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Official Treasury market yield
+US2Y,RATE,U.S. 2Y Treasury yield,U.S. Treasury / FRED DGS2,FREE,DAILY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Official Treasury market yield
+US_REAL10Y,RATE,U.S. 10Y real yield,U.S. Treasury / FRED DFII10,FREE,DAILY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,TIPS-derived official market yield
+US_10Y2Y_SPREAD,RATE,10Y minus 2Y Treasury spread,FRED T10Y2 or DGS10-DGS2,FREE,DAILY,YES,DERIVED_EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Arithmetic spread from official yields
+KR3Y,RATE,Korea Treasury 3Y yield,Bank of Korea ECOS,FREE,DAILY,YES,EXACT,VERY_HIGH,ECOS_API_KEY,Add ECOS collector,Official Korean market rate
+KR10Y,RATE,Korea Treasury 10Y yield,Bank of Korea ECOS,FREE,DAILY,YES,EXACT,VERY_HIGH,ECOS_API_KEY,Add ECOS collector,Official Korean market rate
+FED_HIKE_EXPECTATION,RATE,Next-FOMC hike probability,CME FedWatch API,PAID,EOD/INTRADAY,YES,EXACT_IF_DEFINED,VERY_HIGH,CME_FEDWATCH_API_KEY,Paid API required,Define as probability next meeting target is above current target; CME EOD API starts around $25/month
+BOK_HIKE_EXPECTATION,RATE,BOK policy-rate hike expectation,Korea OIS/IRS or KTB-futures market data,PAID_OR_DERIVED,DAILY,YES,DEFINITION_REQUIRED,HIGH,MARKET_DATA_KEY,Define metric before use,No single official BOK 'hike probability' series; must define market-implied calculation
+US_CPI,INFLATION,U.S. CPI,BLS / FRED CPIAUCSL,FREE,MONTHLY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Official BLS CPI
+US_CORE_CPI,INFLATION,U.S. Core CPI,BLS / FRED CPILFESL,FREE,MONTHLY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Official BLS CPI less food and energy
+US_CORE_PCE,INFLATION,U.S. Core PCE Price Index,BEA / FRED PCEPILFE,FREE,MONTHLY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Official BEA PCE price data
+US_BREAKEVEN_10Y,INFLATION,10Y breakeven inflation,FRED T10YIE,FREE,DAILY,YES,EXACT,HIGH,NONE,Current STEP4 path usable,Market-implied breakeven estimate
+KR_CPI,INFLATION,Korea CPI,KOSIS / Statistics Korea,FREE,MONTHLY,YES,EXACT,VERY_HIGH,KOSIS_API_KEY,Add KOSIS collector,Official Korean CPI; OpenAPI key required
+USDKRW,FX,USD/KRW exchange rate,Federal Reserve / FRED DEXKOUS,FREE,DAILY,YES,EXACT_FOR_REFERENCE,HIGH,NONE,Current STEP4 path usable,Daily reference exchange rate; not intraday executable FX quote
+DXY,FX,ICE U.S. Dollar Index (DXY),ICE Data Indices,LICENSED,DAILY/INTRADAY,YES,EXACT,VERY_HIGH,ICE_DATA_LICENSE,Replace broad-dollar proxy if exact DXY is required,DTWEXBGS is NOT exact DXY
+VIX,RISK,CBOE VIX,Cboe / FRED VIXCLS,FREE_PUBLIC,DAILY,YES,EXACT_EOD,VERY_HIGH,NONE,Current STEP4 path usable,Official VIX close via public distribution
+MOVE,RISK,ICE BofA MOVE Index,ICE Data Indices,LICENSED,DAILY/INTRADAY,YES,EXACT,VERY_HIGH,ICE_DATA_LICENSE,ICE license/API required,Exact MOVE is proprietary ICE index
+US_HY_SPREAD,RISK,U.S. High Yield OAS,ICE BofA via FRED BAMLH0A0HYM2,FREE_PUBLIC,DAILY,YES,EXACT_SERIES,HIGH,NONE,Current STEP4 path usable,Public FRED distribution of ICE BofA series; observe terms
+FCI_TIGHTENING,RISK,Chicago Fed NFCI tightening,Federal Reserve Bank of Chicago / FRED NFCI,FREE,WEEKLY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Official Chicago Fed financial conditions index
+GEOPOLITICAL_RISK,RISK,Caldara-Iacoviello GPR Index,Official GPR dataset (Iacoviello),FREE,MONTHLY + DAILY RECENT,YES,EXACT,HIGH,NONE,Add official XLS collector,Latest values can be revised due to newspaper database delays
+US_ISM_MFG,GROWTH,ISM Manufacturing PMI,Institute for Supply Management,PUBLIC_REPORT_LICENSE_REVIEW,MONTHLY,TECHNICALLY_YES,EXACT_WITH_PERMISSION,VERY_HIGH,ISM_PERMISSION_OR_LICENSE,Do not silently scrape into product,Official report released first business day; redistribution/incorporation restrictions apply
+US_UNEMPLOYMENT,GROWTH,U.S. unemployment rate,BLS / FRED UNRATE,FREE,MONTHLY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Official BLS household survey
+US_INITIAL_CLAIMS,GROWTH,U.S. initial jobless claims,U.S. Department of Labor / FRED ICSA,FREE,WEEKLY,YES,EXACT,VERY_HIGH,NONE,Current STEP4 path usable,Official weekly claims
+US_NFP_SURPRISE,GROWTH,NFP actual minus market consensus,BLS actual + licensed consensus vendor,PAID_FOR_CONSENSUS,MONTHLY,YES,EXACT_IF_CONSENSUS_DEFINED,HIGH,CONSENSUS_DATA_KEY,Define consensus vendor/timestamp,BLS provides actual payroll; surprise requires pre-release consensus snapshot
+KR_EXPORT_GROWTH,GROWTH,Korea total export YoY growth,Korea Customs Service / data.go.kr,FREE,MONTHLY,YES,EXACT,VERY_HIGH,DATA_GO_KR_SERVICE_KEY,Add Customs API collector,Official customs data; monthly revisions/finalization
+KR_SEMI_EXPORT_GROWTH,GROWTH,Korea semiconductor export YoY growth,Korea Customs Service / data.go.kr HS-code aggregation,FREE,MONTHLY,YES,DERIVED_EXACT_IF_HS_BASKET_FIXED,HIGH,DATA_GO_KR_SERVICE_KEY,Freeze semiconductor HS-code basket,Exact calculation requires stable documented HS-code definition
+CB_GOLD_NET_BUYING,GOLD_SPECIFIC,Central-bank net gold purchases,World Gold Council / IMF IFS,FREE_PUBLIC,MONTHLY (~2M lag),YES,EXACT_REPORTED_DELAYED,HIGH,NONE_OR_DOWNLOAD_SESSION,Add WGC official download collector,Monthly reported holdings changes; typically ~2 months in arrears and subject to revisions
