@@ -1,28 +1,28 @@
-﻿Indicator,Status,Observation_Date,Age_Months,Message
-US10Y,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US2Y,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_REAL10Y,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_10Y2Y_SPREAD,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-KR3Y,ACTUAL,2026-05-01,3,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-KR10Y,ACTUAL,2026-06-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-FED_HIKE_EXPECTATION,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-BOK_HIKE_EXPECTATION,ACTUAL,2026-05-01,3,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_CPI,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_CORE_CPI,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_CORE_PCE,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_BREAKEVEN_10Y,ACTUAL,2026-08-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-KR_CPI,UNAVAILABLE,,,historical_data에 유효값 없음
-USDKRW,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-DXY,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-VIX,ACTUAL,2026-08-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-MOVE,UNAVAILABLE,,,historical_data에 유효값 없음
-US_HY_SPREAD,ACTUAL,2026-08-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-FCI_TIGHTENING,ACTUAL,2026-08-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-GEOPOLITICAL_RISK,UNAVAILABLE,,,historical_data에 유효값 없음
-US_ISM_MFG,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_UNEMPLOYMENT,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_INITIAL_CLAIMS,ACTUAL,2026-08-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_NFP_SURPRISE,ACTUAL,2026-07-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-KR_EXPORT_GROWTH,ACTUAL,2026-06-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-KR_SEMI_EXPORT_GROWTH,UNAVAILABLE,,,historical_data에 유효값 없음
-CB_GOLD_NET_BUYING,UNAVAILABLE,,,historical_data에 유효값 없음
+﻿Indicator,Status,Source,Series_ID,Message
+US10Y,ERROR,FRED,DGS10,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US2Y,ERROR,FRED,DGS2,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_REAL10Y,ERROR,FRED,DFII10,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_10Y2Y_SPREAD,ERROR,FRED,T10Y2,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_CPI,ERROR,FRED,CPIAUCSL,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_CORE_CPI,ERROR,FRED,CPILFESL,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+US_CORE_PCE,ERROR,FRED,PCEPILFE,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+US_BREAKEVEN_10Y,ERROR,FRED,T10YIE,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+USDKRW,ERROR,FRED,DEXKOUS,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+DXY,ERROR,FRED,DTWEXBGS,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+VIX,ERROR,FRED,VIXCLS,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_HY_SPREAD,ERROR,FRED,BAMLH0A0HYM2,"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+FCI_TIGHTENING,ERROR,FRED,NFCI,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+US_UNEMPLOYMENT,ERROR,FRED,UNRATE,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+US_INITIAL_CLAIMS,ERROR,FRED,ICSA,"('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+KR3Y,UNAVAILABLE,,,안정적 공개 자동수집 소스 추가 필요
+KR10Y,UNAVAILABLE,,,안정적 공개 자동수집 소스 추가 필요
+FED_HIKE_EXPECTATION,UNAVAILABLE,,,시장기대 전용 소스 필요
+BOK_HIKE_EXPECTATION,UNAVAILABLE,,,시장기대 전용 소스 필요
+KR_CPI,UNAVAILABLE,,,한국 전용 수집기 추가 예정
+MOVE,UNAVAILABLE,,,안정적 공개 자동수집 소스 추가 필요
+GEOPOLITICAL_RISK,UNAVAILABLE,,,전용 GPR 데이터 수집기 추가 예정
+US_ISM_MFG,UNAVAILABLE,,,ISM 원자료 자동수집 경로 별도 필요
+US_NFP_SURPRISE,UNAVAILABLE,,,실제치-컨센서스 surprise 데이터 소스 필요
+KR_EXPORT_GROWTH,UNAVAILABLE,,,한국 수출 전용 수집기 추가 예정
+KR_SEMI_EXPORT_GROWTH,UNAVAILABLE,,,한국 반도체 수출 전용 수집기 추가 예정
+CB_GOLD_NET_BUYING,UNAVAILABLE,,,중앙은행 금매입 전용 데이터 소스 필요
