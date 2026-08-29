@@ -1,0 +1,28 @@
+﻿Indicator,Status,Series_ID,Message
+US10Y,ERROR,DGS10,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US2Y,ERROR,DGS2,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_REAL10Y,ERROR,DFII10,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_10Y2Y_SPREAD,ERROR,T10Y2,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_CPI,ERROR,CPIAUCSL,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_CORE_CPI,ERROR,CPILFESL,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_CORE_PCE,ERROR,PCEPILFE,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_BREAKEVEN_10Y,ERROR,T10YIE,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+USDKRW,ERROR,DEXKOUS,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+DXY,ERROR,DTWEXBGS,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+VIX,ERROR,VIXCLS,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_HY_SPREAD,ERROR,BAMLH0A0HYM2,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+FCI_TIGHTENING,ERROR,NFCI,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_UNEMPLOYMENT,ERROR,UNRATE,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+US_INITIAL_CLAIMS,ERROR,ICSA,"TIMEOUT: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+KR3Y,UNAVAILABLE,,한국 전용 수집기 필요
+KR10Y,UNAVAILABLE,,한국 전용 수집기 필요
+FED_HIKE_EXPECTATION,UNAVAILABLE,,시장기대 전용 소스 필요
+BOK_HIKE_EXPECTATION,UNAVAILABLE,,시장기대 전용 소스 필요
+KR_CPI,UNAVAILABLE,,한국 전용 수집기 필요
+MOVE,UNAVAILABLE,,안정적 공개 소스 추가 필요
+GEOPOLITICAL_RISK,UNAVAILABLE,,GPR 전용 수집기 필요
+US_ISM_MFG,UNAVAILABLE,,ISM 전용 수집기 필요
+US_NFP_SURPRISE,UNAVAILABLE,,컨센서스 데이터 소스 필요
+KR_EXPORT_GROWTH,UNAVAILABLE,,한국 수출 전용 수집기 필요
+KR_SEMI_EXPORT_GROWTH,UNAVAILABLE,,한국 반도체 수출 전용 수집기 필요
+CB_GOLD_NET_BUYING,UNAVAILABLE,,전용 데이터 소스 필요
