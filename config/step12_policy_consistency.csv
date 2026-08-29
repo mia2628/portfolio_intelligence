@@ -1,0 +1,7 @@
+﻿Asset,Policy_Type,Target,Lower,Upper
+Gold,HARD_RANGE,20.0,18.0,22.0
+Domestic_Equity,FLEXIBLE,,,
+Foreign_Equity,FLEXIBLE,,,
+Bond,FLEXIBLE,,,
+Cash,FLEXIBLE,,,
+Other,FLEXIBLE,,,

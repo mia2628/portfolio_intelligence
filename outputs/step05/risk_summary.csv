@@ -1,2 +1,2 @@
-﻿Portfolio_Risk_Score,Portfolio_Risk_State,Active_Indicators,OK_Signals,Missing_Current,Missing_History,Top_Risk_Contributor_1,Top_Risk_Contributor_1_Comment,Top_Risk_Contributor_2,Top_Risk_Contributor_2_Comment,Top_Risk_Contributor_3,Top_Risk_Contributor_3_Comment
-49.67,NEUTRAL,6,6,0,0,US_HY_SPREAD,미국 하이일드 스프레드가 상승해 기업 신용위험과 자금조달 부담 변화를 반영하며 위험을 높였습니다.,VIX,VIX가 하락해 시장의 불안·변동성 신호가 커지면서 주식 중심의 위험도를 높였습니다.,US_REAL10Y,미국 실질금리가 상승해 주식의 할인율과 금의 기회비용 변화가 위험점수에 반영됐습니다.
+﻿Portfolio_Risk_Score,Portfolio_Risk_State,Active_Indicators,OK_Signals,Missing_Current,Missing_History,Top_Risk_Contributor_1,Top_Risk_Contributor_2,Top_Risk_Contributor_3
+54.28,NEUTRAL,6,4,2,0,VIX,US_HY_SPREAD,FCI_TIGHTENING

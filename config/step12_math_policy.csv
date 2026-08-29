@@ -1,0 +1,12 @@
+﻿Component,Weight,Note
+Opportunity_Target,0.3,Target-policy component
+Opportunity_Macro,0.25,STEP3 macro
+Opportunity_RiskAdj,0.2,100-Risk style adjustment
+Opportunity_History,0.15,historical opportunity
+Opportunity_Drawdown,0.1,drawdown attractiveness
+Health_Concentration,0.25,scored
+Health_Volatility,0.2,scored
+Health_MaxDrawdown,0.2,scored
+Health_Correlation,0.15,scored
+Health_TargetPolicy,0.1,scored
+Health_FXExposure,0.0,REPORT_ONLY; excluded from score
