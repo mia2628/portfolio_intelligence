@@ -1,0 +1,9 @@
+﻿Parameter,Value,Description
+Review_Interval_Months,6,정기 리밸런싱 점검 주기
+Gold_Sell_Only_Above_Pct,22.0,금이 이 비중을 초과할 때만 매도 검토
+Gold_Buy_Priority_Below_Pct,18.0,금이 이 비중 미만이면 신규자금 우선 보충
+Gold_Target_Center_Pct,20.0,금 중심 목표비중
+Health_Caution_Score,50.0,Portfolio Health가 이 값 미만이면 구조 점검
+Concentration_Caution_Score,50.0,집중도 점수가 이 값 미만이면 경고
+Correlation_Caution_Score,50.0,분산효과 점수가 이 값 미만이면 경고
+Allow_Selling,1,정책범위 초과 시 매도 제안 허용 여부(1=허용)
