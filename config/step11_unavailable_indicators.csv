@@ -1,0 +1,13 @@
+﻿Indicator,Reason
+KR3Y,한국 전용 수집기 필요
+KR10Y,한국 전용 수집기 필요
+FED_HIKE_EXPECTATION,시장기대 전용 소스 필요
+BOK_HIKE_EXPECTATION,시장기대 전용 소스 필요
+KR_CPI,한국 전용 수집기 필요
+MOVE,안정적 공개 소스 추가 필요
+GEOPOLITICAL_RISK,GPR 전용 수집기 필요
+US_ISM_MFG,ISM 전용 수집기 필요
+US_NFP_SURPRISE,컨센서스 데이터 소스 필요
+KR_EXPORT_GROWTH,한국 수출 전용 수집기 필요
+KR_SEMI_EXPORT_GROWTH,한국 반도체 수출 전용 수집기 필요
+CB_GOLD_NET_BUYING,전용 데이터 소스 필요
