@@ -44,3 +44,21 @@ print(f"Opportunity : {opps[0].get('asset')} {opps[0].get('score')}")
 print(f"Action      : {final[:120]}")
 print(f"Rec source  : {d.get('recommendation',{}).get('source','UNKNOWN')}")
 print("PASS: dashboard.json contains live, non-placeholder STEP13 data.")
+
+
+# Trend integrity
+TREND=BASE/"docs"/"data"/"trend.json"
+if not TREND.exists():
+    fail("trend.json missing")
+t=json.loads(TREND.read_text(encoding="utf-8"))
+pts=t.get("points") or []
+summary=t.get("summary") or {}
+if "7" not in summary or "30" not in summary:
+    fail("7/30 trend summaries missing")
+if len(pts)<1:
+    fail("trend points missing")
+print(f"Trend points  : {len(pts)}")
+print(f"Trend 7D      : {summary['7'].get('points')} points")
+print(f"Trend 30D     : {summary['30'].get('points')} points")
+print("PASS: trend.json contains 7/30-day summaries.")
+

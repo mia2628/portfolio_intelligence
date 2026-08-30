@@ -218,3 +218,35 @@ footer{display:flex;justify-content:center;gap:7px;margin-top:20px;color:#53677f
 .bridge-notice.error{background:#29191b;border-color:#573036;color:#ff9da5}
 
 .data-state-banner{margin:0 0 10px;padding:9px 11px;border-radius:12px;background:#2a191c;border:1px solid #573039;color:#ffadb4;font-size:10px;line-height:1.45}
+
+/* STEP13 v9 trend */
+.trend-status-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0 10px}
+.trend-stat{padding:9px 9px 8px;border-radius:12px;background:#0d1725;border:1px solid #203047;min-width:0}
+.trend-stat span{display:block;font-size:7.5px;letter-spacing:.08em;color:#657a94;font-weight:900;white-space:nowrap}
+.trend-stat b{display:block;margin-top:4px;font-size:18px;line-height:1;color:#e6eef8}
+.trend-stat em{display:block;margin-top:5px;font-size:9px;font-style:normal;font-weight:850;color:#8193aa}
+.trend-stat em.up{color:#76d9a9}
+.trend-stat em.down{color:#ff979f}
+.trend-stat em.flat{color:#91a4bb}
+.trend-legend{display:flex;gap:12px;align-items:center;margin-bottom:5px;font-size:8.5px;color:#6f8299}
+.trend-legend span{display:flex;align-items:center;gap:5px}
+.legend-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.legend-dot.risk{background:#ff7f89}
+.legend-dot.health{background:#67d5a0}
+.legend-dot.opp{background:#78aefc}
+.chart-shell{height:155px;position:relative}
+.trend-line{fill:none;stroke-width:3;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+.trend-risk{stroke:#ff7f89;color:#ff7f89}
+.trend-health{stroke:#67d5a0;color:#67d5a0}
+.trend-opp{stroke:#78aefc;color:#78aefc}
+.trend-grid{stroke:#26364b;stroke-width:1;opacity:.6;vector-effect:non-scaling-stroke}
+.trend-end-label{font-size:20px;font-weight:850}
+.trend-footer{margin-top:8px;padding-top:8px;border-top:1px solid #1d2a3b}
+.trend-insight{font-size:10px;line-height:1.45;color:#a7b6c8}
+.trend-range-info{margin-top:4px;font-size:8.5px;color:#596e88}
+@media(max-width:540px){
+  .trend-stat{padding:8px}
+  .trend-stat b{font-size:17px}
+  .trend-stat span{font-size:7px}
+  .chart-shell{height:145px}
+}

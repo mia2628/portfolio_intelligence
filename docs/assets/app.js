@@ -291,31 +291,62 @@ function renderAlerts(a){
   });
 }
 
-let trendData={points:[]};
+let trendData={points:[],summary:{}};
 let trendDays=7;
 
+function directionText(dir,delta){
+  const n=Number(delta||0);
+  const signed=`${n>0?"+":""}${n.toFixed(1)}`;
+  if(dir==="UP")return {text:`▲ ${signed}`,cls:"up"};
+  if(dir==="DOWN")return {text:`▼ ${signed}`,cls:"down"};
+  if(dir==="FLAT")return {text:`— ${signed}`,cls:"flat"};
+  return {text:"--",cls:"flat"};
+}
+
+function applyTrendStat(nowId,deltaId,metric){
+  setText(nowId,metric?.current==null?"--":score(metric.current));
+  const el=$(deltaId);
+  if(!el)return;
+  const d=directionText(metric?.direction,metric?.delta);
+  el.textContent=d.text;
+  el.className=d.cls;
+}
+
 function renderTrend(t,days=trendDays){
-  trendData=t||{points:[]};
+  trendData=t||{points:[],summary:{}};
   trendDays=days;
-  const all=(trendData?.points||[]).filter(x=>x.date);
-  const pts=all.slice(-days);
-  const svg=$("trendChart"), empty=$("trendEmpty"), insight=$("trendInsight");
 
   document.querySelectorAll(".range-btn").forEach(b=>{
     b.classList.toggle("active",Number(b.dataset.days)===days);
   });
 
+  const all=(trendData?.points||[]).filter(x=>x.date);
+  const pts=all.slice(-days);
+  const summary=trendData?.summary?.[String(days)] || null;
+
+  applyTrendStat("trendRiskNow","trendRiskDelta",summary?.risk);
+  applyTrendStat("trendHealthNow","trendHealthDelta",summary?.health);
+  applyTrendStat("trendOppNow","trendOppDelta",summary?.opportunity);
+
+  const svg=$("trendChart"), empty=$("trendEmpty"), insight=$("trendInsight"), rangeInfo=$("trendRangeInfo");
+
+  if(summary){
+    rangeInfo.textContent=summary.points
+      ? `${summary.from||"--"} → ${summary.to||"--"} · ${summary.points}개 일별 기준점`
+      : "저장된 일별 기준점 없음.";
+  }
+
   if(pts.length<2){
     svg.innerHTML="";
     empty.style.display="grid";
     insight.textContent=pts.length===1
-      ?"첫 기준점 저장됨. 다음 일자부터 변화 방향 확인 가능함."
-      :"누적 데이터 없음.";
+      ?"첫 일별 기준점 저장됨. 다음 날짜 데이터부터 증감과 방향성을 계산함."
+      :"누적 트렌드 데이터 없음.";
     return;
   }
 
   empty.style.display="none";
-  const W=640,H=210,padX=18,padY=18;
+  const W=640,H=210,padX=22,padY=18;
   const y=v=>padY+(100-Math.max(0,Math.min(100,Number(v))))*(H-padY*2)/100;
   const x=i=>padX+i*(W-padX*2)/(pts.length-1);
   let markup="";
@@ -336,15 +367,20 @@ function renderTrend(t,days=trendDays){
     const path=valid.map((o,j)=>`${j===0?"M":"L"} ${x(o.i).toFixed(1)} ${y(o.v).toFixed(1)}`).join(" ");
     markup+=`<path class="trend-line ${cls}" d="${path}"/>`;
     const last=valid[valid.length-1];
-    markup+=`<circle cx="${x(last.i)}" cy="${y(last.v)}" r="4" fill="currentColor" class="${cls}"/>`;
+    markup+=`<circle cx="${x(last.i)}" cy="${y(last.v)}" r="4.5" fill="currentColor" class="${cls}"/>`;
   });
 
   svg.innerHTML=markup;
 
-  const first=pts[0],last=pts[pts.length-1];
-  const delta=(a,b)=>(a==null||b==null)?null:Number(b)-Number(a);
-  const fmt=v=>v==null?"--":`${v>=0?"+":""}${v.toFixed(1)}`;
-  insight.textContent=`${pts.length}개 기준점 · Risk ${fmt(delta(first.risk,last.risk))} · Health ${fmt(delta(first.health,last.health))} · 최고기회 ${niceAsset(last.opportunity_asset)} ${score(last.opportunity_score)}임.`;
+  const rs=summary?.risk, hs=summary?.health, os=summary?.opportunity;
+  const riskDir=directionText(rs?.direction,rs?.delta).text;
+  const healthDir=directionText(hs?.direction,hs?.delta).text;
+  const oppDir=directionText(os?.direction,os?.delta).text;
+  const dom=niceAsset(summary?.dominant_opportunity_asset);
+
+  insight.textContent=
+    `${days}일 기준 Risk ${riskDir}, Health ${healthDir}, Opportunity ${oppDir} 흐름임.`+
+    (dom && dom!=="--" ? ` 기간 중 최고기회 자산은 ${dom} 비중이 가장 높았음.` : "");
 }
 
 document.querySelectorAll(".range-btn").forEach(btn=>{
