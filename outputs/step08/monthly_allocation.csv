@@ -1,5 +1,7 @@
-﻿Asset,Opportunity_Score,Allocation_Share_Pct,Allocation_KRW,Policy_First_Gold_KRW
-Domestic_Equity,45.45,0.0,0,0
-Foreign_Equity,46.42,0.0,0,0
-Bond,48.04,0.0,0,0
-Gold,58.13,100.0,1000000,1000000
+﻿Asset,Opportunity_Score,Allocation_Share_Pct,Allocation_KRW,Policy_First_Gold_KRW,Current_Invested_KRW,Current_Weight_Pct,Scenario_Invested_KRW,Scenario_Weight_Pct,Allocation_Eligible
+Domestic_Equity,51.45,0.0,0,0,5268401,25.15,5268401,24.0,YES
+Foreign_Equity,48.9,0.0,0,0,3642255,17.38,3642255,16.59,YES
+Bond,49.26,0.0,0,0,10191685,48.64,10191685,46.43,YES
+Cash,50.0,0.0,0,0,370465,1.77,370465,1.69,NO
+Other,50.0,0.0,0,0,27298,0.13,27298,0.12,NO
+Gold,60.2,100.0,1000000,1000000,1451631,6.93,2451631,11.17,YES
