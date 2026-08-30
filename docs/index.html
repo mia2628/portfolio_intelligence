@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#08111f">
+  <meta name="theme-color" content="#0b1020">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portfolio Intelligence</title>
@@ -11,83 +11,141 @@
   <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
-  <main class="shell">
-    <header class="topbar">
+<main class="app">
+
+  <header class="app-header">
+    <div>
+      <div class="overline">PORTFOLIO INTELLIGENCE</div>
+      <h1>오늘의 투자 브리핑</h1>
+      <div id="updated" class="sub">업데이트 확인 중</div>
+    </div>
+    <div id="confidencePill" class="confidence">DATA --</div>
+  </header>
+
+  <section class="signal-strip">
+    <article class="signal">
+      <span class="signal-label">RISK</span>
+      <div class="signal-main"><b id="riskScore">--</b><small>/100</small></div>
+      <span id="riskLabel" class="tag neutral">--</span>
+    </article>
+    <article class="signal">
+      <span class="signal-label">BEST OPPORTUNITY</span>
+      <div id="oppAsset" class="signal-asset">--</div>
+      <span class="signal-score"><b id="oppScore">--</b> /100</span>
+    </article>
+    <article class="signal">
+      <span class="signal-label">HEALTH</span>
+      <div class="signal-main"><b id="healthScore">--</b><small>/100</small></div>
+      <span id="healthLabel" class="tag good">--</span>
+    </article>
+  </section>
+
+  <section class="decision-card">
+    <div class="decision-top">
       <div>
-        <div class="eyebrow">PORTFOLIO INTELLIGENCE</div>
-        <h1>오늘의 포트폴리오</h1>
-        <div id="updated" class="muted">데이터 불러오는 중</div>
+        <span class="section-kicker">TODAY'S ACTION</span>
+        <h2>지금 무엇을 할까?</h2>
       </div>
-      <div id="confidencePill" class="pill">DATA --</div>
-    </header>
+      <span id="actionBadge" class="action-badge">--</span>
+    </div>
+    <p id="finalRecommendation" class="decision-text">분석 결과를 불러오는 중입니다.</p>
+  </section>
 
-    <section class="hero-grid">
-      <article class="metric-card risk">
-        <div class="metric-name">시장 위험</div>
-        <div class="metric-row"><span id="riskScore" class="big">--</span><span>/100</span></div>
-        <div id="riskLabel" class="status">--</div>
-      </article>
-      <article class="metric-card opportunity">
-        <div class="metric-name">최고 기회</div>
-        <div id="oppAsset" class="big small-big">--</div>
-        <div><span id="oppScore">--</span> /100</div>
-      </article>
-      <article class="metric-card health">
-        <div class="metric-name">포트폴리오 건강</div>
-        <div class="metric-row"><span id="healthScore" class="big">--</span><span>/100</span></div>
-        <div id="healthLabel" class="status">--</div>
-      </article>
-    </section>
-
-    <section class="panel action-panel">
-      <div class="section-head"><h2>지금 무엇을 할까</h2><span id="actionBadge" class="pill">--</span></div>
-      <div id="finalRecommendation" class="action-copy">분석 결과를 불러오는 중입니다.</div>
-    </section>
-
-    <section class="panel">
-      <div class="section-head"><h2>내 포트폴리오</h2><span class="muted">투자원금 기준</span></div>
-      <div class="portfolio-wrap">
-        <div id="donut" class="donut"><div class="donut-hole"><span>100%</span><small>배분</small></div></div>
-        <div id="portfolioList" class="asset-list"></div>
+  <section class="card">
+    <div class="section-title">
+      <div>
+        <span class="section-kicker">CURRENT PORTFOLIO</span>
+        <h2>내 포트폴리오</h2>
       </div>
-    </section>
+      <span class="basis">투자원금 기준</span>
+    </div>
 
-    <section class="panel" id="scenarioPanel">
-      <div class="section-head"><h2>이번 시나리오</h2><span class="pill ghost">WHAT-IF</span></div>
-      <div id="scenarioSummary" class="muted">최근 STEP8 시나리오가 없습니다.</div>
-      <div id="scenarioList" class="scenario-list"></div>
-      <div class="hint">이 영역은 미래 시나리오이며 실제 투자원금 상태를 변경하지 않습니다.</div>
-    </section>
+    <div class="portfolio-grid">
+      <div class="donut-wrap">
+        <div id="donut" class="donut">
+          <div class="donut-center">
+            <strong>100%</strong>
+            <span>Allocation</span>
+          </div>
+        </div>
+      </div>
+      <div id="portfolioList" class="portfolio-list"></div>
+    </div>
+  </section>
 
-    <section class="panel">
-      <div class="section-head"><h2>왜 이런 결과인가</h2><button class="text-btn" id="toggleWhy">자세히</button></div>
-      <div id="whySummary"></div>
-      <div id="whyDetails" class="hidden">
+  <section class="card scenario-card" id="scenarioPanel">
+    <div class="section-title">
+      <div>
+        <span class="section-kicker">WHAT-IF</span>
+        <h2>이번 투자 시나리오</h2>
+      </div>
+      <span class="scenario-badge">SIMULATION</span>
+    </div>
+    <p id="scenarioSummary" class="scenario-summary">최근 시나리오가 없습니다.</p>
+    <div id="scenarioList" class="scenario-list"></div>
+    <div class="scenario-note">실제 자산에는 반영되지 않는 미래 시뮬레이션입니다.</div>
+  </section>
+
+  <section class="card">
+    <div class="section-title clickable" id="whyHeader">
+      <div>
+        <span class="section-kicker">EXPLAINABILITY</span>
+        <h2>왜 이런 결과가 나왔을까?</h2>
+      </div>
+      <button id="toggleWhy" class="detail-btn">자세히 보기</button>
+    </div>
+
+    <div id="whySummary" class="why-summary"></div>
+
+    <div id="whyDetails" class="details hidden">
+      <div class="detail-block">
         <h3>Risk 주요 요인</h3>
         <div id="riskContributors"></div>
+      </div>
+      <div class="detail-block">
         <h3>Opportunity 구성</h3>
         <div id="oppComponents"></div>
+      </div>
+      <div class="detail-block">
         <h3>Health 구성</h3>
         <div id="healthComponents"></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="panel formula-panel">
-      <div class="section-head"><h2>계산 구조</h2><span class="muted">설명가능성</span></div>
-      <div class="formula"><b>Opportunity</b><br>30% Target + 25% Macro + 20% RiskAdj + 15% History + 10% Drawdown</div>
-      <div class="formula"><b>Portfolio Health</b><br>집중도 · 변동성 · 최대낙폭 · 상관관계 · 정책준수도를 가중합산. REPORT_ONLY 지표는 점수에서 제외.</div>
-      <div class="formula"><b>Data Confidence</b><br>수집 가능한 실제 지표만 재정규화하고, 데이터 부족 시 최종 판단 기여도를 중립 방향으로 감쇠.</div>
-    </section>
+  <section class="card formula-card">
+    <div class="section-title">
+      <div>
+        <span class="section-kicker">MODEL LOGIC</span>
+        <h2>계산 구조</h2>
+      </div>
+    </div>
+    <div class="formula-row">
+      <span>Opportunity</span>
+      <b>Target 30 · Macro 25 · Risk 20 · History 15 · Drawdown 10</b>
+    </div>
+    <div class="formula-row">
+      <span>Portfolio Health</span>
+      <b>집중도 · 변동성 · 낙폭 · 상관관계 · 정책준수</b>
+    </div>
+    <div class="formula-row">
+      <span>Data Confidence</span>
+      <b>실제 수집 데이터만 재정규화 · 부족분은 중립 방향 감쇠</b>
+    </div>
+  </section>
 
-    <footer>
-      <span>STEP13 Mobile Dashboard</span>
-      <span>·</span>
-      <span id="privacyText">금액 비공개</span>
-    </footer>
-  </main>
-  <script src="./assets/app.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  </script>
+  <footer>
+    <span>STEP13</span>
+    <span>•</span>
+    <span id="privacyText">금액 비공개</span>
+  </footer>
+
+</main>
+<script src="./assets/app.js"></script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+</script>
 </body>
 </html>
