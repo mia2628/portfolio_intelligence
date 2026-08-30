@@ -1,0 +1,9 @@
+{
+  "name": "Portfolio Intelligence",
+  "short_name": "Portfolio",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#08111f",
+  "theme_color": "#08111f",
+  "description": "Personal portfolio intelligence dashboard"
+}

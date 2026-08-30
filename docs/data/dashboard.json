@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "generated_at": "",
+    "basis": "INVESTED_PRINCIPAL",
+    "privacy_amounts": false,
+    "version": "STEP13_v1"
+  },
+  "portfolio": {
+    "items": [],
+    "total_invested": null
+  },
+  "risk": {
+    "score": null,
+    "label": "UNKNOWN",
+    "contributors": []
+  },
+  "opportunity": [],
+  "health": {
+    "score": null,
+    "label": "UNKNOWN",
+    "components": [],
+    "gold_policy": null
+  },
+  "allocation": {
+    "available": false,
+    "input_amount": null,
+    "items": []
+  },
+  "rebalance": {
+    "available": false
+  },
+  "recommendation": {
+    "final": "STEP13 데이터가 아직 생성되지 않았습니다.",
+    "situation": "",
+    "sections": []
+  },
+  "confidence": {
+    "score": null,
+    "label": "UNKNOWN",
+    "actual": null,
+    "total": null
+  }
+}
