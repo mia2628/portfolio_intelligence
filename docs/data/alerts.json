@@ -1,5 +1,12 @@
 {
-  "active": [],
-  "count": 0,
-  "signature": "NONE"
+  "active": [
+    {
+      "key": "GOLD_POLICY_BREACH",
+      "severity": "MEDIUM",
+      "title": "금 정책범위 이탈",
+      "message": "현재 금 비중 6.93% / 정책범위 18~22% (BELOW_RANGE)"
+    }
+  ],
+  "count": 1,
+  "signature": "427ff66a0998"
 }
