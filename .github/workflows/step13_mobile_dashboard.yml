@@ -49,6 +49,9 @@ jobs:
               f.write(f"signature={d['signature']}\n")
           PY
 
+      - name: Validate live dashboard data
+        run: python engines/step13_dashboard_integrity_check.py
+
       - name: Commit dashboard data
         run: |
           git config user.name "github-actions[bot]"

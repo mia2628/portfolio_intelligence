@@ -115,6 +115,9 @@ jobs:
           python engines/step13_trend_snapshot.py
           python engines/step13_alert_engine.py
 
+      - name: Validate live dashboard data
+        run: python engines/step13_dashboard_integrity_check.py
+
       - name: Commit outputs
         run: |
           git config user.name "github-actions[bot]"
