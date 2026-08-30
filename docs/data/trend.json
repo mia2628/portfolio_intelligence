@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-08-30T21:36:27+09:00",
+    "generated_at": "2026-08-30T21:37:35+09:00",
     "history_rows": 1,
     "retention_days": 365,
     "same_day_policy": "REPLACE",
@@ -9,7 +9,7 @@
   "points": [
     {
       "date": "2026-08-30",
-      "generated_at": "2026-08-30T21:36:27+09:00",
+      "generated_at": "2026-08-30T21:37:35+09:00",
       "risk": 49.67,
       "health": 74.02,
       "opportunity_asset": "Gold",
