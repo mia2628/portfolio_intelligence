@@ -285,3 +285,22 @@ footer{display:flex;justify-content:center;gap:7px;margin-top:20px;color:#53677f
   .macro-chart-shell{height:165px}
   .macro-current-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+/* STEP13 v10.6 split macro charts */
+.macro-subchart{margin-top:11px}
+.macro-subchart.second{margin-top:15px;padding-top:13px;border-top:1px solid #1d2b3e}
+.macro-subhead{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:7px}
+.macro-subhead b{display:block;margin-top:2px;font-size:11px;color:#cbd9e9}
+.macro-subkicker{display:block;font-size:7px;letter-spacing:.12em;color:#5e7590;font-weight:900}
+.macro-mini-legend{display:flex;gap:9px;align-items:center;font-size:8px;color:#73869d}
+.macro-mini-legend span{display:flex;align-items:center;gap:4px}
+.macro-current-grid.two{grid-template-columns:repeat(2,1fr)}
+.macro-axis-label{fill:#60758f;font-size:15px;font-weight:700}
+.macro-axis-title{fill:#536a84;font-size:14px;font-weight:750}
+.macro-x-tick{stroke:#394b61;stroke-width:1;vector-effect:non-scaling-stroke}
+.macro-chart-shell{height:182px}
+@media(max-width:540px){
+  .macro-chart-shell{height:174px}
+  .macro-axis-label{font-size:14px}
+  .macro-axis-title{font-size:13px}
+}
