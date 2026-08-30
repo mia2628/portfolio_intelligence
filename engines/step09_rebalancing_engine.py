@@ -215,6 +215,7 @@ def evaluate(
     current_date,
     last_rebalance_date,
     gold_weight,
+    gold_weight_source,
     health,
     policy,
     gold_policy
@@ -371,7 +372,7 @@ def save(result):
 
 def main():
     required = [
-        PORTFOLIO_SUMMARY,
+        INVESTED_SUMMARY,
         HEALTH_SUMMARY,
         TARGET_POLICY_STATUS,
         POLICY_FILE
@@ -406,6 +407,7 @@ def main():
         current_date,
         last_rebalance,
         gold_weight,
+        gold_weight_source,
         health,
         policy,
         gold_policy
