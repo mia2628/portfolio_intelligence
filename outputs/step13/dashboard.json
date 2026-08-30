@@ -1,9 +1,10 @@
 {
   "meta": {
-    "generated_at": "2026-08-30T11:08:47+09:00",
+    "generated_at": "2026-08-30T11:16:19+09:00",
     "basis": "INVESTED_PRINCIPAL",
     "privacy_amounts": true,
-    "version": "STEP13_v1"
+    "version": "STEP13_v8_2",
+    "data_state": "GENERATED"
   },
   "portfolio": {
     "items": [
@@ -220,7 +221,7 @@
   },
   "recommendation": {
     "final": "현재 포트폴리오 전체 구조는 유지하되, 신규자금으로 정책이탈 자산을 먼저 보정하고 남는 자금은 STEP6 상대매력도에 따라 금 등 유연자산에 분산 배분하는 것이 적절합니다.",
-    "situation": "",
+    "situation": "Gold가 허용하한 18% 미만이므로 매도 없이 신규자금으로 우선 보충합니다.",
     "sections": [
       {
         "title": "시장위험",
@@ -246,7 +247,8 @@
         "title": "최종권고",
         "text": "현재 포트폴리오 전체 구조는 유지하되, 신규자금으로 정책이탈 자산을 먼저 보정하고 남는 자금은 STEP6 상대매력도에 따라 금 등 유연자산에 분산 배분하는 것이 적절합니다."
       }
-    ]
+    ],
+    "source": "STEP10"
   },
   "confidence": {
     "score": null,
