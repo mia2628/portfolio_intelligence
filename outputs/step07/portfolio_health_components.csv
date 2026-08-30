@@ -1,7 +1,7 @@
-﻿Component,Score,Weight,Weighted_Contribution
-Concentration,80.03,0.25,20.0077
-Volatility,90.0,0.2,18.0
-Max_Drawdown,67.05,0.2,13.4101
-Correlation_Diversification,76.46,0.15,11.4694
-Target_Drift,0.0,0.1,0.0
-FX_Exposure,50.0,0.1,5.0
+﻿Component,Score,Configured_Weight,Effective_Weight,Weighted_Contribution,Status
+Concentration,80.03,0.25,0.2778,22.2307,SCORED
+Volatility,90.0,0.2,0.2222,20.0,SCORED
+Max_Drawdown,67.05,0.2,0.2222,14.9001,SCORED
+Correlation_Diversification,76.46,0.15,0.1667,12.7438,SCORED
+Target_Drift,35.68,0.1,0.1111,3.9644,SCORED
+FX_Exposure,50.0,0.1,0.0,0.0,REPORT_ONLY
