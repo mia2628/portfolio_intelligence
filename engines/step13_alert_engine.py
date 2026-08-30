@@ -5,9 +5,7 @@ BASE=Path(__file__).resolve().parents[1]
 DASH=BASE/"docs"/"data"/"dashboard.json"
 CFG=BASE/"config"/"step13_dashboard_config.json"
 OUT=BASE/"outputs"/"step13"
-DOCS=BASE/"docs"/"data"
 OUT.mkdir(parents=True,exist_ok=True)
-DOCS.mkdir(parents=True,exist_ok=True)
 
 def load(p):
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
@@ -43,9 +41,7 @@ def main():
     signature="|".join(sorted(a["key"] for a in alerts)) or "NONE"
     sig=hashlib.sha256(signature.encode()).hexdigest()[:12]
     result={"active":alerts,"count":len(alerts),"signature":sig}
-    payload=json.dumps(result,ensure_ascii=False,indent=2)
-    (OUT/"alerts.json").write_text(payload,encoding="utf-8")
-    (DOCS/"alerts.json").write_text(payload,encoding="utf-8")
+    (OUT/"alerts.json").write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps(result,ensure_ascii=False))
     return result
 

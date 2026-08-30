@@ -2,8 +2,8 @@
   "dashboard_title": "Portfolio Intelligence",
   "dashboard_subtitle": "Risk · Opportunity · Health · Action",
   "privacy": {
-    "expose_amounts": false,
-    "show_invested_total": false
+    "expose_amounts": true,
+    "show_invested_total": true
   },
   "alerts": {
     "risk_high": 65,

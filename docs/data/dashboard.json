@@ -1,252 +1,38 @@
 {
   "meta": {
-    "generated_at": "2026-08-30T10:18:38+09:00",
+    "generated_at": "",
     "basis": "INVESTED_PRINCIPAL",
     "privacy_amounts": false,
     "version": "STEP13_v1"
   },
   "portfolio": {
-    "items": [
-      {
-        "asset": "Bond",
-        "name": "채권형",
-        "weight": 48.64,
-        "amount": null
-      },
-      {
-        "asset": "Domestic_Equity",
-        "name": "국내주식",
-        "weight": 25.15,
-        "amount": null
-      },
-      {
-        "asset": "Foreign_Equity",
-        "name": "해외주식",
-        "weight": 17.38,
-        "amount": null
-      },
-      {
-        "asset": "Gold",
-        "name": "금",
-        "weight": 6.93,
-        "amount": null
-      },
-      {
-        "asset": "Cash",
-        "name": "유동성",
-        "weight": 1.77,
-        "amount": null
-      },
-      {
-        "asset": "Other",
-        "name": "기타",
-        "weight": 0.13,
-        "amount": null
-      }
-    ],
+    "items": [],
     "total_invested": null
   },
   "risk": {
-    "score": 49.67,
-    "label": "NEUTRAL",
-    "contributors": [
-      {
-        "indicator": "US_HY_SPREAD",
-        "adjusted": 60.13,
-        "contribution": 13.1989,
-        "explanation": ""
-      },
-      {
-        "indicator": "VIX",
-        "adjusted": 37.04,
-        "contribution": 9.9372,
-        "explanation": ""
-      },
-      {
-        "indicator": "US_REAL10Y",
-        "adjusted": 67.79,
-        "contribution": 8.2668,
-        "explanation": ""
-      }
-    ]
+    "score": null,
+    "label": "UNKNOWN",
+    "contributors": []
   },
-  "opportunity": [
-    {
-      "asset": "Gold",
-      "score": 60.2,
-      "label": "ATTRACTIVE",
-      "components": {
-        "target": 80.75,
-        "macro": null,
-        "risk_adj": null,
-        "history": null,
-        "drawdown": 73.58
-      },
-      "explanation": ""
-    },
-    {
-      "asset": "Domestic_Equity",
-      "score": 51.45,
-      "label": "NEUTRAL",
-      "components": {
-        "target": 50.0,
-        "macro": null,
-        "risk_adj": null,
-        "history": null,
-        "drawdown": 45.0
-      },
-      "explanation": ""
-    },
-    {
-      "asset": "Bond",
-      "score": 49.26,
-      "label": "NEUTRAL",
-      "components": {
-        "target": 50.0,
-        "macro": null,
-        "risk_adj": null,
-        "history": null,
-        "drawdown": 52.94
-      },
-      "explanation": ""
-    },
-    {
-      "asset": "Foreign_Equity",
-      "score": 48.9,
-      "label": "NEUTRAL",
-      "components": {
-        "target": 50.0,
-        "macro": null,
-        "risk_adj": null,
-        "history": null,
-        "drawdown": 45.0
-      },
-      "explanation": ""
-    }
-  ],
+  "opportunity": [],
   "health": {
-    "score": 74.02,
-    "label": "GOOD",
-    "components": [
-      {
-        "name": "Concentration",
-        "score": 79.78,
-        "effective_weight": 0.2778,
-        "status": "SCORED"
-      },
-      {
-        "name": "Volatility",
-        "score": 90.0,
-        "effective_weight": 0.2222,
-        "status": "SCORED"
-      },
-      {
-        "name": "Max_Drawdown",
-        "score": 67.13,
-        "effective_weight": 0.2222,
-        "status": "SCORED"
-      },
-      {
-        "name": "Correlation_Diversification",
-        "score": 76.01,
-        "effective_weight": 0.1667,
-        "status": "SCORED"
-      },
-      {
-        "name": "Target_Drift",
-        "score": 38.49,
-        "effective_weight": 0.1111,
-        "status": "SCORED"
-      },
-      {
-        "name": "FX_Exposure",
-        "score": 50.0,
-        "effective_weight": 0.0,
-        "status": "REPORT_ONLY"
-      }
-    ],
-    "gold_policy": {
-      "current": 6.9285,
-      "target": 20.0,
-      "lower": 18.0,
-      "upper": 22.0,
-      "status": "BELOW_RANGE"
-    },
-    "comment": "자산 집중도는 비교적 안정적입니다 / 자산 간 상관관계가 낮아 분산효과가 양호합니다 / 금 정책: 현재 6.9% / 목표 20.0% / 허용범위 18.0~22.0% → BELOW_RANGE"
+    "score": null,
+    "label": "UNKNOWN",
+    "components": [],
+    "gold_policy": null
   },
   "allocation": {
-    "available": true,
-    "input_amount": 1000000,
-    "items": [
-      {
-        "asset": "Gold",
-        "share": 100.0,
-        "amount": 1000000,
-        "scenario_weight": 11.17,
-        "current_weight": 6.93
-      },
-      {
-        "asset": "Domestic_Equity",
-        "share": 0,
-        "amount": 0,
-        "scenario_weight": 24.0,
-        "current_weight": 25.15
-      },
-      {
-        "asset": "Foreign_Equity",
-        "share": 0,
-        "amount": 0,
-        "scenario_weight": 16.59,
-        "current_weight": 17.38
-      },
-      {
-        "asset": "Bond",
-        "share": 0,
-        "amount": 0,
-        "scenario_weight": 46.43,
-        "current_weight": 48.64
-      }
-    ]
+    "available": false,
+    "input_amount": null,
+    "items": []
   },
   "rebalance": {
-    "available": true,
-    "decision": "NEW_MONEY_CORRECTION",
-    "action_level": "MEDIUM",
-    "reason": "Gold가 허용하한 18% 미만이므로 매도 없이 신규자금으로 우선 보충합니다.",
-    "calendar_due": false,
-    "threshold_trigger": true,
-    "gold_weight": 6.93,
-    "gold_source": "INVESTED_PRINCIPAL"
+    "available": false
   },
   "recommendation": {
-    "final": "현재 포트폴리오 전체 구조는 유지하되, 신규자금으로 정책이탈 자산을 먼저 보정하고 남는 자금은 STEP6 상대매력도에 따라 금 등 유연자산에 분산 배분하는 것이 적절합니다.",
+    "final": "STEP13 데이터가 아직 생성되지 않았습니다.",
     "situation": "",
-    "sections": [
-      {
-        "title": "시장위험",
-        "text": "현재 시장 위험도는 49.7점으로 중립권입니다. 특정 방향에 과도하게 베팅할 환경은 아닙니다."
-      },
-      {
-        "title": "신규자금 기회",
-        "text": "현재 신규자금 관점에서 가장 높은 상대매력도는 금 60.2점입니다."
-      },
-      {
-        "title": "포트폴리오 건강",
-        "text": "포트폴리오 건강도는 74.0점으로 전반적으로 양호합니다."
-      },
-      {
-        "title": "이번 달 배분",
-        "text": "이번 달 신규자금은 금 100.0%(1,000,000원), 국내주식 0.0%(0원), 해외주식 0.0%(0원) 순으로 배분하는 안이 제시되었습니다."
-      },
-      {
-        "title": "현재상황",
-        "text": "정기점검일 전이지만, 금 비중이 6.93%로 정책 하한 18.00%보다 낮습니다. 다만 전체 포트폴리오 구조는 비교적 양호하므로 매도 리밸런싱은 하지 않고, 신규자금으로 금을 우선 보충합니다."
-      },
-      {
-        "title": "최종권고",
-        "text": "현재 포트폴리오 전체 구조는 유지하되, 신규자금으로 정책이탈 자산을 먼저 보정하고 남는 자금은 STEP6 상대매력도에 따라 금 등 유연자산에 분산 배분하는 것이 적절합니다."
-      }
-    ]
+    "sections": []
   },
   "confidence": {
     "score": null,

@@ -47,7 +47,10 @@
         <span class="section-kicker">30-DAY TREND</span>
         <h2>점수 흐름</h2>
       </div>
-      <span class="basis">최근 30일</span>
+      <div class="trend-range">
+        <button class="range-btn active" data-days="7">7일</button>
+        <button class="range-btn" data-days="30">30일</button>
+      </div>
     </div>
     <div class="trend-legend">
       <span><i class="dot risk-dot"></i>Risk</span>
@@ -65,11 +68,11 @@
     <div class="decision-top">
       <div>
         <span class="section-kicker">TODAY'S ACTION</span>
-        <h2>지금 무엇을 할까?</h2>
+        <h2 class="decision-title">지금 무엇을 할까?</h2>
       </div>
       <span id="actionBadge" class="action-badge">--</span>
     </div>
-    <p id="finalRecommendation" class="decision-text">분석 결과를 불러오는 중입니다.</p>
+    <p id="finalRecommendation" class="decision-text compact">분석 결과를 불러오는 중입니다.</p>
   </section>
 
   
@@ -79,31 +82,40 @@
         <span class="section-kicker">POLICY ALERT</span>
         <h2>정책 경보</h2>
       </div>
-      <span id="alertCount" class="alert-count">0</span>
+      <div class="alert-head-right">
+        <span id="alertLevel" class="alert-level">NORMAL</span>
+        <span id="alertCount" class="alert-count">0</span>
+      </div>
     </div>
     <div id="alertList" class="alert-list"></div>
-    <div id="alertEmpty" class="alert-empty">현재 활성 경보가 없습니다.</div>
+    <div id="alertEmpty" class="alert-empty">현재 활성 경보 없음.</div>
   </section>
 
   <section class="card ops-card">
     <div class="section-title">
       <div>
-        <span class="section-kicker">QUICK ACTION</span>
-        <h2>모델 실행</h2>
+        <span class="section-kicker">MODEL ACTION</span>
+        <h2>입력 기능</h2>
       </div>
-      <span class="basis">GitHub Actions</span>
+      <span class="basis">준비 중</span>
     </div>
     <div class="ops-grid">
-      <a class="ops-btn primary" href="https://github.com/mia2628/portfolio_intelligence/actions/workflows/portfolio_monthly_decision.yml" target="_blank" rel="noopener">
-        <span class="ops-title">미래 투자 시나리오</span>
-        <span class="ops-desc">원하는 신규자금 INPUT으로 STEP8~10 실행</span>
-      </a>
-      <a class="ops-btn" href="https://github.com/mia2628/portfolio_intelligence/actions/workflows/portfolio_actual_contribution_update.yml" target="_blank" rel="noopener">
-        <span class="ops-title">실제 투자금 반영</span>
-        <span class="ops-desc">실제 투자 완료 후 포트폴리오 원금 갱신</span>
-      </a>
+      <div class="ops-btn disabled">
+        <div class="ops-row">
+          <span class="ops-title">미래 투자 시나리오</span>
+          <span class="coming">준비 중</span>
+        </div>
+        <span class="ops-desc">신규자금 INPUT을 넣어 STEP8~10 결과를 모바일에서 확인하는 기능 개발 예정임.</span>
+      </div>
+      <div class="ops-btn disabled">
+        <div class="ops-row">
+          <span class="ops-title">실제 투자금 반영</span>
+          <span class="coming">준비 중</span>
+        </div>
+        <span class="ops-desc">실제 투자 완료 금액을 입력해 투자원금 상태를 최신화하는 기능 개발 예정임.</span>
+      </div>
     </div>
-    <div class="ops-note">시나리오 실행은 실제 포트폴리오를 변경하지 않습니다. 실제 반영은 두 번째 기능에서만 수행됩니다.</div>
+    <div class="ops-note">현재 모바일 화면에서는 조회만 가능함. 입력·실제 반영은 아직 완성 전임.</div>
   </section>
 
 
@@ -113,7 +125,7 @@
         <span class="section-kicker">CURRENT PORTFOLIO</span>
         <h2>내 포트폴리오</h2>
       </div>
-      <span class="basis">투자원금 기준</span>
+      <div class="portfolio-total-wrap"><span class="basis">투자원금 기준</span><strong id="portfolioTotal" class="portfolio-total">--</strong></div>
     </div>
 
     <div class="portfolio-grid">
@@ -186,7 +198,7 @@
     </div>
     <div class="formula-row">
       <span>Data Confidence</span>
-      <b>실제 수집 데이터만 재정규화 · 부족분은 중립 방향 감쇠</b>
+      <b>실제 수집 데이터만 재정규화하며 부족분은 중립 방향으로 감쇠함.</b>
     </div>
   </section>
 
