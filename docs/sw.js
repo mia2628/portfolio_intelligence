@@ -1,4 +1,4 @@
-const CACHE="portfolio-intelligence-v9-1";
+const CACHE="portfolio-intelligence-v10";
 const STATIC=["./assets/style.css?v=6","./assets/app.js?v=6","./manifest.webmanifest"];
 
 self.addEventListener("install",event=>{
@@ -25,7 +25,8 @@ self.addEventListener("fetch",event=>{
     url.pathname.endsWith("/index.html") ||
     url.pathname.endsWith("/data/dashboard.json") ||
     url.pathname.endsWith("/data/trend.json") ||
-    url.pathname.endsWith("/data/alerts.json")
+    url.pathname.endsWith("/data/alerts.json") ||
+    url.pathname.endsWith("/data/macro_risk.json")
   ){
     event.respondWith(
       fetch(event.request,{cache:"no-store"})

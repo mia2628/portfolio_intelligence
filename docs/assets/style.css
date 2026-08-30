@@ -250,3 +250,38 @@ footer{display:flex;justify-content:center;gap:7px;margin-top:20px;color:#53677f
   .trend-stat span{font-size:7px}
   .chart-shell{height:145px}
 }
+
+/* STEP13 v9.2 first-day -> multi-day trend transition */
+.trend-stat em.baseline{color:#6f86a2}
+.trend-point-label{font-size:17px;font-weight:850}
+.trend-point-label.trend-risk{fill:#ff7f89}
+.trend-point-label.trend-health{fill:#67d5a0}
+.trend-point-label.trend-opp{fill:#78aefc}
+
+/* STEP13 v10 macro composite */
+.macro-score-wrap{text-align:right}
+.macro-score-wrap span{display:block;font-size:7px;letter-spacing:.12em;color:#61758e;font-weight:900}
+.macro-score-wrap strong{display:inline-block;font-size:22px;line-height:1;margin-top:3px;color:#eef5fd}
+.macro-score-wrap em{display:block;margin-top:4px;font-size:8px;font-style:normal;font-weight:850;color:#83a0bd}
+.macro-legend{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 6px;font-size:8px;color:#71849b}
+.macro-legend span{display:flex;align-items:center;gap:4px}
+.macro-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.macro-dot.us10y{background:#f1bd66}.macro-dot.vix{background:#ff7f89}.macro-dot.hy{background:#9c86ff}.macro-dot.fx{background:#68b7ff}
+.macro-chart-shell{height:175px;position:relative;border:1px solid #1d2c40;border-radius:14px;background:#0b1523;overflow:hidden}
+#macroChart{width:100%;height:100%}
+.macro-grid-line{stroke:#26364b;stroke-width:1;opacity:.55;vector-effect:non-scaling-stroke}
+.macro-line{fill:none;stroke-width:2;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.macro-us10y{stroke:#f1bd66;color:#f1bd66}.macro-vix{stroke:#ff7f89;color:#ff7f89}.macro-hy{stroke:#9c86ff;color:#9c86ff}.macro-fx{stroke:#68b7ff;color:#68b7ff}
+.macro-composite{stroke:#e9f2ff;color:#e9f2ff;stroke-width:3.6;opacity:1}
+.macro-current-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:9px}
+.macro-current-grid>div{padding:8px 7px;border-radius:11px;background:#0d1725;border:1px solid #1f2f44;min-width:0}
+.macro-current-grid span{display:block;font-size:7px;color:#61758e;font-weight:850;white-space:nowrap}
+.macro-current-grid b{display:block;margin-top:4px;font-size:11px;color:#dce8f5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.macro-current-grid em{display:block;margin-top:3px;font-size:8px;font-style:normal;color:#8197b1}
+.macro-foot{margin-top:9px;padding-top:8px;border-top:1px solid #1d2a3b}
+#macroInsight{font-size:9.5px;line-height:1.45;color:#9dadc0}
+#macroUpdated{margin-top:4px;font-size:8px;color:#58708c}
+@media(max-width:540px){
+  .macro-chart-shell{height:165px}
+  .macro-current-grid{grid-template-columns:repeat(2,1fr)}
+}

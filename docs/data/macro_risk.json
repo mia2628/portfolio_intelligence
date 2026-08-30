@@ -1,0 +1,18 @@
+{
+  "meta": {
+    "generated_at": null,
+    "source": "FRED",
+    "normalization": "rolling percentile over up to 252 valid observations; high = higher tension",
+    "display_points": 0,
+    "version": "STEP13_MACRO_v10",
+    "state": "PENDING"
+  },
+  "current": {
+    "score": null,
+    "state": "PENDING",
+    "date": null,
+    "raw": {},
+    "normalized": {}
+  },
+  "points": []
+}

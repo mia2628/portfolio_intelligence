@@ -97,17 +97,19 @@ async function boot(){
   syncAppTitle();
   setAmountVisibility(amountVisible);
 
-  let d=null,trend={points:[]},alerts={active:[],count:0};
+  let d=null,trend={points:[]},alerts={active:[],count:0},macro={points:[]};
   try{
-    const [res,tres,ares]=await Promise.all([
+    const [res,tres,ares,mres]=await Promise.all([
       fetch("./data/dashboard.json?ts="+Date.now(),{cache:"no-store"}),
       fetch("./data/trend.json?ts="+Date.now(),{cache:"no-store"}).catch(()=>null),
-      fetch("./data/alerts.json?ts="+Date.now(),{cache:"no-store"}).catch(()=>null)
+      fetch("./data/alerts.json?ts="+Date.now(),{cache:"no-store"}).catch(()=>null),
+      fetch("./data/macro_risk.json?ts="+Date.now(),{cache:"no-store"}).catch(()=>null)
     ]);
     if(!res.ok)throw new Error(`dashboard HTTP ${res.status}`);
     d=await res.json();
     trend=tres ? await tres.json().catch(()=>({points:[]})) : {points:[]};
     alerts=ares ? await ares.json().catch(()=>({active:[],count:0})) : {active:[],count:0};
+    macro=mres ? await mres.json().catch(()=>({points:[]})) : {points:[]};
     latestDashboardData=d;
   }catch(err){
     markDataState(false,"STEP13 데이터 파일을 불러오지 못함. GitHub Pages 배포상태 확인 필요함.");
@@ -151,6 +153,7 @@ async function boot(){
 
   try{renderScenario(d.allocation||{});}catch(e){console.error("scenario render",e);}
   try{renderWhy(d);}catch(e){console.error("why render",e);}
+  try{renderMacro(macro);}catch(e){console.error("macro render",e);}
   try{renderTrend(trend);}catch(e){console.error("trend render",e);}
   try{renderAlerts(alerts);}catch(e){console.error("alert render",e);}
 
@@ -291,10 +294,89 @@ function renderAlerts(a){
   });
 }
 
+
+function macroRawText(obj,key){
+  const x=obj?.current?.raw?.[key];
+  if(!x || x.value==null)return "--";
+  if(key==="USDKRW")return `${Number(x.value).toLocaleString("ko-KR",{maximumFractionDigits:1})}원`;
+  if(key==="US10Y")return `${Number(x.value).toFixed(2)}%`;
+  if(key==="HY_SPREAD")return `${Number(x.value).toFixed(2)}%p`;
+  return Number(x.value).toFixed(1);
+}
+
+function macroNormText(obj,key){
+  const v=obj?.current?.normalized?.[key];
+  return v==null?"--":`긴장 ${Number(v).toFixed(0)}`;
+}
+
+function renderMacro(m){
+  const pts=(m?.points||[]).filter(p=>p.date);
+  const current=m?.current||{};
+  setText("macroScore",current.score==null?"--":score(current.score));
+  setText("macroState",current.state||"--");
+  setText("macroUs10y",macroRawText(m,"US10Y"));
+  setText("macroVix",macroRawText(m,"VIX"));
+  setText("macroHy",macroRawText(m,"HY_SPREAD"));
+  setText("macroFx",macroRawText(m,"USDKRW"));
+  setText("macroUs10yN",macroNormText(m,"US10Y"));
+  setText("macroVixN",macroNormText(m,"VIX"));
+  setText("macroHyN",macroNormText(m,"HY_SPREAD"));
+  setText("macroFxN",macroNormText(m,"USDKRW"));
+
+  const upd=m?.meta?.generated_at;
+  setText("macroUpdated",upd?`FRED · ${new Date(upd).toLocaleString("ko-KR")} 갱신`:"FRED 데이터 생성 대기 중임.");
+
+  const svg=$("macroChart"), empty=$("macroEmpty");
+  if(!svg||!empty)return;
+  if(pts.length<2){
+    svg.innerHTML="";
+    empty.style.display="grid";
+    return;
+  }
+  empty.style.display="none";
+
+  const W=640,H=245,padX=22,padY=18;
+  const x=i=>padX+i*(W-padX*2)/(pts.length-1);
+  const y=v=>padY+(100-Math.max(0,Math.min(100,Number(v))))*(H-padY*2)/100;
+
+  let markup="";
+  [25,50,75].forEach(v=>{
+    markup+=`<line class="macro-grid-line" x1="${padX}" y1="${y(v)}" x2="${W-padX}" y2="${y(v)}"/>`;
+  });
+
+  const series=[
+    ["us10y","macro-us10y"],
+    ["vix","macro-vix"],
+    ["hy","macro-hy"],
+    ["usdkrw","macro-fx"],
+    ["macro_tension","macro-composite"]
+  ];
+
+  series.forEach(([key,cls])=>{
+    const valid=pts.map((p,i)=>({v:p[key],i})).filter(o=>o.v!=null);
+    if(valid.length<2)return;
+    const path=valid.map((o,j)=>`${j===0?"M":"L"} ${x(o.i).toFixed(1)} ${y(o.v).toFixed(1)}`).join(" ");
+    markup+=`<path class="macro-line ${cls}" d="${path}"/>`;
+    const last=valid[valid.length-1];
+    markup+=`<circle cx="${x(last.i)}" cy="${y(last.v)}" r="${key==="macro_tension"?5:3.5}" class="${cls}" fill="currentColor"/>`;
+  });
+  svg.innerHTML=markup;
+
+  const sc=Number(current.score);
+  let msg="거시 긴장도 계산 중임.";
+  if(Number.isFinite(sc)){
+    if(sc>=65)msg="네 지표가 최근 분포 상단에 있어 시장 긴장도가 높은 편임.";
+    else if(sc>=45)msg="거시 긴장도가 중간권이며 지표별 방향 차이를 함께 볼 필요가 있음.";
+    else msg="네 지표의 종합 긴장도가 최근 분포 대비 낮은 편임.";
+  }
+  setText("macroInsight",msg+" · 정규화 점수는 절대 위험확률이 아닌 상대적 위치임.");
+}
+
 let trendData={points:[],summary:{}};
 let trendDays=7;
 
-function directionText(dir,delta){
+function directionText(dir,delta,points=0){
+  if(points<2)return {text:"기준점",cls:"baseline"};
   const n=Number(delta||0);
   const signed=`${n>0?"+":""}${n.toFixed(1)}`;
   if(dir==="UP")return {text:`▲ ${signed}`,cls:"up"};
@@ -303,11 +385,11 @@ function directionText(dir,delta){
   return {text:"--",cls:"flat"};
 }
 
-function applyTrendStat(nowId,deltaId,metric){
+function applyTrendStat(nowId,deltaId,metric,points=0){
   setText(nowId,metric?.current==null?"--":score(metric.current));
   const el=$(deltaId);
   if(!el)return;
-  const d=directionText(metric?.direction,metric?.delta);
+  const d=directionText(metric?.direction,metric?.delta,points);
   el.textContent=d.text;
   el.className=d.cls;
 }
@@ -324,9 +406,9 @@ function renderTrend(t,days=trendDays){
   const pts=all.slice(-days);
   const summary=trendData?.summary?.[String(days)] || null;
 
-  applyTrendStat("trendRiskNow","trendRiskDelta",summary?.risk);
-  applyTrendStat("trendHealthNow","trendHealthDelta",summary?.health);
-  applyTrendStat("trendOppNow","trendOppDelta",summary?.opportunity);
+  applyTrendStat("trendRiskNow","trendRiskDelta",summary?.risk,summary?.points||0);
+  applyTrendStat("trendHealthNow","trendHealthDelta",summary?.health,summary?.points||0);
+  applyTrendStat("trendOppNow","trendOppDelta",summary?.opportunity,summary?.points||0);
 
   const svg=$("trendChart"), empty=$("trendEmpty"), insight=$("trendInsight"), rangeInfo=$("trendRangeInfo");
 
@@ -336,12 +418,38 @@ function renderTrend(t,days=trendDays){
       : "저장된 일별 기준점 없음.";
   }
 
-  if(pts.length<2){
+  if(pts.length===0){
     svg.innerHTML="";
     empty.style.display="grid";
-    insight.textContent=pts.length===1
-      ?"첫 일별 기준점 저장됨. 다음 날짜 데이터부터 증감과 방향성을 계산함."
-      :"누적 트렌드 데이터 없음.";
+    empty.textContent="누적 트렌드 데이터 없음.";
+    insight.textContent="일별 기준점이 생성되면 점수 흐름을 추적함.";
+    return;
+  }
+
+  if(pts.length===1){
+    empty.style.display="none";
+    const W=640,H=210,padX=22,padY=18;
+    const y=v=>padY+(100-Math.max(0,Math.min(100,Number(v))))*(H-padY*2)/100;
+    const cx=W/2;
+    let markup="";
+    [25,50,75].forEach(v=>{
+      markup+=`<line class="trend-grid" x1="${padX}" y1="${y(v)}" x2="${W-padX}" y2="${y(v)}"/>`;
+    });
+
+    const p=pts[0];
+    const markers=[
+      ["risk","trend-risk","R"],
+      ["health","trend-health","H"],
+      ["opportunity_score","trend-opp","O"]
+    ];
+    markers.forEach(([key,cls,label])=>{
+      if(p[key]==null)return;
+      const cy=y(p[key]);
+      markup+=`<circle cx="${cx}" cy="${cy}" r="5" fill="currentColor" class="${cls}"/>`;
+      markup+=`<text x="${cx+10}" y="${cy+4}" class="trend-point-label ${cls}">${label} ${score(p[key])}</text>`;
+    });
+    svg.innerHTML=markup;
+    insight.textContent="첫 기준점 저장됨. 다음 거래일부터 실제 증감과 방향성을 계산함.";
     return;
   }
 
@@ -373,9 +481,9 @@ function renderTrend(t,days=trendDays){
   svg.innerHTML=markup;
 
   const rs=summary?.risk, hs=summary?.health, os=summary?.opportunity;
-  const riskDir=directionText(rs?.direction,rs?.delta).text;
-  const healthDir=directionText(hs?.direction,hs?.delta).text;
-  const oppDir=directionText(os?.direction,os?.delta).text;
+  const riskDir=directionText(rs?.direction,rs?.delta,summary?.points||0).text;
+  const healthDir=directionText(hs?.direction,hs?.delta,summary?.points||0).text;
+  const oppDir=directionText(os?.direction,os?.delta,summary?.points||0).text;
   const dom=niceAsset(summary?.dominant_opportunity_asset);
 
   insight.textContent=

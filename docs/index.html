@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>포트폴리오 정책 자동화</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./assets/style.css?v=91">
+  <link rel="stylesheet" href="./assets/style.css?v=10">
 </head>
 <body>
 <main class="app">
@@ -49,50 +49,42 @@
   </section>
 
 
-  <section class="card trend-card">
+
+  <section class="card macro-card">
     <div class="section-title">
       <div>
-        <span class="section-kicker">30-DAY TREND</span>
-        <h2>점수 흐름</h2>
+        <span class="section-kicker">MACRO MARKET</span>
+        <h2>거시 리스크 복합 차트</h2>
       </div>
-      <div class="trend-range">
-        <button class="range-btn active" data-days="7">7일</button>
-        <button class="range-btn" data-days="30">30일</button>
-      </div>
-    </div>
-
-    <div class="trend-status-row">
-      <div class="trend-stat">
-        <span>RISK</span>
-        <b id="trendRiskNow">--</b>
-        <em id="trendRiskDelta">--</em>
-      </div>
-      <div class="trend-stat">
-        <span>HEALTH</span>
-        <b id="trendHealthNow">--</b>
-        <em id="trendHealthDelta">--</em>
-      </div>
-      <div class="trend-stat">
-        <span>OPPORTUNITY</span>
-        <b id="trendOppNow">--</b>
-        <em id="trendOppDelta">--</em>
+      <div class="macro-score-wrap">
+        <span>MACRO TENSION</span>
+        <strong id="macroScore">--</strong>
+        <em id="macroState">--</em>
       </div>
     </div>
 
-    <div class="trend-legend">
-      <span><i class="legend-dot risk"></i>Risk</span>
-      <span><i class="legend-dot health"></i>Health</span>
-      <span><i class="legend-dot opp"></i>Opportunity</span>
+    <div class="macro-legend">
+      <span><i class="macro-dot us10y"></i>미 10Y</span>
+      <span><i class="macro-dot vix"></i>VIX</span>
+      <span><i class="macro-dot hy"></i>HY</span>
+      <span><i class="macro-dot fx"></i>USD/KRW</span>
     </div>
 
-    <div class="chart-shell">
-      <svg id="trendChart" viewBox="0 0 640 210" preserveAspectRatio="none" aria-label="점수 추세 그래프"></svg>
-      <div id="trendEmpty" class="trend-empty">트렌드 데이터가 아직 충분하지 않음.</div>
+    <div class="macro-chart-shell">
+      <svg id="macroChart" viewBox="0 0 640 245" preserveAspectRatio="none" aria-label="거시 리스크 복합 차트"></svg>
+      <div id="macroEmpty" class="trend-empty">거시 데이터 생성 대기 중임.</div>
     </div>
 
-    <div class="trend-footer">
-      <div id="trendInsight" class="trend-insight">트렌드 계산 중임.</div>
-      <div id="trendRangeInfo" class="trend-range-info">--</div>
+    <div class="macro-current-grid">
+      <div><span>미 10Y</span><b id="macroUs10y">--</b><em id="macroUs10yN">--</em></div>
+      <div><span>VIX</span><b id="macroVix">--</b><em id="macroVixN">--</em></div>
+      <div><span>HY Spread</span><b id="macroHy">--</b><em id="macroHyN">--</em></div>
+      <div><span>USD/KRW</span><b id="macroFx">--</b><em id="macroFxN">--</em></div>
+    </div>
+
+    <div class="macro-foot">
+      <div id="macroInsight">각 지표를 최근 약 1년 분포에서 0~100으로 정규화함. 높을수록 시장 긴장도가 높은 편임.</div>
+      <div id="macroUpdated">FRED 데이터 확인 중임.</div>
     </div>
   </section>
 
@@ -256,6 +248,54 @@
     </div>
   </section>
 
+
+  <section class="card trend-card">
+    <div class="section-title">
+      <div>
+        <span class="section-kicker">30-DAY TREND</span>
+        <h2>점수 흐름</h2>
+      </div>
+      <div class="trend-range">
+        <button class="range-btn active" data-days="7">7일</button>
+        <button class="range-btn" data-days="30">30일</button>
+      </div>
+    </div>
+
+    <div class="trend-status-row">
+      <div class="trend-stat">
+        <span>RISK</span>
+        <b id="trendRiskNow">--</b>
+        <em id="trendRiskDelta">--</em>
+      </div>
+      <div class="trend-stat">
+        <span>HEALTH</span>
+        <b id="trendHealthNow">--</b>
+        <em id="trendHealthDelta">--</em>
+      </div>
+      <div class="trend-stat">
+        <span>OPPORTUNITY</span>
+        <b id="trendOppNow">--</b>
+        <em id="trendOppDelta">--</em>
+      </div>
+    </div>
+
+    <div class="trend-legend">
+      <span><i class="legend-dot risk"></i>Risk</span>
+      <span><i class="legend-dot health"></i>Health</span>
+      <span><i class="legend-dot opp"></i>Opportunity</span>
+    </div>
+
+    <div class="chart-shell">
+      <svg id="trendChart" viewBox="0 0 640 210" preserveAspectRatio="none" aria-label="점수 추세 그래프"></svg>
+      <div id="trendEmpty" class="trend-empty">트렌드 데이터가 아직 충분하지 않음.</div>
+    </div>
+
+    <div class="trend-footer">
+      <div id="trendInsight" class="trend-insight">트렌드 계산 중임.</div>
+      <div id="trendRangeInfo" class="trend-range-info">--</div>
+    </div>
+  </section>
+
   <footer>
     <span>STEP13</span>
     <span>•</span>
@@ -263,7 +303,7 @@
   </footer>
 
 </main>
-<script src="./assets/app.js?v=91"></script>
+<script src="./assets/app.js?v=10"></script>
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
