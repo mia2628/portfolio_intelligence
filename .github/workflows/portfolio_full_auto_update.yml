@@ -1,0 +1,41 @@
+name: Portfolio Full Auto Update
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Mon-Fri 07:30 KST = Sun-Thu 22:30 UTC
+    - cron: "30 22 * * 0-4"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portfolio-full-auto-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pandas numpy requests
+      - name: STEP4 - Refresh historical data
+        run: python engines/step04_collect_historical_data.py
+      - name: STEP11 - Build latest actual inputs
+        run: python engines/step11_auto_bridge.py --apply
+      - name: STEP3 - Coverage-aware macro
+        run: python engines/step03_shock_factor_engine.py
+      - name: STEP11 - Validate
+        run: python engines/step11_final_coverage_check.py
+      - name: STEP5-7 - Integrated core
+        run: python engines/step12_pipeline_runner.py --mode core
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add portfolio.csv config/portfolio_target_policy.csv data/ outputs/ || true
+          git diff --cached --quiet || (git commit -m "Refresh integrated portfolio intelligence" && git push)
