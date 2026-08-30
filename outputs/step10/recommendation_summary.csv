@@ -1,2 +1,2 @@
-﻿Risk_Score,Risk_State,Best_Opportunity_Asset,Best_Opportunity_Score,Portfolio_Health_Score,Portfolio_Health_State,Rebalancing_Decision,Action_Level,Current_Situation,Final_Recommendation
-54.28,UNKNOWN,Gold,58.13,67.89,GOOD,NEW_MONEY_CORRECTION,MEDIUM,"아직 정기점검일 전이지만, 금 비중이 6.42%로 정책범위 18~22%보다 낮습니다. 포트폴리오 건강도는 67.9점으로 비교적 양호하므로 기존자산 매도보다 신규자금으로 금을 우선 보충하는 단계입니다.","현재는 금 비중이 정책 하한에 크게 못 미치므로 이번 달 신규자금 1,000,000원은 전액 금 보충에 사용하는 것이 우선입니다. 기존 보유자산은 매도하지 않습니다."
+﻿Risk_Score,Risk_State,Best_Opportunity_Asset,Best_Opportunity_Score,Portfolio_Health_Score,Portfolio_Health_State,Rebalancing_Decision,Action_Level,Situation_Message,Final_Recommendation
+49.67,UNKNOWN,Gold,60.62,73.84,GOOD,NEW_MONEY_CORRECTION,MEDIUM,"정기점검일 전이지만, 금 비중이 6.42%로 정책 하한 18.00%보다 낮습니다. 다만 전체 포트폴리오 구조는 비교적 양호하므로 매도 리밸런싱은 하지 않고, 신규자금으로 금을 우선 보충합니다.","현재 포트폴리오 전체 구조는 유지하되, 신규자금으로 정책이탈 자산을 먼저 보정하고 남는 자금은 STEP6 상대매력도에 따라 금 등 유연자산에 분산 배분하는 것이 적절합니다."
