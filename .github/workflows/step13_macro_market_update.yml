@@ -35,7 +35,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: python -m pip install --upgrade pandas requests
+        run: python -m pip install --upgrade pandas
 
       - name: Build macro risk composite
         run: python engines/step13_macro_risk_engine.py
@@ -49,8 +49,9 @@ jobs:
           d=json.loads(p.read_text(encoding="utf-8"))
           assert d["current"]["score"] is not None
           assert len(d["points"]) >= 20
-          assert d["meta"]["source"] == "FRED"
-          print("PASS: macro_risk.json validated.")
+          assert d["meta"]["external_network_required"] is False
+          assert d["meta"]["source"] == "REPOSITORY_DATA_ONLY"
+          print("PASS: macro_risk.json validated without external network dependency.")
           PY
 
       - name: Commit macro data
