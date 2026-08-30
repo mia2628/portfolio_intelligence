@@ -1,0 +1,153 @@
+name: Portfolio Mobile Command Bridge
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: portfolio-mobile-command
+  cancel-in-progress: false
+
+jobs:
+  authorize-and-run:
+    if: >
+      startsWith(github.event.issue.title, '[PORTFOLIO_COMMAND]')
+      && github.actor == github.repository_owner
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Parse and validate command
+        id: command
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          python - <<'PY'
+          import os, re
+          body=os.environ.get("ISSUE_BODY","")
+          # Compatibility guard:
+          # v8 UI accidentally encoded line breaks as literal "\\n".
+          # Normalize those legacy command bodies before parsing.
+          body=body.replace("\\r\\n","\n").replace("\\n","\n")
+          if "PORTFOLIO_COMMAND_V1" not in body:
+              raise SystemExit("Invalid command marker")
+
+          vals={}
+          for line in body.splitlines():
+              if "=" in line:
+                  k,v=line.split("=",1)
+                  vals[k.strip()]=v.strip()
+
+          kind=vals.get("TYPE","")
+          amount=vals.get("AMOUNT","")
+          confirm=vals.get("CONFIRM","")
+          nonce=vals.get("NONCE","")
+
+          print("Parsed fields:", sorted(vals.keys()))
+          print("Parsed TYPE:", kind or "<EMPTY>")
+
+          if kind not in {"SCENARIO","ACTUAL"}:
+              raise SystemExit(f"Invalid TYPE: {kind!r}")
+          if not re.fullmatch(r"[0-9]{1,10}",amount):
+              raise SystemExit("Invalid AMOUNT")
+          amount_i=int(amount)
+          if amount_i<=0 or amount_i>1_000_000_000:
+              raise SystemExit("AMOUNT out of range")
+          if not re.fullmatch(r"[A-Za-z0-9.-]{8,80}",nonce):
+              raise SystemExit("Invalid NONCE")
+          if kind=="SCENARIO" and confirm!="SCENARIO":
+              raise SystemExit("Scenario confirmation missing")
+          if kind=="ACTUAL" and confirm!="CONFIRM_ACTUAL":
+              raise SystemExit("Actual confirmation missing")
+
+          last_review=vals.get("LAST_REVIEW_DATE","")
+          if kind=="SCENARIO" and not re.fullmatch(r"[0-9]{8}",last_review):
+              raise SystemExit("Invalid LAST_REVIEW_DATE")
+
+          out=os.environ["GITHUB_OUTPUT"]
+          with open(out,"a",encoding="utf-8") as f:
+              f.write(f"kind={kind}\n")
+              f.write(f"amount={amount_i}\n")
+              f.write(f"last_review={last_review}\n")
+              f.write(f"nonce={nonce}\n")
+          print(f"Authorized command: {kind}, amount={amount_i:,}")
+          PY
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pandas numpy requests
+
+      - name: Run scenario decision
+        if: steps.command.outputs.kind == 'SCENARIO'
+        run: >
+          python engines/step12_pipeline_runner.py
+          --mode decision
+          --amount "${{ steps.command.outputs.amount }}"
+          --last-review "${{ steps.command.outputs.last_review }}"
+
+      - name: Apply actual contribution
+        if: steps.command.outputs.kind == 'ACTUAL'
+        run: >
+          python engines/step12_portfolio_state_engine.py
+          --mode apply
+          --amount "${{ steps.command.outputs.amount }}"
+
+      - name: Recalculate after actual contribution
+        if: steps.command.outputs.kind == 'ACTUAL'
+        run: |
+          python engines/step06_opportunity_engine.py
+          python engines/step07_portfolio_health_engine.py
+
+      - name: Rebuild STEP13 dashboard
+        run: |
+          python engines/step13_dashboard_export.py
+          python engines/step13_trend_snapshot.py
+          python engines/step13_alert_engine.py
+
+      - name: Commit outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/portfolio_invested_state.csv data/portfolio_account_snapshot.csv 2>/dev/null || true
+          git add outputs/step06/ outputs/step07/ outputs/step08/ outputs/step09/ outputs/step10/ outputs/portfolio/ outputs/step13/ 2>/dev/null || true
+          git add data/dashboard_history.csv docs/data/dashboard.json docs/data/trend.json docs/data/alerts.json 2>/dev/null || true
+          git diff --cached --quiet || (git commit -m "Execute mobile portfolio command" && git push)
+
+      - name: Report result to issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          KIND="${{ steps.command.outputs.kind }}"
+          AMOUNT="${{ steps.command.outputs.amount }}"
+          if [ "$KIND" = "SCENARIO" ]; then
+            gh issue comment "${{ github.event.issue.number }}" --body "✅ 가상 시나리오 실행 완료함. 입력금액: ${AMOUNT}원. 실제 포트폴리오 원금은 변경하지 않았음."
+          else
+            gh issue comment "${{ github.event.issue.number }}" --body "✅ 실제 투자금 반영 완료함. 반영금액: ${AMOUNT}원. 투자원금 상태를 최신화했음."
+          fi
+          gh issue close "${{ github.event.issue.number }}" --comment "명령 처리 완료함."
+
+  reject-unauthorized:
+    if: >
+      startsWith(github.event.issue.title, '[PORTFOLIO_COMMAND]')
+      && github.actor != github.repository_owner
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Reject command
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body "⛔ 저장소 소유자 외 사용자의 포트폴리오 명령은 실행하지 않음."
+          gh issue close "${{ github.event.issue.number }}"
