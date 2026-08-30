@@ -76,6 +76,18 @@ function nominalizeKo(text){
 
 const colors=["#5aa7ff","#54d98c","#f3c95f","#9c86ff","#ff9b66","#ff7373"];
 
+
+function setText(id,value,fallback="--"){
+  const el=$(id);
+  if(el)el.textContent=(value===null||value===undefined||value==="")?fallback:value;
+}
+function markDataState(ok,message){
+  const el=document.getElementById("dataStateBanner");
+  if(!el)return;
+  el.classList.toggle("hidden",ok);
+  el.textContent=message||"";
+}
+
 function niceAsset(a){
   const m={Bond:"채권",Domestic_Equity:"국내주식",Foreign_Equity:"해외주식",Gold:"금",Cash:"유동성",Other:"기타"};
   return m[a]||a||"--";
@@ -84,46 +96,74 @@ function niceAsset(a){
 async function boot(){
   syncAppTitle();
   setAmountVisibility(amountVisible);
-  const [res,tres,ares]=await Promise.all([
-    fetch("./data/dashboard.json?ts="+Date.now()),
-    fetch("./data/trend.json?ts="+Date.now()).catch(()=>null),
-    fetch("./data/alerts.json?ts="+Date.now()).catch(()=>null)
-  ]);
-  const d=await res.json();
-  latestDashboardData=d;
-  const trend=tres ? await tres.json().catch(()=>({points:[]})) : {points:[]};
-  const alerts=ares ? await ares.json().catch(()=>({active:[],count:0})) : {active:[],count:0};
 
-  $("updated").textContent="업데이트 "+new Date(d.meta.generated_at).toLocaleString("ko-KR");
-  $("privacyText").textContent=amountVisible?"금액 공개":"금액 비공개";
+  let d=null,trend={points:[]},alerts={active:[],count:0};
+  try{
+    const [res,tres,ares]=await Promise.all([
+      fetch("./data/dashboard.json?ts="+Date.now(),{cache:"no-store"}),
+      fetch("./data/trend.json?ts="+Date.now(),{cache:"no-store"}).catch(()=>null),
+      fetch("./data/alerts.json?ts="+Date.now(),{cache:"no-store"}).catch(()=>null)
+    ]);
+    if(!res.ok)throw new Error(`dashboard HTTP ${res.status}`);
+    d=await res.json();
+    trend=tres ? await tres.json().catch(()=>({points:[]})) : {points:[]};
+    alerts=ares ? await ares.json().catch(()=>({active:[],count:0})) : {active:[],count:0};
+    latestDashboardData=d;
+  }catch(err){
+    markDataState(false,"STEP13 데이터 파일을 불러오지 못함. GitHub Pages 배포상태 확인 필요함.");
+    console.error(err);
+    return;
+  }
 
-  $("riskScore").textContent=score(d.risk.score);
-  $("riskLabel").textContent=d.risk.label||"--";
+  setText("updated","업데이트 "+(d.meta?.generated_at ? new Date(d.meta.generated_at).toLocaleString("ko-KR") : "정보 없음"));
+  setText("privacyText",amountVisible?"금액 공개":"금액 비공개");
+
+  const risk=d.risk||{};
+  setText("riskScore",score(risk.score));
+  setText("riskLabel",risk.label||"UNKNOWN");
 
   const top=(d.opportunity||[])[0]||{};
-  $("oppAsset").textContent=niceAsset(top.asset);
-  $("oppScore").textContent=score(top.score);
+  setText("oppAsset",niceAsset(top.asset));
+  setText("oppScore",score(top.score));
 
-  $("healthScore").textContent=score(d.health.score);
-  $("healthLabel").textContent=d.health.label||"--";
+  const health=d.health||{};
+  setText("healthScore",score(health.score));
+  setText("healthLabel",health.label||"UNKNOWN");
 
   const conf=d.confidence||{};
-  $("confidencePill").textContent=conf.score==null?"DATA --":`DATA ${score(conf.score)} ${conf.label||""}`;
+  setText("confidencePill",conf.score==null?"DATA --":`DATA ${score(conf.score)} ${conf.label||""}`);
 
   const rb=d.rebalance||{};
-  $("actionBadge").textContent=rb.available?(rb.decision||"CHECK"):"STATUS";
-  $("finalRecommendation").textContent=nominalizeKo(
-    d.recommendation?.final ||
-    rb.reason ||
-    "현재 유지 가능한 포트폴리오 상태임."
-  );
+  setText("actionBadge",rb.available?(rb.decision||"CHECK"):"STATUS");
 
-  $("portfolioTotal").textContent = money(d.portfolio?.total_invested);
-  renderPortfolio(d.portfolio?.items||[]);
-  renderScenario(d.allocation||{});
-  renderWhy(d);
-  renderTrend(trend);
-  renderAlerts(alerts);
+  let final=d.recommendation?.final || rb.reason || "";
+  const placeholder=/STEP13 데이터가 아직 생성되지 않았습니다/;
+  if(!final || placeholder.test(final)){
+    final=rb.reason || "현재 권고 데이터를 생성하지 못함.";
+  }
+  setText("finalRecommendation",nominalizeKo(final));
+
+  // Each module renders independently: one failure cannot blank the whole dashboard.
+  try{
+    setText("portfolioTotal",money(d.portfolio?.total_invested));
+    renderPortfolio(d.portfolio?.items||[]);
+  }catch(e){console.error("portfolio render",e);}
+
+  try{renderScenario(d.allocation||{});}catch(e){console.error("scenario render",e);}
+  try{renderWhy(d);}catch(e){console.error("why render",e);}
+  try{renderTrend(trend);}catch(e){console.error("trend render",e);}
+  try{renderAlerts(alerts);}catch(e){console.error("alert render",e);}
+
+  const live=
+    d.meta?.data_state==="GENERATED" &&
+    risk.score!=null &&
+    health.score!=null &&
+    (d.portfolio?.items||[]).length>0;
+
+  markDataState(
+    live,
+    live ? "" : "일부 STEP13 데이터가 비어 있음. 최신 Actions 실행결과 확인 필요함."
+  );
 }
 
 function renderPortfolio(items){

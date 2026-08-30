@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>포트폴리오 정책 자동화</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./assets/style.css?v=81">
+  <link rel="stylesheet" href="./assets/style.css?v=82">
 </head>
 <body>
 <main class="app">
@@ -28,6 +28,7 @@
       </label>
     </div>
   </header>
+  <div id="dataStateBanner" class="data-state-banner hidden"></div>
 
   <section class="signal-strip">
     <article class="signal">
@@ -238,7 +239,7 @@
   </footer>
 
 </main>
-<script src="./assets/app.js?v=81"></script>
+<script src="./assets/app.js?v=82"></script>
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});

@@ -186,17 +186,61 @@ def rebalance_data():
     }
 
 def recommendation_data():
+    """
+    STEP10을 우선 사용하되, STEP10 CSV 컬럼명이 달라지거나 비어 있어도
+    STEP9 Reason / Decision을 사용해 TODAY'S ACTION이 placeholder가 되지 않도록 함.
+    """
     s=first(OUT/"step10"/"recommendation_summary.csv")
     d=read_csv(OUT/"step10"/"recommendation_detail.csv")
+
     sections=[]
     for r in d:
-        title=pick(r,["Section","Category","Title"],"")
-        text=pick(r,["Text","Recommendation","Message","Detail"],"")
-        if title or text: sections.append({"title":title,"text":text})
-    # flexible summary aliases
-    final=pick(s,["Final_Recommendation","Recommendation","Final","Korean_Recommendation"],"")
-    situation=pick(s,["Current_Situation","Situation","Current_Status"],"")
-    return {"final":final,"situation":situation,"sections":sections}
+        title=pick(r,["Section","Category","Title","Key"],"")
+        text=pick(r,[
+            "Text","Recommendation","Message","Detail","Value",
+            "Explanation","Narrative","Korean_Text"
+        ],"")
+        if title or text:
+            sections.append({"title":title,"text":text})
+
+    final=pick(s,[
+        "Final_Recommendation","Recommendation","Final",
+        "Korean_Recommendation","Final_Recommendation_KR",
+        "Recommendation_Text","Message","Text"
+    ],"")
+    situation=pick(s,[
+        "Current_Situation","Situation","Current_Status",
+        "Current_Situation_KR","Status_Text"
+    ],"")
+
+    # Search STEP10 detail rows if summary aliases did not match.
+    if not final:
+        for r in d:
+            title=str(pick(r,["Section","Category","Title","Key"],"")).lower()
+            text=pick(r,["Text","Recommendation","Message","Detail","Value","Explanation","Narrative"],"")
+            if text and ("최종" in title or "final" in title or "recommend" in title):
+                final=text
+                break
+
+    # Reliable fallback: STEP9 is authoritative for current action.
+    rb=first(OUT/"step09"/"rebalancing_decision.csv")
+    if not final and rb:
+        reason=pick(rb,["Reason","Decision_Reason"],"")
+        decision=pick(rb,["Decision","Rebalancing_Decision"],"")
+        if reason:
+            final=reason
+        elif decision:
+            final=f"현재 정책 판단은 {decision}임."
+
+    if not situation and rb:
+        situation=pick(rb,["Reason","Decision_Reason"],"")
+
+    return {
+        "final":final,
+        "situation":situation,
+        "sections":sections,
+        "source":"STEP10" if s or d else ("STEP9_FALLBACK" if rb else "NONE")
+    }
 
 def confidence_data():
     p=OUT/"step11"/"coverage_summary.csv"
@@ -222,7 +266,8 @@ def build():
             "generated_at":datetime.now(ZoneInfo("Asia/Seoul")).isoformat(timespec="seconds"),
             "basis":"INVESTED_PRINCIPAL",
             "privacy_amounts":expose,
-            "version":"STEP13_v1",
+            "version":"STEP13_v8_2",
+            "data_state":"GENERATED",
         },
         "portfolio":{"items":portfolio,"total_invested":total},
         "risk":risk_data(),
