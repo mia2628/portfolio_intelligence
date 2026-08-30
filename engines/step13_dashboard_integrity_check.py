@@ -53,6 +53,12 @@ if not TREND.exists():
 t=json.loads(TREND.read_text(encoding="utf-8"))
 pts=t.get("points") or []
 summary=t.get("summary") or {}
+
+dates=[str(p.get("date") or "").strip() for p in pts]
+if any(not d for d in dates):
+    fail("blank trend date detected")
+if len(dates)!=len(set(dates)):
+    fail("duplicate trend dates detected")
 if "7" not in summary or "30" not in summary:
     fail("7/30 trend summaries missing")
 if len(pts)<1:

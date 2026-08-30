@@ -22,10 +22,35 @@ def fnum(v):
         return None
 
 def load_rows():
+    """
+    Read only valid daily history rows.
+    - Ignore completely blank rows.
+    - Ignore rows whose date is empty/whitespace.
+    - Normalize date text.
+    - Deduplicate existing same-date rows, keeping the latest row.
+    """
     if not HISTORY.exists():
         return []
+
+    valid=[]
     with HISTORY.open("r",encoding="utf-8-sig",newline="") as f:
-        return list(csv.DictReader(f))
+        for raw in csv.DictReader(f):
+            if not raw:
+                continue
+            row={k:(v.strip() if isinstance(v,str) else v) for k,v in raw.items()}
+            date=(row.get("date") or "").strip()
+            if not date:
+                continue
+            row["date"]=date
+            valid.append(row)
+
+    # Existing files may already contain duplicate dates.
+    # Last occurrence wins because it represents the most recent rerun for that day.
+    by_date={}
+    for row in valid:
+        by_date[row["date"]]=row
+
+    return [by_date[d] for d in sorted(by_date)]
 
 def write_rows(rows):
     HISTORY.parent.mkdir(parents=True,exist_ok=True)
@@ -96,10 +121,13 @@ row={
 }
 
 rows=load_rows()
+
 # Same-day rerun replaces the canonical row for that KST date.
-rows=[r for r in rows if r.get("date")!=today]
-rows.append(row)
-rows=sorted(rows,key=lambda r:r.get("date",""))[-365:]
+# This also guarantees one row per calendar date even if an older CSV had duplicates.
+by_date={r["date"]:r for r in rows if (r.get("date") or "").strip()}
+by_date[today]=row
+rows=[by_date[d] for d in sorted(by_date)][-365:]
+
 write_rows(rows)
 
 points=[]
@@ -136,6 +164,8 @@ print("STEP13 TREND SNAPSHOT v9")
 print("="*86)
 print("Trend date      :",today)
 print("History rows    :",len(points))
+print("Unique dates    :",len({p["date"] for p in points if p.get("date")}))
+print("Blank rows      : 0 (filtered)")
 for days in (7,30):
     s=payload["summary"][str(days)]
     print(f"{days}-day points   :",s["points"])

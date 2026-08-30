@@ -332,7 +332,7 @@ function renderTrend(t,days=trendDays){
 
   if(summary){
     rangeInfo.textContent=summary.points
-      ? `${summary.from||"--"} → ${summary.to||"--"} · ${summary.points}개 일별 기준점`
+      ? `${summary.from||"--"} → ${summary.to||"--"} · ${summary.points}개 유효 일별 기준점`
       : "저장된 일별 기준점 없음.";
   }
 
