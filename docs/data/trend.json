@@ -1,15 +1,5 @@
 {
-  "generated_at": "2026-08-30T10:28:35+09:00",
+  "generated_at": "",
   "window_days": 30,
-  "points": [
-    {
-      "date": "2026-08-30",
-      "risk": 49.67,
-      "health": 74.02,
-      "opportunity_asset": "Gold",
-      "opportunity_score": 60.2,
-      "gold_weight": 6.9285,
-      "confidence": null
-    }
-  ]
+  "points": []
 }

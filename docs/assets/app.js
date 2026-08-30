@@ -1,5 +1,27 @@
+
+const APP_TITLE="포트폴리오 정책 자동화";
+const AMOUNT_VISIBILITY_KEY="portfolio_amount_visibility_v1";
+let amountVisible = localStorage.getItem(AMOUNT_VISIBILITY_KEY)==="visible";
+let latestDashboardData=null;
+
+function syncAppTitle(){
+  document.title=APP_TITLE;
+  const h1=document.querySelector(".app-header h1");
+  if(h1) h1.textContent=APP_TITLE;
+}
+
+function setAmountVisibility(visible){
+  amountVisible=Boolean(visible);
+  localStorage.setItem(AMOUNT_VISIBILITY_KEY, amountVisible ? "visible" : "hidden");
+  const toggle=document.getElementById("amountVisibilityToggle");
+  const label=document.getElementById("privacyLabel");
+  if(toggle) toggle.checked=amountVisible;
+  if(label) label.textContent=amountVisible ? "금액 공개" : "금액 비공개";
+  document.body.classList.toggle("amounts-hidden", !amountVisible);
+}
+
 const $=id=>document.getElementById(id);
-const money=n=>n==null?"비공개":new Intl.NumberFormat("ko-KR").format(n)+"원";
+const money=n=>n==null?"--":(!amountVisible?"••••••":new Intl.NumberFormat("ko-KR").format(n)+"원");
 const score=n=>n==null?"--":Number(n).toFixed(1);
 const pct=n=>n==null?"--":Number(n).toFixed(2)+"%";
 
@@ -23,17 +45,20 @@ function niceAsset(a){
 }
 
 async function boot(){
+  syncAppTitle();
+  setAmountVisibility(amountVisible);
   const [res,tres,ares]=await Promise.all([
     fetch("./data/dashboard.json?ts="+Date.now()),
     fetch("./data/trend.json?ts="+Date.now()).catch(()=>null),
     fetch("./data/alerts.json?ts="+Date.now()).catch(()=>null)
   ]);
   const d=await res.json();
+  latestDashboardData=d;
   const trend=tres ? await tres.json().catch(()=>({points:[]})) : {points:[]};
   const alerts=ares ? await ares.json().catch(()=>({active:[],count:0})) : {active:[],count:0};
 
   $("updated").textContent="업데이트 "+new Date(d.meta.generated_at).toLocaleString("ko-KR");
-  $("privacyText").textContent=d.meta.privacy_amounts?"금액 표시":"금액 비공개";
+  $("privacyText").textContent=amountVisible?"금액 공개":"금액 비공개";
 
   $("riskScore").textContent=score(d.risk.score);
   $("riskLabel").textContent=d.risk.label||"--";
@@ -253,6 +278,19 @@ $("toggleWhy").addEventListener("click",()=>{
   $("whyDetails").classList.toggle("hidden");
   $("toggleWhy").textContent=$("whyDetails").classList.contains("hidden")?"자세히 보기":"접기";
 });
+
+
+const amountToggle=document.getElementById("amountVisibilityToggle");
+if(amountToggle){
+  amountToggle.addEventListener("change",()=>{
+    setAmountVisibility(amountToggle.checked);
+    if(latestDashboardData){
+      $("portfolioTotal").textContent=money(latestDashboardData.portfolio?.total_invested);
+      renderPortfolio(latestDashboardData.portfolio?.items||[]);
+      renderScenario(latestDashboardData.allocation||{});
+    }
+  });
+}
 
 boot().catch(err=>{
   $("updated").textContent="데이터 로딩 실패";

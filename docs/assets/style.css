@@ -172,3 +172,20 @@ footer{display:flex;justify-content:center;gap:7px;margin-top:20px;color:#53677f
   .card,.decision-card{padding:15px}
   .chart-shell{height:140px}
 }
+
+/* v6 local amount privacy control */
+.header-tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.privacy-switch{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.privacy-switch input{position:absolute;opacity:0;pointer-events:none}
+.privacy-label{font-size:9px;color:#7f93ac;font-weight:700;white-space:nowrap}
+.switch-track{width:34px;height:19px;border-radius:999px;background:#26354a;border:1px solid #31445d;padding:2px;transition:.2s;display:flex;align-items:center}
+.switch-thumb{width:13px;height:13px;border-radius:50%;background:#8496ac;transition:.2s;display:block}
+.privacy-switch input:checked + .switch-track{background:#1b5a49;border-color:#2b8069}
+.privacy-switch input:checked + .switch-track .switch-thumb{transform:translateX(15px);background:#65e0aa}
+.amounts-hidden .portfolio-total,
+.amounts-hidden .asset-value .muted,
+.amounts-hidden .scenario-row .muted{letter-spacing:.08em}
+@media(max-width:540px){
+  .header-tools{gap:6px}
+  .privacy-label{font-size:8.5px}
+}

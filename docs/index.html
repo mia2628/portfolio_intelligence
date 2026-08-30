@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#0b1020">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Portfolio Intelligence</title>
+  <title>포트폴리오 정책 자동화</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./assets/style.css">
+  <link rel="stylesheet" href="./assets/style.css?v=6">
 </head>
 <body>
 <main class="app">
@@ -19,7 +19,14 @@
       <h1>포트폴리오 정책 자동화</h1>
       <div class="sub">데이터 기반 투자 판단 · 신규자금 배분 · 리스크 관리</div><div id="updated" class="sub update-line">업데이트 확인 중</div>
     </div>
-    <div id="confidencePill" class="confidence">DATA --</div>
+    <div class="header-tools">
+      <div id="confidencePill" class="confidence">DATA --</div>
+      <label class="privacy-switch" title="이 휴대폰 화면에서 투자금액 표시 여부">
+        <span id="privacyLabel" class="privacy-label">금액 비공개</span>
+        <input id="amountVisibilityToggle" type="checkbox" aria-label="투자금액 공개 비공개 전환">
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+      </label>
+    </div>
   </header>
 
   <section class="signal-strip">
@@ -209,7 +216,7 @@
   </footer>
 
 </main>
-<script src="./assets/app.js"></script>
+<script src="./assets/app.js?v=6"></script>
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});
