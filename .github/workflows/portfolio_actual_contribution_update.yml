@@ -1,0 +1,53 @@
+name: Portfolio Actual Contribution Update
+
+on:
+  workflow_dispatch:
+    inputs:
+      actual_amount:
+        description: "실제로 투자 완료한 신규자금 (원, 숫자만)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: portfolio-actual-contribution-update
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pandas numpy requests
+
+      - name: Show current invested portfolio
+        run: python engines/step12_portfolio_state_engine.py --mode show
+
+      - name: Apply actual contribution using latest STEP8 allocation
+        run: >
+          python engines/step12_portfolio_state_engine.py
+          --mode apply
+          --amount "${{ inputs.actual_amount }}"
+
+      - name: Recalculate STEP6 opportunity
+        run: python engines/step06_opportunity_engine.py
+
+      - name: Recalculate STEP7 health
+        run: python engines/step07_portfolio_health_engine.py
+
+      - name: Show updated invested portfolio
+        run: python engines/step12_portfolio_state_engine.py --mode show
+
+      - name: Commit actual portfolio state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/portfolio_invested_state.csv data/portfolio_account_snapshot.csv
+          git add outputs/portfolio/ outputs/step06/ outputs/step07/
+          git diff --cached --quiet || (git commit -m "Apply actual portfolio contribution" && git push)
