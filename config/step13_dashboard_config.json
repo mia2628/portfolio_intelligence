@@ -1,0 +1,21 @@
+{
+  "dashboard_title": "Portfolio Intelligence",
+  "dashboard_subtitle": "Risk · Opportunity · Health · Action",
+  "privacy": {
+    "expose_amounts": false,
+    "show_invested_total": false
+  },
+  "alerts": {
+    "risk_high": 65,
+    "health_low": 50,
+    "data_confidence_low": 60,
+    "gold_policy_breach": true,
+    "rebalancing_high_only": false
+  },
+  "display": {
+    "currency": "KRW",
+    "refresh_minutes": 15,
+    "max_risk_contributors": 3,
+    "max_recommendations": 4
+  }
+}
