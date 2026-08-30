@@ -113,6 +113,7 @@ jobs:
         run: |
           python engines/step13_dashboard_export.py
           python engines/step13_trend_snapshot.py
+          python engines/step13_history_audit.py
           python engines/step13_alert_engine.py
 
       - name: Validate live dashboard data

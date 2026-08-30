@@ -36,6 +36,7 @@ jobs:
 
       - name: Record dashboard trend
         run: python engines/step13_trend_snapshot.py
+          python engines/step13_history_audit.py
 
       - name: Evaluate alerts
         id: alerts
