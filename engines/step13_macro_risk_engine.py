@@ -5,6 +5,9 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 import requests
+import time
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 BASE=Path(__file__).resolve().parents[1]
 OUT=BASE/"docs"/"data"/"macro_risk.json"
@@ -39,23 +42,52 @@ MIN_OBS=60
 DISPLAY_DAYS=120
 PLOT_POINTS=90
 
+def build_session():
+    retry=Retry(
+        total=4,
+        connect=4,
+        read=4,
+        backoff_factor=3,
+        status_forcelist=[429,500,502,503,504],
+        allowed_methods=["GET"],
+        raise_on_status=False,
+    )
+    session=requests.Session()
+    session.mount("https://",HTTPAdapter(max_retries=retry))
+    session.headers.update({"User-Agent":"portfolio-intelligence/1.0"})
+    return session
+
 def fetch_fred(series_id):
+    """
+    FRED public CSV with retries.
+    Connect/read timeout are separated so a slow FRED response does not
+    immediately kill the entire scheduled job.
+    """
     url=f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
-    r=requests.get(url,timeout=30,headers={"User-Agent":"portfolio-intelligence/1.0"})
-    r.raise_for_status()
-    df=pd.read_csv(io.StringIO(r.text))
-    if "DATE" not in df.columns:
-        # FRED occasionally returns "observation_date".
-        date_col=df.columns[0]
-    else:
-        date_col="DATE"
-    val_col=[c for c in df.columns if c!=date_col][0]
-    df=df.rename(columns={date_col:"date",val_col:"value"})
-    df["date"]=pd.to_datetime(df["date"],errors="coerce")
-    df["value"]=pd.to_numeric(df["value"],errors="coerce")
-    df=df.dropna(subset=["date","value"]).sort_values("date")
-    cutoff=pd.Timestamp(datetime.now(KST).date()-timedelta(days=LOOKBACK_DAYS))
-    return df[df["date"]>=cutoff].copy()
+    session=build_session()
+    last=None
+    for attempt in range(1,4):
+        try:
+            r=session.get(url,timeout=(15,75))
+            r.raise_for_status()
+            df=pd.read_csv(io.StringIO(r.text))
+            date_col="DATE" if "DATE" in df.columns else df.columns[0]
+            val_col=[c for c in df.columns if c!=date_col][0]
+            df=df.rename(columns={date_col:"date",val_col:"value"})
+            df["date"]=pd.to_datetime(df["date"],errors="coerce")
+            df["value"]=pd.to_numeric(df["value"],errors="coerce")
+            df=df.dropna(subset=["date","value"]).sort_values("date")
+            cutoff=pd.Timestamp(datetime.now(KST).date()-timedelta(days=LOOKBACK_DAYS))
+            df=df[df["date"]>=cutoff].copy()
+            if len(df)<MIN_OBS:
+                raise RuntimeError(f"too few FRED observations: {len(df)}")
+            return df
+        except Exception as e:
+            last=e
+            print(f"WARN: FRED {series_id} attempt {attempt}/3 failed: {e}")
+            if attempt<3:
+                time.sleep(5*attempt)
+    raise RuntimeError(f"FRED {series_id} failed after retries: {last}")
 
 def rolling_percentile(values, window=ROLLING_OBS, min_obs=MIN_OBS):
     out=[]
@@ -72,16 +104,87 @@ def rolling_percentile(values, window=ROLLING_OBS, min_obs=MIN_OBS):
         out.append(round(pct,2))
     return out
 
+def load_local_fallback(key):
+    """
+    Use existing repository historical data if FRED is temporarily unavailable.
+    This keeps the chart operational during external-source outages.
+    """
+    candidates=[
+        BASE/"data"/"historical"/"historical_data.csv",
+        BASE/"data"/"historical_data.csv",
+    ]
+    aliases={
+        "US10Y":["US10Y","US_10Y","US10Y_YIELD","DGS10"],
+        "VIX":["VIX","VIXCLS"],
+        "HY_SPREAD":["US_HY_SPREAD","HY_SPREAD","BAMLH0A0HYM2"],
+        "USDKRW":["USDKRW","USD_KRW","DEXKOUS"],
+    }
+    for p in candidates:
+        if not p.exists():
+            continue
+        try:
+            df=pd.read_csv(p)
+            date_candidates=[c for c in ["date","DATE","Date","observation_date"] if c in df.columns]
+            if not date_candidates:
+                continue
+            col=next((c for c in aliases[key] if c in df.columns),None)
+            if not col:
+                continue
+            x=df[[date_candidates[0],col]].copy()
+            x.columns=["date","value"]
+            x["date"]=pd.to_datetime(x["date"],errors="coerce")
+            x["value"]=pd.to_numeric(x["value"],errors="coerce")
+            x=x.dropna().sort_values("date")
+            cutoff=pd.Timestamp(datetime.now(KST).date()-timedelta(days=LOOKBACK_DAYS))
+            x=x[x["date"]>=cutoff]
+            if len(x)>=MIN_OBS:
+                print(f"FALLBACK: {key} loaded from {p} ({len(x)} rows)")
+                return x
+        except Exception as e:
+            print(f"WARN: local fallback {p} / {key}: {e}")
+    return None
+
+def load_previous_macro_series(key):
+    """
+    Last-resort fallback from existing macro_risk.json.
+    This contains normalized points only, so it cannot rebuild raw FRED values.
+    It is used only to preserve the previous published chart when fresh rebuild fails.
+    """
+    return None
+
 frames={}
 errors={}
+source_used={}
 for key,meta in SERIES.items():
     try:
         frames[key]=fetch_fred(meta["fred_id"])
+        source_used[key]="FRED"
     except Exception as e:
         errors[key]=str(e)
+        fb=load_local_fallback(key)
+        if fb is not None:
+            frames[key]=fb
+            source_used[key]="LOCAL_FALLBACK"
 
 if len(frames)<3:
-    raise SystemExit(f"FAIL: insufficient macro sources: {errors}")
+    # Do not destroy the currently published chart during a temporary FRED outage.
+    if OUT.exists():
+        try:
+            prev=json.loads(OUT.read_text(encoding="utf-8"))
+            if (prev.get("points") or []) and prev.get("current",{}).get("score") is not None:
+                print("="*86)
+                print("STEP13 MACRO RISK v10.2")
+                print("="*86)
+                print("WARN: fresh macro rebuild unavailable; preserving previous macro_risk.json.")
+                print("Available fresh sources:",list(frames))
+                print("Errors:",errors)
+                print("PASS_WITH_STALE_DATA: previous valid macro chart retained.")
+                raise SystemExit(0)
+        except SystemExit:
+            raise
+        except Exception:
+            pass
+    raise SystemExit(f"FAIL: insufficient macro sources after retry/fallback: {errors}")
 
 # union business dates
 all_dates=sorted(set().union(*[set(df["date"]) for df in frames.values()]))
@@ -156,6 +259,7 @@ payload={
         "display_points":len(points),
         "version":"STEP13_MACRO_v10",
         "errors":errors,
+        "source_used":source_used,
     },
     "current":{
         "score":f(latest["MACRO_TENSION"],1),
@@ -173,7 +277,7 @@ OUT.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
 print("="*86)
 print("STEP13 MACRO RISK v10")
 print("="*86)
-print("Source           : FRED")
+print("Source mix       :",source_used)
 print("Latest date      :",payload["current"]["date"])
 print("Macro Tension    :",payload["current"]["score"],payload["current"]["state"])
 print("Display points   :",len(points))
