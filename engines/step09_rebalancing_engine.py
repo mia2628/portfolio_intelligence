@@ -141,6 +141,56 @@ def load_gold_policy_status():
     return {"Status":"", "Target":20.0, "Lower":18.0, "Upper":22.0}
 
 
+def build_situation_message(
+    calendar_due,
+    gold_below,
+    gold_above,
+    structural_caution,
+    gold_weight,
+    lower,
+    upper
+):
+    if gold_above:
+        return (
+            f"정기점검일 {'도래' if calendar_due else '전'}이지만, "
+            f"금 비중이 {gold_weight:.2f}%로 정책 상한 {upper:.2f}%를 초과했습니다. "
+            "현재 포트폴리오 구조도 함께 점검하면서 필요하면 일부 매도·재배분을 검토합니다."
+        )
+
+    if gold_below:
+        if structural_caution:
+            return (
+                f"정기점검일 {'도래' if calendar_due else '전'}이지만, "
+                f"금 비중이 {gold_weight:.2f}%로 정책 하한 {lower:.2f}%보다 낮고 "
+                "포트폴리오 건강지표 일부도 주의수준입니다. "
+                "기존자산 매도보다 신규자금으로 금을 보충하면서 구조를 함께 점검합니다."
+            )
+        return (
+            f"정기점검일 {'도래' if calendar_due else '전'}이지만, "
+            f"금 비중이 {gold_weight:.2f}%로 정책 하한 {lower:.2f}%보다 낮습니다. "
+            "다만 전체 포트폴리오 구조는 비교적 양호하므로 매도 리밸런싱은 하지 않고, "
+            "신규자금으로 금을 우선 보충합니다."
+        )
+
+    if structural_caution:
+        return (
+            f"금 비중은 정책범위 {lower:.0f}~{upper:.0f}% 안에 있지만, "
+            "포트폴리오 건강지표 일부가 주의수준입니다. "
+            "즉시 매매보다 구조 변화 여부를 먼저 점검합니다."
+        )
+
+    if calendar_due:
+        return (
+            f"6개월 정기점검일이 도래했지만 금 비중은 정책범위 {lower:.0f}~{upper:.0f}% 안이고 "
+            "포트폴리오 구조도 큰 이상이 없습니다. 강제 리밸런싱 없이 현재 구조를 유지합니다."
+        )
+
+    return (
+        f"아직 정기점검일 전이고 금 비중도 정책범위 {lower:.0f}~{upper:.0f}% 안이며 "
+        "포트폴리오 구조도 큰 이상이 없습니다. 현재는 별도 조치 없이 유지합니다."
+    )
+
+
 def evaluate(
     current_date,
     last_rebalance_date,
@@ -196,6 +246,16 @@ def evaluate(
         decision = "HOLD"
         action_level = "NONE"
         reason = "정기 점검 전이며 정책범위와 건강지표 모두 큰 이상이 없습니다."
+
+    situation_message = build_situation_message(
+        calendar_due=calendar_due,
+        gold_below=gold_below,
+        gold_above=gold_above,
+        structural_caution=structural_caution,
+        gold_weight=gold_weight,
+        lower=lower,
+        upper=upper,
+    )
 
     actions = []
 
@@ -258,6 +318,7 @@ def evaluate(
         "Decision": decision,
         "Action_Level": action_level,
         "Reason": reason,
+        "Situation_Message": situation_message,
         "Actions": actions,
     }
 
@@ -332,7 +393,7 @@ def main():
     save(result)
 
     print("="*78)
-    print("STEP 09 - 6-MONTH REBALANCING ENGINE FINAL")
+    print("STEP 09 - 6-MONTH REBALANCING ENGINE v3")
     print("="*78)
     print(f"점검일            : {result['Current_Date']}")
     print(f"마지막 기준일     : {result['Last_Rebalance_Date']}")
@@ -349,6 +410,9 @@ def main():
     print(f"Decision          : {result['Decision']}")
     print(f"Action Level      : {result['Action_Level']}")
     print(f"Reason            : {result['Reason']}")
+    print()
+    print("현재상황")
+    print(f"→ {result['Situation_Message']}")
     print()
     print("권고조치")
     for a in result["Actions"]:

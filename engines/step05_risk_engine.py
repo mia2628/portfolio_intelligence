@@ -86,7 +86,12 @@ def korean_comment(indicator, observed, adjusted):
 
     comments = {
         "VIX":
-            f"VIX가 {direction}해 시장의 불안·변동성 신호가 커지면서 주식 중심의 위험도를 높였습니다.",
+            (
+                f"VIX가 {direction}했고, 현재 조정 위험점수 {adjusted:.2f}점 기준으로 "
+                + ("시장 변동성 위험을 높였습니다." if adjusted > 52
+                   else "시장 변동성 위험을 낮췄습니다." if adjusted < 48
+                   else "시장 변동성 위험에 중립적으로 작용했습니다.")
+            ),
 
         "US_HY_SPREAD":
             f"미국 하이일드 스프레드가 {direction}해 기업 신용위험과 자금조달 부담 변화를 반영하며 {impact}.",

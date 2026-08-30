@@ -362,20 +362,17 @@ def score_target_policy(portfolio):
             else:
                 if lower <= current <= upper:
                     status = "IN_RANGE"
-                    # within range: high score, best near target
-                    distance_to_target = abs(current-target)
-                    half_range = max((upper-lower)/2.0, 0.0001)
-                    score = clamp(100.0 - 20.0*(distance_to_target/half_range), 80.0, 100.0)
+                    score = 100.0
                     comment = "허용범위 안에 있어 정책상 정상입니다."
                 elif current < lower:
                     status = "BELOW_RANGE"
                     gap = lower-current
-                    score = clamp(80.0 - 15.0*gap, 0.0, 79.99)
+                    score = clamp(100.0 * current / max(lower, 1e-12))
                     comment = f"허용하한 {lower:.1f}%보다 {gap:.1f}%p 낮아 신규자금으로 보충이 필요합니다."
                 else:
                     status = "ABOVE_RANGE"
                     gap = current-upper
-                    score = clamp(80.0 - 15.0*gap, 0.0, 79.99)
+                    score = clamp(100.0 * (100.0-current) / max(100.0-upper, 1e-12))
                     comment = f"허용상한 {upper:.1f}%보다 {gap:.1f}%p 높아 추가매수를 억제할 필요가 있습니다."
 
             hard_scores.append(score)
@@ -490,17 +487,37 @@ def main():
         "FX_Exposure":fx_score,
     }
 
+    # REPORT_ONLY means no contribution to Portfolio Health.
+    # Remaining scored component weights are renormalized to sum to 1.
+    effective_weights = dict(weights)
+    if fx_status == "REPORT_ONLY":
+        effective_weights["FX_Exposure"] = 0.0
+
+    scored_weight_sum = sum(
+        effective_weights.get(k, 0.0)
+        for k in components
+    )
+    if scored_weight_sum <= 0:
+        raise ValueError("Portfolio Health 유효 weight 합계가 0입니다.")
+
+    effective_weights = {
+        k: effective_weights.get(k, 0.0) / scored_weight_sum
+        for k in components
+    }
+
     final = sum(
-        components[k]*weights[k]
-        for k in weights
+        components[k] * effective_weights[k]
+        for k in components
     )
 
     component_rows = [
         {
             "Component":k,
             "Score":round(v,2),
-            "Weight":round(weights[k],4),
-            "Weighted_Contribution":round(v*weights[k],4),
+            "Configured_Weight":round(weights.get(k,0.0),4),
+            "Effective_Weight":round(effective_weights[k],4),
+            "Weighted_Contribution":round(v*effective_weights[k],4),
+            "Status":"REPORT_ONLY" if k=="FX_Exposure" and fx_status=="REPORT_ONLY" else "SCORED",
         }
         for k,v in components.items()
     ]
@@ -564,7 +581,9 @@ def main():
     if gold_status:
         comments.append(
             f"금 정책: 현재 {gold_status['Current_Weight']:.1f}% / "
-            f"목표 10% / 허용범위 8~12% → {gold_status['Status']}"
+            f"목표 {gold_status['Target_Pct']}% / "
+            f"허용범위 {gold_status['Lower_Bound_Pct']}~{gold_status['Upper_Bound_Pct']}% "
+            f"→ {gold_status['Status']}"
         )
 
     summary=[{
@@ -580,6 +599,9 @@ def main():
         "Gold_Status":gold_status["Status"] if gold_status else "",
         "Estimated_FX_Exposure_Pct":round(fx_pct,2),
         "FX_Status":fx_status,
+        "FX_Effective_Weight":round(effective_weights.get("FX_Exposure",0.0),4),
+        "Target_Policy_Method":"HARD_RANGE_COMPLIANCE_V2",
+        "Health_Formula":"weighted scored components; REPORT_ONLY components excluded and remaining weights renormalized",
         "Korean_Comment":" / ".join(comments[:3]),
     }]
 
@@ -589,7 +611,7 @@ def main():
         w.writerows(summary)
 
     print("="*78)
-    print("STEP 07 - PORTFOLIO HEALTH ENGINE FINAL")
+    print("STEP 07 - PORTFOLIO HEALTH ENGINE v2 POLICY INTEGRATED")
     print("="*78)
     print(f"Portfolio Health : {final:.2f} / 100  {health_state(final)}")
     print()
@@ -599,7 +621,7 @@ def main():
     print(f"Max Drawdown     : {dd_score:.2f}")
     print(f"Correlation      : {corr_score:.2f}")
     print(f"Target Policy    : {target_policy_score:.2f}")
-    print(f"FX Exposure      : {fx_score:.2f} ({fx_status})")
+    print(f"FX Exposure      : {fx_score:.2f} ({fx_status}, EffectiveWeight={effective_weights.get('FX_Exposure',0.0):.4f})")
     print()
     print("핵심지표")
     print(f"HHI              : {hhi:.4f}")

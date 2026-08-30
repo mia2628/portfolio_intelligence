@@ -20,6 +20,7 @@ STEP05_RISK = STEP05 / "risk_scores.csv"
 
 OPP_CONFIG = CONFIG / "opportunity_config.csv"
 ASSET_CONFIG = CONFIG / "opportunity_asset_config.csv"
+TARGET_POLICY = CONFIG / "portfolio_target_policy.csv"
 
 OUT_SCORES = STEP06 / "opportunity_scores.csv"
 OUT_DETAILS = STEP06 / "opportunity_details.csv"
@@ -355,14 +356,75 @@ def load_portfolio_weights():
     return result
 
 
-def target_gap_score(current, target):
-    if current is None or target is None or target <= 0:
-        return 50.0, None
+def load_target_policy():
+    """Canonical portfolio policy. HARD_RANGE overrides stale Target_Weight fields."""
+    rows = read_csv(TARGET_POLICY)
+    result = {}
+    for r in rows:
+        asset = canonical_asset(r.get("Asset"))
+        if not asset:
+            continue
+        result[asset] = {
+            "Policy_Type": (r.get("Policy_Type") or "").strip().upper(),
+            "Target": num(r.get("Target_Pct")),
+            "Lower": num(r.get("Lower_Bound_Pct")),
+            "Upper": num(r.get("Upper_Bound_Pct")),
+        }
+    return result
 
-    gap = target - current
-    ratio = gap / target
-    score = clamp(50.0 + 40.0 * ratio)
-    return score, gap
+
+def target_policy_score(current, policy_row, fallback_target=None):
+    """
+    Opportunity Target component.
+
+    HARD_RANGE:
+      current < lower:
+        50 + 50*(lower-current)/lower
+      lower <= current <= upper:
+        50
+      current > upper:
+        50 - 50*(current-upper)/(100-upper)
+
+    Meaning:
+    - 50 = no policy-driven new-money tilt.
+    - Below lower -> progressively stronger buy priority.
+    - Above upper -> progressively lower buy priority.
+    - Continuous and bounded in [0,100].
+
+    FLEXIBLE:
+    - neutral 50, because no numeric target is intentionally imposed.
+
+    Fallback:
+    - only for legacy policies without an explicit policy row.
+    """
+    if current is None:
+        return 50.0, None, None, None, None
+
+    if policy_row:
+        ptype = policy_row.get("Policy_Type", "")
+        target = policy_row.get("Target")
+        lower = policy_row.get("Lower")
+        upper = policy_row.get("Upper")
+
+        if ptype == "FLEXIBLE":
+            return 50.0, None, target, lower, upper
+
+        if ptype == "HARD_RANGE" and lower is not None and upper is not None:
+            if current < lower:
+                score = 50.0 + 50.0 * (lower-current) / max(lower, 1e-12)
+            elif current > upper:
+                score = 50.0 - 50.0 * (current-upper) / max(100.0-upper, 1e-12)
+            else:
+                score = 50.0
+            gap_to_target = None if target is None else target-current
+            return clamp(score), gap_to_target, target, lower, upper
+
+    if fallback_target is None or fallback_target <= 0:
+        return 50.0, None, fallback_target, None, None
+
+    gap = fallback_target-current
+    ratio = gap/fallback_target
+    return clamp(50.0+40.0*ratio), gap, fallback_target, None, None
 
 
 def load_risk_scores():
@@ -439,7 +501,7 @@ def similar_episode_scores():
     return result
 
 
-def explain(asset, mscore, risk_raw, hscore, dscore, gap):
+def explain(asset, mscore, risk_raw, hscore, dscore, gap, current=None, lower=None, upper=None):
     kr = {
         "Domestic_Equity": "국내주식",
         "Foreign_Equity": "해외주식",
@@ -449,7 +511,18 @@ def explain(asset, mscore, risk_raw, hscore, dscore, gap):
 
     reasons = []
 
-    if gap is not None:
+    if current is not None and lower is not None and upper is not None:
+        if current < lower:
+            reasons.append(
+                f"현재 {current:.1f}%로 정책 하한 {lower:.1f}%보다 {lower-current:.1f}%p 낮아 신규자금 보충 우선순위가 높습니다"
+            )
+        elif current > upper:
+            reasons.append(
+                f"현재 {current:.1f}%로 정책 상한 {upper:.1f}%보다 {current-upper:.1f}%p 높아 추가매수 우선순위가 낮습니다"
+            )
+        else:
+            reasons.append(f"현재 비중이 정책 허용범위 {lower:.0f}~{upper:.0f}% 안에 있습니다")
+    elif gap is not None:
         if gap > 0:
             reasons.append(f"목표비중보다 {abs(gap):.1f}%p 낮아 보충 요인이 있습니다")
         elif gap < 0:
@@ -474,10 +547,9 @@ def explain(asset, mscore, risk_raw, hscore, dscore, gap):
         reasons.append("현재 위험 부담이 낮아 기회점수에 도움이 됐습니다")
 
     if not reasons:
-        reasons.append("목표비중·거시환경·위험·과거 국면이 전반적으로 중립적입니다")
+        reasons.append("정책·거시환경·위험·과거 국면이 전반적으로 중립적입니다")
 
     return f"{kr}: " + ", ".join(reasons[:2]) + "."
-
 
 def main():
     required = [
@@ -486,6 +558,7 @@ def main():
         STEP05_RISK,
         OPP_CONFIG,
         ASSET_CONFIG,
+        TARGET_POLICY,
         HISTORICAL_DATA,
     ]
 
@@ -502,6 +575,7 @@ def main():
     macro = load_macro_scores_strict()
 
     portfolio = load_portfolio_weights()
+    target_policy = load_target_policy()
     risk = load_risk_scores()
     historical = similar_episode_scores()
     drawdown = compute_drawdown_scores()
@@ -518,9 +592,13 @@ def main():
     for asset in assets:
         p = portfolio.get(asset, {})
         current = p.get("Current_Weight")
-        target = p.get("Target_Weight")
+        fallback_target = p.get("Target_Weight")
 
-        tscore, gap = target_gap_score(current, target)
+        tscore, gap, target, lower, upper = target_policy_score(
+            current,
+            target_policy.get(asset),
+            fallback_target
+        )
         mscore = macro[asset]
         risk_raw = risk.get(asset, 50.0)
         rscore = clamp(100.0 - risk_raw)
@@ -542,13 +620,16 @@ def main():
 
         comment = explain(
             asset, mscore, risk_raw,
-            hscore, dscore, gap
+            hscore, dscore, gap,
+            current=current, lower=lower, upper=upper
         )
 
         details.append({
             "Asset": asset,
             "Current_Weight": "" if current is None else round(current, 4),
             "Target_Weight": "" if target is None else round(target, 4),
+            "Lower_Bound_Pct": "" if lower is None else round(lower, 4),
+            "Upper_Bound_Pct": "" if upper is None else round(upper, 4),
             "Target_Gap": "" if gap is None else round(gap, 4),
             "Target_Gap_Score": round(tscore, 2),
             "Macro_Environment_Score": round(mscore, 2),
@@ -593,6 +674,8 @@ def main():
         "Rank_4": ranking[3]["Asset"],
         "Rank_4_Score": ranking[3]["Opportunity_Score"],
         "Macro_Normalization": "PASS_ALL_STEP3_ACTUAL",
+        "Target_Policy_Method": "HARD_RANGE_CONTINUOUS_V2",
+        "Opportunity_Formula": "0.30*Target+0.25*Macro+0.20*RiskAdj+0.15*History+0.10*Drawdown",
         "Note": "신규자금 상대적 매력도이며 매도 또는 리밸런싱 신호가 아닙니다.",
     }]
 
@@ -603,7 +686,7 @@ def main():
 
     print()
     print("=" * 78)
-    print("STEP 06 - OPPORTUNITY ENGINE v4 MACRO NORMALIZED")
+    print("STEP 06 - OPPORTUNITY ENGINE v5 POLICY INTEGRATED")
     print("=" * 78)
     print("점수 의미 (50 = 중립)")
     print("Target    : 목표비중 대비 부족/초과")

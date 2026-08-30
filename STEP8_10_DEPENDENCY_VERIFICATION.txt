@@ -1,0 +1,23 @@
+STEP8-10 INPUT DEPENDENCY VERIFICATION
+
+STEP8 step08_monthly_allocation_engine.py
+- reads: outputs/step06/opportunity_scores.csv
+- reads: outputs/step07/target_policy_status.csv
+=> STEP6 v5 and STEP7 v2 integrated outputs directly feed STEP8.
+
+STEP9 step09_rebalancing_engine.py
+- reads: outputs/step07/portfolio_health_summary.csv
+- reads: outputs/step07/portfolio_health_components.csv
+- reads: outputs/step07/target_policy_status.csv
+=> STEP7 v2 integrated outputs directly feed STEP9.
+
+STEP10 step10_recommendation_engine.py
+- reads: outputs/step06/opportunity_scores.csv
+- reads: outputs/step07/portfolio_health_summary.csv
+- reads: STEP8 monthly_allocation_summary.csv + monthly_allocation.csv
+- reads: STEP9 rebalancing_decision.csv + rebalancing_actions.csv
+=> STEP10 does NOT read opportunity_summary.csv.
+=> The authoritative STEP6 file for downstream decisions is opportunity_scores.csv.
+
+Conclusion:
+No STEP8/9/10 code change is required for these dependencies.
