@@ -13,7 +13,9 @@ INVESTED_SUMMARY=BASE/"outputs"/"portfolio"/"portfolio_invested_summary.csv"
 OPPORTUNITY=STEP06/"opportunity_scores.csv"
 TARGET_POLICY=STEP07/"target_policy_status.csv"
 
-ASSETS=["Domestic_Equity","Foreign_Equity","Bond","Gold"]
+INVESTABLE_ASSETS=["Domestic_Equity","Foreign_Equity","Bond","Gold"]
+PORTFOLIO_ASSETS=["Domestic_Equity","Foreign_Equity","Bond","Cash","Other","Gold"]
+ASSETS=INVESTABLE_ASSETS  # backward-compatible alias for allocation logic
 
 def read_csv(p):
     with p.open("r",encoding="utf-8-sig",newline="") as f:
@@ -39,7 +41,7 @@ def load_portfolio():
     vals={}; wts={}; total=None
     for r in rows:
         a=r.get("Asset")
-        if a not in ASSETS and a not in ["Cash","Other"]: continue
+        if a not in PORTFOLIO_ASSETS: continue
         v=pick(r,["Invested_Amount_KRW","Current_Value_KRW","Asset_Current_Value","Current_Value","Value_KRW"])
         w=pick(r,["Portfolio_Weight_Pct","Portfolio_Weight","Current_Portfolio_Weight","Current_Weight","Weight_Pct","Weight"])
         if v is not None: vals[a]=v
@@ -187,19 +189,21 @@ def allocate_monthly(
 
     result=[]
     projected_total=total+contribution
-    for a in ASSETS:
+    for a in PORTFOLIO_ASSETS:
         before=vals.get(a,0.0)
-        after=before+alloc[a]
+        allocation=alloc.get(a,0.0)
+        after=before+allocation
         result.append({
             "Asset":a,
-            "Opportunity_Score":round(opp[a],2),
-            "Allocation_Share_Pct":round(shares[a]*100,2),
-            "Allocation_KRW":round(alloc[a]),
+            "Opportunity_Score":round(opp.get(a,50.0),2),
+            "Allocation_Share_Pct":round((shares.get(a,0.0))*100,2),
+            "Allocation_KRW":round(allocation),
             "Policy_First_Gold_KRW":round(policy_gold) if a=="Gold" else 0,
             "Current_Invested_KRW":round(before),
             "Current_Weight_Pct":round(100*before/total,2) if total>0 else 0,
             "Scenario_Invested_KRW":round(after),
-            "Scenario_Weight_Pct":round(100*after/projected_total,2) if projected_total>0 else 0
+            "Scenario_Weight_Pct":round(100*after/projected_total,2) if projected_total>0 else 0,
+            "Allocation_Eligible":"YES" if a in INVESTABLE_ASSETS else "NO"
         })
 
     return {
@@ -244,7 +248,7 @@ def main():
     save_result(result)
 
     print("="*78)
-    print("STEP 08 - MONTHLY ALLOCATION ENGINE v4 SCENARIO ONLY")
+    print("STEP 08 - MONTHLY ALLOCATION ENGINE v5 FULL-PORTFOLIO SCENARIO")
     print("="*78)
     print("현재 포트폴리오 (투자원금 기준)")
     current_total=sum(r["Current_Invested_KRW"] for r in result["Allocations"])

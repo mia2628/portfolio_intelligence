@@ -1,2 +1,2 @@
-﻿Current_Date,Last_Rebalance_Date,Next_Scheduled_Review,Calendar_Due,Threshold_Trigger,Gold_Weight_Pct,Gold_Range,Portfolio_Health,Concentration_Score,Correlation_Score,Decision,Action_Level,Reason,Situation_Message
-2026-08-30,2026-08-30,2027-02-28,False,True,6.42,18~22%,74.02,79.78,76.01,NEW_MONEY_CORRECTION,MEDIUM,Gold가 허용하한 18% 미만이므로 매도 없이 신규자금으로 우선 보충합니다.,"정기점검일 전이지만, 금 비중이 6.42%로 정책 하한 18.00%보다 낮습니다. 다만 전체 포트폴리오 구조는 비교적 양호하므로 매도 리밸런싱은 하지 않고, 신규자금으로 금을 우선 보충합니다."
+﻿Current_Date,Last_Rebalance_Date,Next_Scheduled_Review,Calendar_Due,Threshold_Trigger,Gold_Weight_Pct,Gold_Range,Portfolio_Health,Concentration_Score,Correlation_Score,Decision,Action_Level,Reason
+2026-08-29,2026-08-29,2027-02-28,False,True,6.42,18~22%,67.89,80.03,76.46,NEW_MONEY_CORRECTION,MEDIUM,Gold가 허용하한 18% 미만이므로 매도 없이 신규자금으로 우선 보충합니다.

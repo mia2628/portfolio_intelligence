@@ -36,6 +36,8 @@ def decision(amount,last_review):
     # Preview only: no mutation of actual invested state.
     run([sys.executable,ENG/"step12_portfolio_state_engine.py","--mode","preview","--amount",str(int(amount))],"Portfolio Scenario Preview")
     run([sys.executable,ENG/"step09_rebalancing_engine.py"],"STEP09",f"{today}\n{last_review}\n")
+    check=ENG/"step12_step8_step9_consistency_check.py"; req(check)
+    run([sys.executable,check],"STEP8/STEP9 Consistency Check")
     run([sys.executable,ENG/"step10_recommendation_engine.py"],"STEP10")
 
 def main():

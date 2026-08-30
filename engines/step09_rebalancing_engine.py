@@ -11,6 +11,7 @@ STEP09 = BASE / "outputs" / "step09"
 STEP09.mkdir(parents=True, exist_ok=True)
 
 PORTFOLIO_SUMMARY = BASE / "portfolio_summary.csv"
+INVESTED_SUMMARY = BASE / "outputs" / "portfolio" / "portfolio_invested_summary.csv"
 HEALTH_SUMMARY = STEP07 / "portfolio_health_summary.csv"
 HEALTH_COMPONENTS = STEP07 / "portfolio_health_components.csv"
 TARGET_POLICY_STATUS = STEP07 / "target_policy_status.csv"
@@ -91,22 +92,41 @@ def parse_date(s):
 
 
 def load_gold_weight():
-    rows = read_csv(PORTFOLIO_SUMMARY)
-    for r in rows:
-        if canonical_asset(r.get("Asset")) == "Gold":
-            for c in [
-                "Portfolio_Weight_Pct",
-                "Portfolio_Weight",
-                "Current_Portfolio_Weight",
-                "Current_Weight",
-                "Weight_Pct",
-                "Weight",
-            ]:
-                if c in r:
-                    v = num(r.get(c))
-                    if v is not None:
-                        return v
-    raise ValueError("portfolio_summary.csv에서 Gold 현재비중을 찾지 못했습니다.")
+    """
+    Current Gold weight source priority:
+    1) outputs/portfolio/portfolio_invested_summary.csv
+       - canonical actual portfolio state
+       - invested-principal basis
+    2) legacy portfolio_summary.csv only as fallback
+    """
+    sources = [
+        ("INVESTED_PRINCIPAL", INVESTED_SUMMARY),
+        ("LEGACY_FALLBACK", PORTFOLIO_SUMMARY),
+    ]
+
+    for source_name, path in sources:
+        if not path.exists():
+            continue
+        rows = read_csv(path)
+        for r in rows:
+            if canonical_asset(r.get("Asset")) == "Gold":
+                for c in [
+                    "Portfolio_Weight_Pct",
+                    "Portfolio_Weight",
+                    "Current_Portfolio_Weight",
+                    "Current_Weight",
+                    "Weight_Pct",
+                    "Weight",
+                ]:
+                    if c in r:
+                        v = num(r.get(c))
+                        if v is not None:
+                            return v, source_name
+
+    raise ValueError(
+        "portfolio_invested_summary.csv 및 legacy portfolio_summary.csv에서 "
+        "Gold 현재비중을 찾지 못했습니다."
+    )
 
 
 def load_health():
@@ -311,6 +331,7 @@ def evaluate(
         "Calendar_Due": calendar_due,
         "Threshold_Trigger": threshold_trigger,
         "Gold_Weight_Pct": round(gold_weight,2),
+        "Gold_Weight_Source": gold_weight_source,
         "Gold_Range": f"{lower:.0f}~{upper:.0f}%",
         "Portfolio_Health": round(health["Portfolio_Health"],2),
         "Concentration_Score": round(health["Concentration"],2),
@@ -377,7 +398,7 @@ def main():
         last_rebalance = parse_date(text)
 
     policy = load_policy()
-    gold_weight = load_gold_weight()
+    gold_weight, gold_weight_source = load_gold_weight()
     health = load_health()
     gold_policy = load_gold_policy_status()
 
@@ -393,7 +414,7 @@ def main():
     save(result)
 
     print("="*78)
-    print("STEP 09 - 6-MONTH REBALANCING ENGINE v3")
+    print("STEP 09 - 6-MONTH REBALANCING ENGINE v4 INVESTED-STATE")
     print("="*78)
     print(f"점검일            : {result['Current_Date']}")
     print(f"마지막 기준일     : {result['Last_Rebalance_Date']}")
@@ -402,6 +423,7 @@ def main():
     print(f"Threshold Trigger : {result['Threshold_Trigger']}")
     print()
     print(f"Gold 비중         : {result['Gold_Weight_Pct']:.2f}%")
+    print(f"Gold 비중 기준    : {result.get('Gold_Weight_Source','UNKNOWN')}")
     print(f"Gold 정책범위     : {result['Gold_Range']}")
     print(f"Portfolio Health  : {result['Portfolio_Health']:.2f}")
     print(f"Concentration     : {result['Concentration_Score']:.2f}")
