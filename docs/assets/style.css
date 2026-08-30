@@ -118,3 +118,25 @@ footer{display:flex;justify-content:center;gap:7px;margin-top:20px;color:#53677f
 .trend-risk{stroke:var(--red)}.trend-health{stroke:var(--green)}.trend-opp{stroke:var(--yellow)}
 .trend-empty{position:absolute;inset:0;display:grid;place-items:center;color:#647792;font-size:11px;text-align:center;padding:20px}
 .trend-insight{margin-top:9px;color:#91a4ba;font-size:10.5px;line-height:1.5}
+
+.alert-center{background:linear-gradient(155deg,#151d2a,#101827)}
+.alert-count{min-width:28px;height:28px;display:grid;place-items:center;border-radius:999px;background:#2b1d1d;border:1px solid #543131;color:#ff9a9a;font-size:11px;font-weight:900}
+.alert-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.alert-item{border-radius:14px;padding:11px 12px;background:#121d2d;border:1px solid #26344a}
+.alert-item.medium{border-left:3px solid var(--yellow)}
+.alert-item.high{border-left:3px solid var(--red)}
+.alert-item-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:800}
+.alert-severity{font-size:8px;letter-spacing:.08em;border-radius:999px;padding:4px 6px;background:#2b2515;color:#f6d978}
+.alert-item.high .alert-severity{background:#321c1f;color:#ff9ca4}
+.alert-message{font-size:10.5px;color:#8fa2b9;line-height:1.5;margin-top:5px}
+.alert-empty{margin-top:10px;padding:10px 0;color:#667a94;font-size:11px}
+
+.ops-card{background:linear-gradient(150deg,#102137,#101827)}
+.ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.ops-btn{text-decoration:none;color:var(--text);border:1px solid #293a52;background:#111d2d;border-radius:15px;padding:13px;display:flex;flex-direction:column;gap:5px;min-height:82px}
+.ops-btn.primary{background:linear-gradient(145deg,#17355a,#11233a);border-color:#315b87}
+.ops-title{font-size:12px;font-weight:800}
+.ops-desc{font-size:9.5px;line-height:1.45;color:#8095ae}
+.ops-note{margin-top:10px;font-size:9.5px;line-height:1.5;color:#657b96}
+.freshness{color:#6f86a2;font-size:9px;margin-top:2px}
+@media(max-width:390px){.ops-grid{grid-template-columns:1fr}}

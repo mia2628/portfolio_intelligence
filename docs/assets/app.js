@@ -10,12 +10,14 @@ function niceAsset(a){
 }
 
 async function boot(){
-  const [res,tres]=await Promise.all([
+  const [res,tres,ares]=await Promise.all([
     fetch("./data/dashboard.json?ts="+Date.now()),
-    fetch("./data/trend.json?ts="+Date.now()).catch(()=>null)
+    fetch("./data/trend.json?ts="+Date.now()).catch(()=>null),
+    fetch("./data/alerts.json?ts="+Date.now()).catch(()=>null)
   ]);
   const d=await res.json();
   const trend=tres ? await tres.json().catch(()=>({points:[]})) : {points:[]};
+  const alerts=ares ? await ares.json().catch(()=>({active:[],count:0})) : {active:[],count:0};
 
   $("updated").textContent="업데이트 "+new Date(d.meta.generated_at).toLocaleString("ko-KR");
   $("privacyText").textContent=d.meta.privacy_amounts?"금액 표시":"금액 비공개";
@@ -44,6 +46,7 @@ async function boot(){
   renderScenario(d.allocation||{});
   renderWhy(d);
   renderTrend(trend);
+  renderAlerts(alerts);
 }
 
 function renderPortfolio(items){
@@ -141,6 +144,30 @@ function renderWhy(d){
       <div><b>${x.name}</b><small>${x.status||""}</small></div>
       <div class="asset-value">${score(x.score)}</div>`;
     hc.appendChild(row);
+  });
+}
+
+function renderAlerts(a){
+  const list=$("alertList"), empty=$("alertEmpty"), count=$("alertCount");
+  const items=a?.active||[];
+  count.textContent=String(items.length);
+  list.innerHTML="";
+  if(!items.length){
+    empty.style.display="block";
+    return;
+  }
+  empty.style.display="none";
+  items.forEach(x=>{
+    const row=document.createElement("div");
+    const sev=(x.severity||"MEDIUM").toLowerCase();
+    row.className=`alert-item ${sev}`;
+    row.innerHTML=`
+      <div class="alert-item-title">
+        <span>${x.title||"정책 경보"}</span>
+        <span class="alert-severity">${x.severity||"MEDIUM"}</span>
+      </div>
+      <div class="alert-message">${x.message||""}</div>`;
+    list.appendChild(row);
   });
 }
 
