@@ -206,3 +206,13 @@ footer{display:flex;justify-content:center;gap:7px;margin-top:20px;color:#53677f
 .input-btn{border:1px solid #2a3a50;background:#111c2c;color:#a9b8ca;border-radius:12px;height:40px;font-size:11px;font-weight:800}
 .input-btn.primary{background:#17365b;border-color:#315e8e;color:#e0efff}
 .input-saved{margin-top:10px;border-radius:10px;padding:8px 10px;background:#10281e;border:1px solid #25543e;color:#78d9a5;font-size:10px}
+
+/* v8 authenticated action bridge */
+.actual-confirm{margin-top:9px;padding:10px;border-radius:13px;background:#17141a;border:1px solid #3b2931}
+.confirm-check{display:flex;align-items:center;gap:8px;font-size:10px;color:#c4aeb8;margin-bottom:9px}
+.confirm-check input{width:16px;height:16px;accent-color:#d86772}
+.input-btn.danger{width:100%;background:#431e25;border-color:#74323d;color:#ffc8ce}
+.input-btn.danger:disabled{opacity:.35;cursor:not-allowed}
+.input-btn.full{width:100%;margin-top:8px}
+.bridge-notice{margin-top:9px;padding:9px 10px;border-radius:10px;background:#10251e;border:1px solid #25503d;color:#7bd5a5;font-size:10px;line-height:1.45}
+.bridge-notice.error{background:#29191b;border-color:#573036;color:#ff9da5}

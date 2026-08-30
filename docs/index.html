@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>포트폴리오 정책 자동화</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./assets/style.css?v=7">
+  <link rel="stylesheet" href="./assets/style.css?v=8">
 </head>
 <body>
 <main class="app">
@@ -125,14 +125,25 @@
     </div>
 
     <div class="input-actions">
-      <button id="saveInputDraft" class="input-btn primary">입력값 저장</button>
-      <button id="clearInputDraft" class="input-btn">초기화</button>
+      <button id="saveInputDraft" class="input-btn">입력값 저장</button>
+      <button id="runScenarioBtn" class="input-btn primary">가상 시나리오 실행</button>
     </div>
 
+    <div class="actual-confirm">
+      <label class="confirm-check">
+        <input id="actualConfirmCheck" type="checkbox">
+        <span>실제 투자금 반영임을 확인함.</span>
+      </label>
+      <button id="runActualBtn" class="input-btn danger" disabled>실제 투자금 반영</button>
+    </div>
+
+    <button id="clearInputDraft" class="input-btn full">입력값 초기화</button>
+
     <div id="inputSavedNotice" class="input-saved hidden">이 휴대폰에 입력값 저장됨.</div>
+    <div id="bridgeNotice" class="bridge-notice hidden"></div>
     <div class="ops-note">
-      현재 입력값은 이 휴대폰에만 저장되며 분석엔진이나 실제 포트폴리오에는 반영되지 않음.
-      다음 단계에서 GitHub Actions 실행과 연결할 예정임.
+      실행 버튼을 누르면 GitHub 명령 작성 화면으로 이동함. GitHub에 로그인된 저장소 소유자가 명령을 제출해야 분석이 실행됨.
+      실제 투자금 반영은 확인 체크 후에만 가능함.
     </div>
   </section>
 
@@ -227,7 +238,7 @@
   </footer>
 
 </main>
-<script src="./assets/app.js?v=7"></script>
+<script src="./assets/app.js?v=8"></script>
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});

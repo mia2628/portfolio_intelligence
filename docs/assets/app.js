@@ -330,6 +330,85 @@ if(amountToggle){
 }
 
 
+
+const GITHUB_REPO="mia2628/portfolio_intelligence";
+const COMMAND_ISSUE_URL=`https://github.com/${GITHUB_REPO}/issues/new`;
+
+function validAmount(v){
+  const n=Number(cleanNumericInput(v));
+  return Number.isSafeInteger(n) && n>0 && n<=1000000000 ? n : null;
+}
+
+function todayYYYYMMDD(){
+  const d=new Date();
+  const p=n=>String(n).padStart(2,"0");
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}`;
+}
+
+function showBridgeNotice(text,isError=false){
+  const el=$("bridgeNotice");
+  if(!el)return;
+  el.textContent=text;
+  el.classList.remove("hidden","error");
+  if(isError)el.classList.add("error");
+}
+
+function buildIssueUrl(kind, amount){
+  const nonce=`${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+  let title, body;
+  if(kind==="scenario"){
+    title="[PORTFOLIO_COMMAND] SCENARIO";
+    body=[
+      "PORTFOLIO_COMMAND_V1",
+      "TYPE=SCENARIO",
+      `AMOUNT=${amount}`,
+      `LAST_REVIEW_DATE=${todayYYYYMMDD()}`,
+      `NONCE=${nonce}`,
+      "CONFIRM=SCENARIO"
+    ].join("\\n");
+  }else{
+    title="[PORTFOLIO_COMMAND] ACTUAL";
+    body=[
+      "PORTFOLIO_COMMAND_V1",
+      "TYPE=ACTUAL",
+      `AMOUNT=${amount}`,
+      `NONCE=${nonce}`,
+      "CONFIRM=CONFIRM_ACTUAL"
+    ].join("\\n");
+  }
+  const u=new URL(COMMAND_ISSUE_URL);
+  u.searchParams.set("title",title);
+  u.searchParams.set("body",body);
+  return u.toString();
+}
+
+function runScenarioCommand(){
+  const amount=validAmount($("scenarioAmountInput")?.value);
+  if(!amount){
+    showBridgeNotice("가상 시나리오 금액을 1원 이상 숫자로 입력해야 함.",true);
+    return;
+  }
+  saveInputDraft();
+  showBridgeNotice("GitHub 명령 작성 화면으로 이동함. 내용 확인 후 Issue를 제출해야 실행됨.");
+  window.open(buildIssueUrl("scenario",amount),"_blank","noopener");
+}
+
+function runActualCommand(){
+  const amount=validAmount($("actualAmountInput")?.value);
+  const checked=$("actualConfirmCheck")?.checked;
+  if(!amount){
+    showBridgeNotice("실제 반영 금액을 1원 이상 숫자로 입력해야 함.",true);
+    return;
+  }
+  if(!checked){
+    showBridgeNotice("실제 투자금 반영 확인 체크가 필요함.",true);
+    return;
+  }
+  saveInputDraft();
+  showBridgeNotice("실제 반영 명령 작성 화면으로 이동함. 금액을 다시 확인한 후 Issue를 제출해야 함.");
+  window.open(buildIssueUrl("actual",amount),"_blank","noopener");
+}
+
 ["scenarioAmountInput","actualAmountInput"].forEach(id=>{
   const el=$(id);
   if(el){
@@ -339,6 +418,15 @@ if(amountToggle){
     });
   }
 });
+
+if($("runScenarioBtn")) $("runScenarioBtn").addEventListener("click",runScenarioCommand);
+if($("runActualBtn")) $("runActualBtn").addEventListener("click",runActualCommand);
+if($("actualConfirmCheck")){
+  $("actualConfirmCheck").addEventListener("change",()=>{
+    $("runActualBtn").disabled=!$("actualConfirmCheck").checked;
+  });
+}
+
 if($("saveInputDraft")) $("saveInputDraft").addEventListener("click",saveInputDraft);
 if($("clearInputDraft")) $("clearInputDraft").addEventListener("click",clearInputDraft);
 syncInputDraftUI();
