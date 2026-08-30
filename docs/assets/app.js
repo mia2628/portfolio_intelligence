@@ -1,4 +1,41 @@
 
+const INPUT_DRAFT_KEY="portfolio_input_draft_v1";
+
+function cleanNumericInput(v){
+  return String(v||"").replace(/[^0-9]/g,"");
+}
+function formatInputKRW(v){
+  const n=Number(cleanNumericInput(v));
+  return n>0 ? new Intl.NumberFormat("ko-KR").format(n)+"원" : "입력값 없음.";
+}
+function loadInputDraft(){
+  try{return JSON.parse(localStorage.getItem(INPUT_DRAFT_KEY)||"{}");}
+  catch{return {};}
+}
+function syncInputDraftUI(){
+  const d=loadInputDraft();
+  const s=$("scenarioAmountInput"), a=$("actualAmountInput");
+  if(s && !s.value) s.value=d.scenario_amount||"";
+  if(a && !a.value) a.value=d.actual_amount||"";
+  if($("scenarioAmountPreview")) $("scenarioAmountPreview").textContent=formatInputKRW(s?.value);
+  if($("actualAmountPreview")) $("actualAmountPreview").textContent=formatInputKRW(a?.value);
+}
+function saveInputDraft(){
+  const s=cleanNumericInput($("scenarioAmountInput")?.value);
+  const a=cleanNumericInput($("actualAmountInput")?.value);
+  localStorage.setItem(INPUT_DRAFT_KEY,JSON.stringify({scenario_amount:s,actual_amount:a,saved_at:new Date().toISOString()}));
+  syncInputDraftUI();
+  const n=$("inputSavedNotice");
+  if(n){n.classList.remove("hidden");setTimeout(()=>n.classList.add("hidden"),1800);}
+}
+function clearInputDraft(){
+  localStorage.removeItem(INPUT_DRAFT_KEY);
+  if($("scenarioAmountInput")) $("scenarioAmountInput").value="";
+  if($("actualAmountInput")) $("actualAmountInput").value="";
+  syncInputDraftUI();
+}
+
+
 const APP_TITLE="포트폴리오 정책 자동화";
 const AMOUNT_VISIBILITY_KEY="portfolio_amount_visibility_v1";
 let amountVisible = localStorage.getItem(AMOUNT_VISIBILITY_KEY)==="visible";
@@ -291,6 +328,20 @@ if(amountToggle){
     }
   });
 }
+
+
+["scenarioAmountInput","actualAmountInput"].forEach(id=>{
+  const el=$(id);
+  if(el){
+    el.addEventListener("input",()=>{
+      el.value=cleanNumericInput(el.value);
+      syncInputDraftUI();
+    });
+  }
+});
+if($("saveInputDraft")) $("saveInputDraft").addEventListener("click",saveInputDraft);
+if($("clearInputDraft")) $("clearInputDraft").addEventListener("click",clearInputDraft);
+syncInputDraftUI();
 
 boot().catch(err=>{
   $("updated").textContent="데이터 로딩 실패";

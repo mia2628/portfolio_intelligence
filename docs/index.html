@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>포트폴리오 정책 자동화</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./assets/style.css?v=6">
+  <link rel="stylesheet" href="./assets/style.css?v=7">
 </head>
 <body>
 <main class="app">
@@ -74,8 +74,7 @@
   <section class="decision-card">
     <div class="decision-top">
       <div>
-        <span class="section-kicker">TODAY'S ACTION</span>
-        <h2 class="decision-title">지금 무엇을 할까?</h2>
+        <span class="section-kicker today-action-only">TODAY'S ACTION</span>
       </div>
       <span id="actionBadge" class="action-badge">--</span>
     </div>
@@ -101,28 +100,40 @@
   <section class="card ops-card">
     <div class="section-title">
       <div>
-        <span class="section-kicker">MODEL ACTION</span>
-        <h2>입력 기능</h2>
+        <span class="section-kicker">MODEL INPUT</span>
+        <h2>입력 준비</h2>
       </div>
-      <span class="basis">준비 중</span>
+      <span class="basis">LOCAL ONLY</span>
     </div>
-    <div class="ops-grid">
-      <div class="ops-btn disabled">
-        <div class="ops-row">
-          <span class="ops-title">미래 투자 시나리오</span>
-          <span class="coming">준비 중</span>
-        </div>
-        <span class="ops-desc">신규자금 INPUT을 넣어 STEP8~10 결과를 모바일에서 확인하는 기능 개발 예정임.</span>
+
+    <div class="input-block">
+      <label for="scenarioAmountInput">가상 시나리오 신규자금</label>
+      <div class="input-row">
+        <input id="scenarioAmountInput" inputmode="numeric" pattern="[0-9]*" placeholder="예: 1000000">
+        <span>원</span>
       </div>
-      <div class="ops-btn disabled">
-        <div class="ops-row">
-          <span class="ops-title">실제 투자금 반영</span>
-          <span class="coming">준비 중</span>
-        </div>
-        <span class="ops-desc">실제 투자 완료 금액을 입력해 투자원금 상태를 최신화하는 기능 개발 예정임.</span>
-      </div>
+      <div id="scenarioAmountPreview" class="input-preview">입력값 없음.</div>
     </div>
-    <div class="ops-note">현재 모바일 화면에서는 조회만 가능함. 입력·실제 반영은 아직 완성 전임.</div>
+
+    <div class="input-block">
+      <label for="actualAmountInput">실제 투자금 반영 예정액</label>
+      <div class="input-row">
+        <input id="actualAmountInput" inputmode="numeric" pattern="[0-9]*" placeholder="예: 500000">
+        <span>원</span>
+      </div>
+      <div id="actualAmountPreview" class="input-preview">입력값 없음.</div>
+    </div>
+
+    <div class="input-actions">
+      <button id="saveInputDraft" class="input-btn primary">입력값 저장</button>
+      <button id="clearInputDraft" class="input-btn">초기화</button>
+    </div>
+
+    <div id="inputSavedNotice" class="input-saved hidden">이 휴대폰에 입력값 저장됨.</div>
+    <div class="ops-note">
+      현재 입력값은 이 휴대폰에만 저장되며 분석엔진이나 실제 포트폴리오에는 반영되지 않음.
+      다음 단계에서 GitHub Actions 실행과 연결할 예정임.
+    </div>
   </section>
 
 
@@ -216,7 +227,7 @@
   </footer>
 
 </main>
-<script src="./assets/app.js?v=6"></script>
+<script src="./assets/app.js?v=7"></script>
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});

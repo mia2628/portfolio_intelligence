@@ -1,4 +1,4 @@
-const CACHE="portfolio-intelligence-v6";
+const CACHE="portfolio-intelligence-v7";
 const STATIC=["./assets/style.css?v=6","./assets/app.js?v=6","./manifest.webmanifest"];
 
 self.addEventListener("install",event=>{
