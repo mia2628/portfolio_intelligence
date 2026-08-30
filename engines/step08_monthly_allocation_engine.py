@@ -9,6 +9,7 @@ STEP08=BASE/"outputs"/"step08"
 STEP08.mkdir(parents=True,exist_ok=True)
 
 PORTFOLIO_SUMMARY=BASE/"portfolio_summary.csv"
+INVESTED_SUMMARY=BASE/"outputs"/"portfolio"/"portfolio_invested_summary.csv"
 OPPORTUNITY=STEP06/"opportunity_scores.csv"
 TARGET_POLICY=STEP07/"target_policy_status.csv"
 
@@ -33,17 +34,18 @@ def pick(row,names):
     return None
 
 def load_portfolio():
-    rows=read_csv(PORTFOLIO_SUMMARY)
+    source=INVESTED_SUMMARY if INVESTED_SUMMARY.exists() else PORTFOLIO_SUMMARY
+    rows=read_csv(source)
     vals={}; wts={}; total=None
     for r in rows:
         a=r.get("Asset")
         if a not in ASSETS and a not in ["Cash","Other"]: continue
-        v=pick(r,["Current_Value_KRW","Asset_Current_Value","Current_Value","Value_KRW"])
+        v=pick(r,["Invested_Amount_KRW","Current_Value_KRW","Asset_Current_Value","Current_Value","Value_KRW"])
         w=pick(r,["Portfolio_Weight_Pct","Portfolio_Weight","Current_Portfolio_Weight","Current_Weight","Weight_Pct","Weight"])
         if v is not None: vals[a]=v
         if w is not None: wts[a]=w
         if total is None:
-            total=pick(r,["Total_Current_Value","Portfolio_Total_Current_Value","Total_Portfolio_Value"])
+            total=pick(r,["Total_Invested_Amount_KRW","Total_Current_Value","Portfolio_Total_Current_Value","Total_Portfolio_Value"])
     if total is None and vals: total=sum(vals.values())
     if total is None:
         raise ValueError("portfolio_summary.csv에서 전체 현재가치를 읽지 못했습니다.")
@@ -184,13 +186,20 @@ def allocate_monthly(
     shares={a:alloc[a]/contribution for a in ASSETS}
 
     result=[]
+    projected_total=total+contribution
     for a in ASSETS:
+        before=vals.get(a,0.0)
+        after=before+alloc[a]
         result.append({
             "Asset":a,
             "Opportunity_Score":round(opp[a],2),
             "Allocation_Share_Pct":round(shares[a]*100,2),
             "Allocation_KRW":round(alloc[a]),
-            "Policy_First_Gold_KRW":round(policy_gold) if a=="Gold" else 0
+            "Policy_First_Gold_KRW":round(policy_gold) if a=="Gold" else 0,
+            "Current_Invested_KRW":round(before),
+            "Current_Weight_Pct":round(100*before/total,2) if total>0 else 0,
+            "Scenario_Invested_KRW":round(after),
+            "Scenario_Weight_Pct":round(100*after/projected_total,2) if projected_total>0 else 0
         })
 
     return {
@@ -235,8 +244,14 @@ def main():
     save_result(result)
 
     print("="*78)
-    print("STEP 08 - MONTHLY ALLOCATION ENGINE v3 GOLD 20%")
+    print("STEP 08 - MONTHLY ALLOCATION ENGINE v4 SCENARIO ONLY")
     print("="*78)
+    print("현재 포트폴리오 (투자원금 기준)")
+    current_total=sum(r["Current_Invested_KRW"] for r in result["Allocations"])
+    for r in sorted(result["Allocations"],key=lambda x:x["Current_Weight_Pct"],reverse=True):
+        print(f"{r['Asset']:<18} {r['Current_Invested_KRW']:>12,.0f}원  {r['Current_Weight_Pct']:>6.2f}%")
+    print(f"{'TOTAL':<18} {current_total:>12,.0f}원  100.00%")
+    print("-"*78)
     print(f"이번 달 투자금 : {result['Monthly_Contribution_KRW']:,.0f}원")
     print(f"현재 Gold     : {result['Current_Gold_Weight_Pct']:.2f}%")
     print(
@@ -253,6 +268,12 @@ def main():
             f"{r['Allocation_KRW']:>12,.0f}원  "
             f"(Opportunity {r['Opportunity_Score']:.2f})"
         )
+
+    print()
+    print("시나리오 적용 후 예상 포트폴리오 (저장되지 않음)")
+    for r in sorted(result["Allocations"],key=lambda x:x["Scenario_Weight_Pct"],reverse=True):
+        print(f"{r['Asset']:<18} {r['Scenario_Invested_KRW']:>12,.0f}원  {r['Scenario_Weight_Pct']:>6.2f}%")
+    print("※ 위 시나리오는 미래 영향 확인용이며 실제 포트폴리오 원금은 변경하지 않습니다.")
 
 if __name__=="__main__":
     main()

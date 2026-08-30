@@ -16,6 +16,8 @@ def req(p):
     if not p.exists():raise SystemExit(f"[STOP] missing: {p}")
 
 def core():
+    state=ENG/"step12_portfolio_state_engine.py"; req(state)
+    run([sys.executable,state,"--mode","show"],"Portfolio Invested State")
     for label,name in [
         ("STEP05 Risk","step05_risk_engine.py"),
         ("STEP06 Opportunity","step06_opportunity_engine.py"),
@@ -31,6 +33,8 @@ def decision(amount,last_review):
     for name in ["step08_monthly_allocation_engine.py","step09_rebalancing_engine.py","step10_recommendation_engine.py"]:
         req(ENG/name)
     run([sys.executable,ENG/"step08_monthly_allocation_engine.py","--amount",str(int(amount))],"STEP08")
+    # Preview only: no mutation of actual invested state.
+    run([sys.executable,ENG/"step12_portfolio_state_engine.py","--mode","preview","--amount",str(int(amount))],"Portfolio Scenario Preview")
     run([sys.executable,ENG/"step09_rebalancing_engine.py"],"STEP09",f"{today}\n{last_review}\n")
     run([sys.executable,ENG/"step10_recommendation_engine.py"],"STEP10")
 

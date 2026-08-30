@@ -1,0 +1,20 @@
+STEP12 INPUT v2 변경사항
+
+Portfolio Monthly Decision
+- 기존 입력명 monthly_amount -> scenario_amount
+- scenario_amount는 REQUIRED
+- default 없음
+- 하드코딩된 1,000,000원 없음
+- 입력값은 미래 시나리오 계산에만 사용
+- data/portfolio_invested_state.csv는 변경하지 않음
+
+Portfolio Actual Contribution Update
+- actual_amount는 실제 투자 완료 금액
+- 이 workflow에서만 실제 투자원금 상태를 변경
+
+예시
+시나리오만 보고 싶을 때:
+scenario_amount = 사용자가 원하는 임의 금액
+
+실제 투자 후 반영할 때:
+actual_amount = 실제 투자 완료 금액

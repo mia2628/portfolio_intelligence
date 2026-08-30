@@ -11,6 +11,7 @@ STEP07 = BASE / "outputs" / "step07"
 STEP07.mkdir(parents=True, exist_ok=True)
 
 PORTFOLIO_SUMMARY = BASE / "portfolio_summary.csv"
+INVESTED_SUMMARY = BASE / "outputs" / "portfolio" / "portfolio_invested_summary.csv"
 PORTFOLIO_FILE = BASE / "portfolio.csv"
 HISTORICAL_DATA = HIST / "historical_data.csv"
 
@@ -87,6 +88,18 @@ def pick_num(row, names):
 
 def load_portfolio():
     result = {}
+
+    # Prefer actual invested-principal state. Evaluation amounts are snapshots only.
+    if INVESTED_SUMMARY.exists():
+        rows = read_csv(INVESTED_SUMMARY)
+        for r in rows:
+            asset = canonical_asset(r.get("Asset"))
+            if not asset:
+                continue
+            current = pick_num(r, ["Portfolio_Weight_Pct","Portfolio_Weight"])
+            result[asset] = {"Current_Weight":current}
+        if result:
+            return result
 
     if PORTFOLIO_SUMMARY.exists():
         rows = read_csv(PORTFOLIO_SUMMARY)

@@ -2,6 +2,7 @@ from pathlib import Path
 import csv
 
 BASE = Path(__file__).resolve().parents[1]
+PORTFOLIO_INVESTED = BASE / "outputs" / "portfolio" / "portfolio_invested_summary.csv"
 STEP05 = BASE / "outputs" / "step05"
 STEP06 = BASE / "outputs" / "step06"
 STEP07 = BASE / "outputs" / "step07"
@@ -262,6 +263,17 @@ def main():
     print("STEP 10 - RECOMMENDATION / EXPLAINABILITY ENGINE")
     print("="*78)
     print()
+    if PORTFOLIO_INVESTED.exists():
+        pr=read_csv(PORTFOLIO_INVESTED)
+        print("[현재 포트폴리오 - 투자원금 기준]")
+        for r in sorted(pr,key=lambda x:float(x.get("Portfolio_Weight_Pct",0)),reverse=True):
+            print(
+                f"→ {r.get('Asset_KR',r.get('Asset'))}: "
+                f"{float(r.get('Invested_Amount_KRW',0)):,.0f}원 "
+                f"({float(r.get('Portfolio_Weight_Pct',0)):.2f}%)"
+            )
+        print()
+
     print("[현재 시장]")
     print("→", msg_risk)
     print()
