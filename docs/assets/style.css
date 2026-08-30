@@ -104,3 +104,17 @@ footer{display:flex;justify-content:center;gap:7px;margin-top:20px;color:#53677f
   .portfolio-grid{grid-template-columns:1fr}
   .donut-wrap{display:flex;justify-content:center}
 }
+
+.update-line{margin-top:3px;color:#5e718b}
+.trend-card{overflow:hidden}
+.trend-legend{display:flex;gap:14px;margin:13px 0 7px;color:#8fa0b5;font-size:10px}
+.trend-legend span{display:flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.risk-dot{background:var(--red)}.health-dot{background:var(--green)}.opp-dot{background:var(--yellow)}
+.chart-shell{height:165px;position:relative;border-radius:14px;background:linear-gradient(180deg,#0f1929,#0c1421);border:1px solid #1c2940;padding:8px;overflow:hidden}
+#trendChart{width:100%;height:100%;display:block}
+.trend-grid{stroke:#26344b;stroke-width:1;opacity:.6}
+.trend-line{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.trend-risk{stroke:var(--red)}.trend-health{stroke:var(--green)}.trend-opp{stroke:var(--yellow)}
+.trend-empty{position:absolute;inset:0;display:grid;place-items:center;color:#647792;font-size:11px;text-align:center;padding:20px}
+.trend-insight{margin-top:9px;color:#91a4ba;font-size:10.5px;line-height:1.5}

@@ -10,8 +10,12 @@ function niceAsset(a){
 }
 
 async function boot(){
-  const res=await fetch("./data/dashboard.json?ts="+Date.now());
+  const [res,tres]=await Promise.all([
+    fetch("./data/dashboard.json?ts="+Date.now()),
+    fetch("./data/trend.json?ts="+Date.now()).catch(()=>null)
+  ]);
   const d=await res.json();
+  const trend=tres ? await tres.json().catch(()=>({points:[]})) : {points:[]};
 
   $("updated").textContent="업데이트 "+new Date(d.meta.generated_at).toLocaleString("ko-KR");
   $("privacyText").textContent=d.meta.privacy_amounts?"금액 표시":"금액 비공개";
@@ -39,6 +43,7 @@ async function boot(){
   renderPortfolio(d.portfolio?.items||[]);
   renderScenario(d.allocation||{});
   renderWhy(d);
+  renderTrend(trend);
 }
 
 function renderPortfolio(items){
@@ -137,6 +142,34 @@ function renderWhy(d){
       <div class="asset-value">${score(x.score)}</div>`;
     hc.appendChild(row);
   });
+}
+
+function renderTrend(t){
+  const pts=(t?.points||[]).filter(x=>x.date);
+  const svg=$("trendChart"), empty=$("trendEmpty"), insight=$("trendInsight");
+  if(pts.length<2){
+    svg.innerHTML="";
+    empty.style.display="grid";
+    insight.textContent=pts.length===1?"첫 기준점이 저장되었습니다. 다음 일자부터 변화 방향을 확인할 수 있습니다.":"";
+    return;
+  }
+  empty.style.display="none";
+  const W=640,H=210,padX=14,padY=14;
+  const y=v=>padY+(100-Math.max(0,Math.min(100,Number(v))))*(H-padY*2)/100;
+  const x=i=>padX+i*(W-padX*2)/(pts.length-1);
+  let markup="";
+  [25,50,75].forEach(v=>markup+=`<line class="trend-grid" x1="${padX}" y1="${y(v)}" x2="${W-padX}" y2="${y(v)}"/>`);
+  [["risk","trend-risk"],["health","trend-health"],["opportunity_score","trend-opp"]].forEach(([key,cls])=>{
+    const valid=pts.map((p,i)=>({v:p[key],i})).filter(o=>o.v!=null);
+    if(valid.length<2)return;
+    const path=valid.map((o,j)=>`${j===0?"M":"L"} ${x(o.i).toFixed(1)} ${y(o.v).toFixed(1)}`).join(" ");
+    markup+=`<path class="trend-line ${cls}" d="${path}"/>`;
+  });
+  svg.innerHTML=markup;
+  const first=pts[0],last=pts[pts.length-1];
+  const delta=(a,b)=>(a==null||b==null)?null:Number(b)-Number(a);
+  const fmt=v=>v==null?"--":`${v>=0?"+":""}${v.toFixed(1)}`;
+  insight.textContent=`${first.date} → ${last.date} · Risk ${fmt(delta(first.risk,last.risk))} · Health ${fmt(delta(first.health,last.health))} · 최고기회 ${niceAsset(last.opportunity_asset)} ${score(last.opportunity_score)}`;
 }
 
 $("toggleWhy").addEventListener("click",()=>{

@@ -16,8 +16,8 @@
   <header class="app-header">
     <div>
       <div class="overline">PORTFOLIO INTELLIGENCE</div>
-      <h1>오늘의 투자 브리핑</h1>
-      <div id="updated" class="sub">업데이트 확인 중</div>
+      <h1>포트폴리오 의사결정 자동화</h1>
+      <div class="sub">데이터 기반 투자 판단 · 신규자금 배분 · 리스크 관리</div><div id="updated" class="sub update-line">업데이트 확인 중</div>
     </div>
     <div id="confidencePill" class="confidence">DATA --</div>
   </header>
@@ -38,6 +38,27 @@
       <div class="signal-main"><b id="healthScore">--</b><small>/100</small></div>
       <span id="healthLabel" class="tag good">--</span>
     </article>
+  </section>
+
+
+  <section class="card trend-card">
+    <div class="section-title">
+      <div>
+        <span class="section-kicker">30-DAY TREND</span>
+        <h2>점수 흐름</h2>
+      </div>
+      <span class="basis">최근 30일</span>
+    </div>
+    <div class="trend-legend">
+      <span><i class="dot risk-dot"></i>Risk</span>
+      <span><i class="dot health-dot"></i>Health</span>
+      <span><i class="dot opp-dot"></i>Opportunity</span>
+    </div>
+    <div class="chart-shell">
+      <svg id="trendChart" viewBox="0 0 640 210" preserveAspectRatio="none"></svg>
+      <div id="trendEmpty" class="trend-empty">데이터가 쌓이면 최근 30일 흐름이 표시됩니다.</div>
+    </div>
+    <div id="trendInsight" class="trend-insight"></div>
   </section>
 
   <section class="decision-card">
