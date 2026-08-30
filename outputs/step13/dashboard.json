@@ -1,8 +1,8 @@
 {
   "meta": {
-    "generated_at": "2026-08-30T10:18:38+09:00",
+    "generated_at": "2026-08-30T10:28:35+09:00",
     "basis": "INVESTED_PRINCIPAL",
-    "privacy_amounts": false,
+    "privacy_amounts": true,
     "version": "STEP13_v1"
   },
   "portfolio": {
@@ -11,40 +11,40 @@
         "asset": "Bond",
         "name": "채권형",
         "weight": 48.64,
-        "amount": null
+        "amount": 10191685
       },
       {
         "asset": "Domestic_Equity",
         "name": "국내주식",
         "weight": 25.15,
-        "amount": null
+        "amount": 5268401
       },
       {
         "asset": "Foreign_Equity",
         "name": "해외주식",
         "weight": 17.38,
-        "amount": null
+        "amount": 3642255
       },
       {
         "asset": "Gold",
         "name": "금",
         "weight": 6.93,
-        "amount": null
+        "amount": 1451631
       },
       {
         "asset": "Cash",
         "name": "유동성",
         "weight": 1.77,
-        "amount": null
+        "amount": 370465
       },
       {
         "asset": "Other",
         "name": "기타",
         "weight": 0.13,
-        "amount": null
+        "amount": 27298
       }
     ],
-    "total_invested": null
+    "total_invested": 20951735
   },
   "risk": {
     "score": 49.67,
