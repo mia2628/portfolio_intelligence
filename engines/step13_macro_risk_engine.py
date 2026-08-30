@@ -1,298 +1,182 @@
 from pathlib import Path
-import io, json, math, re
-from datetime import datetime, timedelta
+import io, json, math, subprocess
+from datetime import datetime
 from zoneinfo import ZoneInfo
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pandas as pd
-import requests
 
 BASE=Path(__file__).resolve().parents[1]
+HIST=BASE/"data"/"historical"/"historical_data.csv"
+STEP3=BASE/"data"/"step03_market_inputs.csv"
 OUT=BASE/"docs"/"data"/"macro_risk.json"
 KST=ZoneInfo("Asia/Seoul")
 
-SERIES={
-    "US10Y":{"fred_id":"DGS10","name":"미국 10년물","unit":"%"},
-    "VIX":{"fred_id":"VIXCLS","name":"VIX","unit":""},
-    "HY_SPREAD":{"fred_id":"BAMLH0A0HYM2","name":"하이일드 스프레드","unit":"%p"},
-    "USDKRW":{"fred_id":"DEXKOUS","name":"USD/KRW","unit":"원"},
+KEYS=["US10Y","VIX","US_HY_SPREAD","USDKRW"]
+DISPLAY={
+    "US10Y":{"name":"미국 10년물 변화","unit":"bp"},
+    "VIX":{"name":"VIX 변화","unit":"%"},
+    "US_HY_SPREAD":{"name":"하이일드 스프레드 변화","unit":"bp"},
+    "USDKRW":{"name":"USD/KRW 변화","unit":"%"},
 }
 
-ALIASES={
-    "US10Y":[
-        "US10Y","US_10Y","US10Y_YIELD","US_10Y_YIELD","DGS10",
-        "US10YTREASURY","US10YTREASURYYIELD","UST10Y","UST_10Y"
-    ],
-    "VIX":[
-        "VIX","VIXCLS","CBOEVIX","CBOE_VIX","VIX_INDEX"
-    ],
-    "HY_SPREAD":[
-        "US_HY_SPREAD","USHYSPREAD","HY_SPREAD","HYSPREAD",
-        "BAMLH0A0HYM2","HIGH_YIELD_SPREAD","US_HIGH_YIELD_SPREAD"
-    ],
-    "USDKRW":[
-        "USDKRW","USD_KRW","DEXKOUS","USD/KRW","KRWUSD",
-        "USDKRW_EXCHANGE_RATE","USD_KRW_EXCHANGE_RATE"
-    ],
-}
-
-DATE_CANDIDATES=[
-    "date","DATE","Date","observation_date","timestamp","datetime",
-    "asof_date","base_date","trade_date"
-]
-INDICATOR_CANDIDATES=[
-    "indicator","Indicator","indicator_id","indicator_code","series",
-    "series_id","metric","Metric","name","Name","symbol","ticker"
-]
-VALUE_CANDIDATES=[
-    "value","Value","VALUE","current_value","close","Close",
-    "price","rate","score","observation"
-]
-
-LOOKBACK_DAYS=900
-ROLLING_OBS=252
 MIN_OBS=60
-DISPLAY_DAYS=120
+ROLLING_OBS=120
 PLOT_POINTS=90
 
-def norm_name(v):
-    return re.sub(r"[^A-Z0-9]","",str(v).upper())
+def numeric(s):
+    return pd.to_numeric(s,errors="coerce")
 
-NORM_ALIASES={k:{norm_name(x) for x in vals} for k,vals in ALIASES.items()}
+def read_hist_text(text):
+    df=pd.read_csv(io.StringIO(text))
+    if "Date" not in df.columns:
+        return None
+    df["Date"]=pd.to_datetime(df["Date"],errors="coerce")
+    df=df.dropna(subset=["Date"]).sort_values("Date")
+    for k in KEYS:
+        if k in df.columns:
+            df[k]=numeric(df[k])
+    return df
 
-def identify_indicator(label):
-    n=norm_name(label)
-    for key,aliases in NORM_ALIASES.items():
-        if n in aliases:
-            return key
-    # conservative fuzzy fallbacks
-    if "VIX" in n:
-        return "VIX"
-    if ("HY" in n or "HIGHYIELD" in n) and "SPREAD" in n:
-        return "HY_SPREAD"
-    if "USDKRW" in n or ("USD" in n and "KRW" in n):
-        return "USDKRW"
-    if ("10Y" in n or "10YEAR" in n) and ("US" in n or "TREAS" in n or "UST" in n):
-        return "US10Y"
-    return None
+def valid_score(df):
+    if df is None or df.empty:
+        return 0,{}
+    counts={k:int(df[k].notna().sum()) if k in df.columns else 0 for k in KEYS}
+    good=sum(v>=MIN_OBS for v in counts.values())
+    return good,counts
 
-def clean_series(df,date_col,value_col):
-    x=df[[date_col,value_col]].copy()
-    x.columns=["date","value"]
-    x["date"]=pd.to_datetime(x["date"],errors="coerce")
-    x["value"]=pd.to_numeric(x["value"],errors="coerce")
-    x=x.dropna(subset=["date","value"]).sort_values("date")
-    cutoff=pd.Timestamp(datetime.now(KST).date()-timedelta(days=LOOKBACK_DAYS))
-    x=x[x["date"]>=cutoff]
-    x=x.drop_duplicates(subset=["date"],keep="last")
-    return x
+def current_file_candidate():
+    if not HIST.exists():
+        return None,None
+    try:
+        text=HIST.read_text(encoding="utf-8-sig")
+        df=read_hist_text(text)
+        good,counts=valid_score(df)
+        if good>=3:
+            return df,{"source":"CURRENT_FILE","counts":counts}
+    except Exception as e:
+        print("WARN current historical_data:",e)
+    return None,None
 
-def discover_local_sources():
+def git_history_candidate():
     """
-    Search data/**/*.csv and support:
-    A) WIDE: date + one column per indicator
-    B) LONG: date + indicator/series/name + value
+    Find the newest committed historical_data.csv that contains
+    at least 3 of the 4 macro series with >= MIN_OBS valid rows.
+    No network access is required.
     """
-    found={}
-    diagnostics=[]
+    path="data/historical/historical_data.csv"
+    try:
+        p=subprocess.run(
+            ["git","log","--format=%H","--",path],
+            cwd=BASE,check=True,text=True,capture_output=True,timeout=20
+        )
+        commits=[x.strip() for x in p.stdout.splitlines() if x.strip()]
+    except Exception as e:
+        print("WARN git log:",e)
+        return None,None
 
-    data_root=BASE/"data"
-    if not data_root.exists():
-        return found, diagnostics
-
-    # Prefer historical-looking files, but inspect all reasonably sized CSVs.
-    files=sorted(data_root.rglob("*.csv"), key=lambda p:(
-        0 if "histor" in p.name.lower() else 1,
-        len(str(p))
-    ))
-
-    for p in files:
+    for sha in commits[:80]:
         try:
-            if p.stat().st_size > 50_000_000:
-                continue
-            df=pd.read_csv(p)
-            if df.empty:
-                continue
-        except Exception as e:
-            diagnostics.append(f"SKIP {p}: {e}")
+            p=subprocess.run(
+                ["git","show",f"{sha}:{path}"],
+                cwd=BASE,check=True,text=True,capture_output=True,timeout=10
+            )
+            df=read_hist_text(p.stdout)
+            good,counts=valid_score(df)
+            if good>=3:
+                return df,{
+                    "source":"GIT_LAST_KNOWN_GOOD",
+                    "commit":sha[:12],
+                    "counts":counts,
+                }
+        except Exception:
             continue
+    return None,None
 
-        cols=list(df.columns)
-        date_col=next((c for c in DATE_CANDIDATES if c in cols),None)
-        if not date_col:
-            # Last-resort: find a column containing 'date'
-            date_col=next((c for c in cols if "date" in str(c).lower()),None)
-        if not date_col:
-            continue
+def load_step3_current():
+    vals={}
+    if not STEP3.exists():
+        return vals
+    try:
+        d=pd.read_csv(STEP3)
+        if not {"Indicator","Observed_Change"}.issubset(d.columns):
+            return vals
+        for _,r in d.iterrows():
+            k=str(r["Indicator"])
+            if k in KEYS:
+                v=pd.to_numeric(pd.Series([r["Observed_Change"]]),errors="coerce").iloc[0]
+                if pd.notna(v):
+                    vals[k]=float(v)
+    except Exception as e:
+        print("WARN step03 current:",e)
+    return vals
 
-        # ---------- WIDE format ----------
-        for c in cols:
-            if c==date_col:
-                continue
-            key=identify_indicator(c)
-            if key and key not in found:
-                try:
-                    x=clean_series(df,date_col,c)
-                    if len(x)>=MIN_OBS:
-                        found[key]=(x,f"{p} [WIDE:{c}]")
-                except Exception:
-                    pass
+def percentile(values,current):
+    a=[float(x) for x in values if pd.notna(x)]
+    if not a or current is None:
+        return None
+    less=sum(x<current for x in a)
+    equal=sum(x==current for x in a)
+    return round(100*(less+0.5*equal)/len(a),2)
 
-        # ---------- LONG format ----------
-        ind_col=next((c for c in INDICATOR_CANDIDATES if c in cols),None)
-        val_col=next((c for c in VALUE_CANDIDATES if c in cols and c!=date_col),None)
-
-        # Infer common long-format columns if exact candidate names differ.
-        if not ind_col:
-            for c in cols:
-                if c==date_col:
-                    continue
-                sample=df[c].dropna().astype(str).head(100)
-                if sample.empty:
-                    continue
-                matches=sum(identify_indicator(v) is not None for v in sample)
-                if matches>=1:
-                    ind_col=c
-                    break
-
-        if ind_col and not val_col:
-            numeric_candidates=[]
-            for c in cols:
-                if c in {date_col,ind_col}:
-                    continue
-                conv=pd.to_numeric(df[c],errors="coerce")
-                ratio=conv.notna().mean()
-                if ratio>=0.5:
-                    numeric_candidates.append((ratio,c))
-            if numeric_candidates:
-                val_col=max(numeric_candidates)[1]
-
-        if ind_col and val_col:
-            for key in SERIES:
-                if key in found:
-                    continue
-                mask=df[ind_col].astype(str).map(identify_indicator)==key
-                if not mask.any():
-                    continue
-                try:
-                    x=clean_series(df.loc[mask],[date_col][0],val_col)
-                    if len(x)>=MIN_OBS:
-                        found[key]=(x,f"{p} [LONG:{ind_col}={key}, value={val_col}]")
-                except Exception:
-                    pass
-
-        if len(found)==4:
-            break
-
-    return found, diagnostics
-
-def fetch_fred_once(key):
-    sid=SERIES[key]["fred_id"]
-    url=f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}"
-    r=requests.get(url,timeout=(5,12),headers={"User-Agent":"portfolio-intelligence/1.0"})
-    r.raise_for_status()
-    df=pd.read_csv(io.StringIO(r.text))
-    date_col="DATE" if "DATE" in df.columns else df.columns[0]
-    val_col=next(c for c in df.columns if c!=date_col)
-    x=clean_series(df,date_col,val_col)
-    if len(x)<MIN_OBS:
-        raise RuntimeError(f"{key}: too few observations {len(x)}")
-    return key,x
-
-def rolling_percentile(values,window=ROLLING_OBS,min_obs=MIN_OBS):
+def rolling_percentile(series,window=ROLLING_OBS):
+    vals=list(series)
     out=[]
-    arr=list(values)
-    for i,v in enumerate(arr):
-        if v is None or not math.isfinite(float(v)):
+    for i,v in enumerate(vals):
+        if pd.isna(v):
             out.append(None); continue
-        start=max(0,i-window+1)
-        hist=[x for x in arr[start:i+1] if x is not None and math.isfinite(float(x))]
-        if len(hist)<min_obs:
+        h=[float(x) for x in vals[max(0,i-window+1):i+1] if pd.notna(x)]
+        if len(h)<24:
             out.append(None); continue
-        less=sum(x<v for x in hist)
-        equal=sum(x==v for x in hist)
-        out.append(round(100.0*(less+0.5*equal)/len(hist),2))
+        less=sum(x<float(v) for x in h)
+        equal=sum(x==float(v) for x in h)
+        out.append(round(100*(less+0.5*equal)/len(h),2))
     return out
 
-def previous_is_valid():
-    if not OUT.exists():
-        return False
-    try:
-        d=json.loads(OUT.read_text(encoding="utf-8"))
-        return bool(d.get("points")) and d.get("current",{}).get("score") is not None
-    except Exception:
-        return False
+df,source=current_file_candidate()
+if df is None:
+    df,source=git_history_candidate()
 
-frames={}
-source_used={}
-errors={}
-
-local,diagnostics=discover_local_sources()
-for key,(df,src) in local.items():
-    frames[key]=df
-    source_used[key]=f"LOCAL:{src}"
-
-print("="*86)
-print("STEP13 MACRO LOCAL DISCOVERY v10.4")
-print("="*86)
-print("Detected local macro series:",sorted(frames))
-for k,v in source_used.items():
-    print(f"{k:16}: {v}")
-
-missing=[k for k in SERIES if k not in frames]
-
-# Only missing series use short parallel FRED fallback.
-if missing:
-    print("Missing after local autodetect -> short parallel FRED:",missing)
-    with ThreadPoolExecutor(max_workers=min(4,len(missing))) as ex:
-        futs={ex.submit(fetch_fred_once,k):k for k in missing}
-        for fut in as_completed(futs):
-            key=futs[fut]
-            try:
-                k,df=fut.result()
-                frames[k]=df
-                source_used[k]="FRED"
-            except Exception as e:
-                errors[key]=str(e)
-                print(f"WARN: {key} FRED fallback failed: {e}")
-
-if len(frames)<3:
-    if previous_is_valid():
-        print("PASS_WITH_STALE_DATA: previous valid macro_risk.json retained.")
-        raise SystemExit(0)
+if df is None:
     raise SystemExit(
-        "FAIL: fewer than 3 macro sources after local auto-detection and FRED fallback. "
-        f"Detected={sorted(frames)}, errors={errors}"
+        "FAIL: no valid historical_data.csv in current file or git history. "
+        "This is a repository-data issue, not an external API timeout."
     )
 
-all_dates=sorted(set().union(*[set(df["date"]) for df in frames.values()]))
-master=pd.DataFrame({"date":all_dates}).sort_values("date")
-for key,df in frames.items():
-    master=master.merge(df.rename(columns={"value":key}),on="date",how="left")
-for key in frames:
-    master[key]=master[key].ffill(limit=5)
+print("="*86)
+print("STEP13 MACRO DATA RECOVERY v10.5")
+print("="*86)
+print("Historical source :",source)
 
-for key in frames:
-    vals=[None if pd.isna(x) else float(x) for x in master[key]]
-    master[key+"_N"]=rolling_percentile(vals)
+# Use only available validated macro columns.
+available=[k for k in KEYS if k in df.columns and df[k].notna().sum()>=MIN_OBS]
+if len(available)<3:
+    raise SystemExit(f"FAIL: only {available} have enough history")
 
-norm_cols=[k+"_N" for k in frames]
-master["MACRO_TENSION"]=master[norm_cols].mean(axis=1,skipna=True)
-master.loc[master[norm_cols].notna().sum(axis=1)<3,"MACRO_TENSION"]=float("nan")
+# Build normalized historical chart from the already-transformed STEP04 signals.
+plot=df[["Date"]+available].copy()
+for k in available:
+    plot[k+"_N"]=rolling_percentile(plot[k])
 
-latest_valid=master.dropna(subset=["MACRO_TENSION"])
-if latest_valid.empty:
-    if previous_is_valid():
-        print("PASS_WITH_STALE_DATA: no fresh normalized row; previous macro chart retained.")
-        raise SystemExit(0)
-    raise SystemExit("FAIL: no normalized macro tension row")
+norm_cols=[k+"_N" for k in available]
+plot["MACRO_TENSION"]=plot[norm_cols].mean(axis=1,skipna=True)
+plot.loc[plot[norm_cols].notna().sum(axis=1)<3,"MACRO_TENSION"]=float("nan")
+plot=plot.dropna(subset=["MACRO_TENSION"]).tail(PLOT_POINTS)
 
-latest=latest_valid.iloc[-1]
-display_cutoff=pd.Timestamp(datetime.now(KST).date()-timedelta(days=DISPLAY_DAYS))
-plot=master[master["date"]>=display_cutoff].dropna(subset=["MACRO_TENSION"]).tail(PLOT_POINTS)
+# Overlay latest STEP3 transformed signals when available.
+current=load_step3_current()
+raw={}
+norm={}
+for k in KEYS:
+    hist=df[k].dropna().tolist() if k in df.columns else []
+    latest_current=current.get(k)
+    if latest_current is None and hist:
+        latest_current=float(hist[-1])
+    raw[k]=latest_current
+    norm[k]=percentile(hist,latest_current) if hist and latest_current is not None else None
 
-def f(v,d=2):
-    return None if pd.isna(v) else round(float(v),d)
+active_norm=[v for v in norm.values() if v is not None]
+macro_score=round(sum(active_norm)/len(active_norm),1) if len(active_norm)>=3 else None
+
 def state(v):
     if v is None:return "NO_DATA"
     if v>=65:return "HIGH"
@@ -302,41 +186,39 @@ def state(v):
 points=[]
 for _,r in plot.iterrows():
     points.append({
-        "date":r["date"].strftime("%Y-%m-%d"),
-        "us10y":f(r.get("US10Y_N"),1),
-        "vix":f(r.get("VIX_N"),1),
-        "hy":f(r.get("HY_SPREAD_N"),1),
-        "usdkrw":f(r.get("USDKRW_N"),1),
-        "macro_tension":f(r.get("MACRO_TENSION"),1),
+        "date":r["Date"].strftime("%Y-%m-%d"),
+        "us10y":None if "US10Y_N" not in r or pd.isna(r.get("US10Y_N")) else round(float(r["US10Y_N"]),1),
+        "vix":None if "VIX_N" not in r or pd.isna(r.get("VIX_N")) else round(float(r["VIX_N"]),1),
+        "hy":None if "US_HY_SPREAD_N" not in r or pd.isna(r.get("US_HY_SPREAD_N")) else round(float(r["US_HY_SPREAD_N"]),1),
+        "usdkrw":None if "USDKRW_N" not in r or pd.isna(r.get("USDKRW_N")) else round(float(r["USDKRW_N"]),1),
+        "macro_tension":round(float(r["MACRO_TENSION"]),1),
     })
 
 latest_raw={}
-latest_norm={}
-for key,meta in SERIES.items():
-    latest_raw[key]={
-        "name":meta["name"],
-        "value":f(latest.get(key),3 if key!="USDKRW" else 2) if key in frames else None,
-        "unit":meta["unit"],
-        "fred_id":meta["fred_id"],
+for k in KEYS:
+    latest_raw[k]={
+        "name":DISPLAY[k]["name"],
+        "value":None if raw[k] is None else round(float(raw[k]),3),
+        "unit":DISPLAY[k]["unit"],
+        "source":"STEP3_CURRENT" if k in current else source["source"],
     }
-    latest_norm[key]=f(latest.get(key+"_N"),1) if key in frames else None
 
 payload={
     "meta":{
         "generated_at":datetime.now(KST).isoformat(timespec="seconds"),
-        "source":"LOCAL_AUTODETECT_WITH_FRED_FALLBACK",
-        "source_used":source_used,
-        "normalization":"rolling percentile over up to 252 valid observations; high = higher tension",
+        "source":"REPOSITORY_DATA_ONLY",
+        "historical_source":source,
+        "normalization":"percentile of STEP04 transformed macro signals; high = higher upward pressure",
         "display_points":len(points),
-        "version":"STEP13_MACRO_v10_4",
-        "errors":errors,
+        "version":"STEP13_MACRO_v10_5",
+        "external_network_required":False,
     },
     "current":{
-        "score":f(latest["MACRO_TENSION"],1),
-        "state":state(f(latest["MACRO_TENSION"],1)),
-        "date":latest["date"].strftime("%Y-%m-%d"),
+        "score":macro_score,
+        "state":state(macro_score),
+        "date":datetime.now(KST).date().isoformat(),
         "raw":latest_raw,
-        "normalized":latest_norm,
+        "normalized":norm,
     },
     "points":points,
 }
@@ -344,13 +226,9 @@ payload={
 OUT.parent.mkdir(parents=True,exist_ok=True)
 OUT.write_text(json.dumps(payload,ensure_ascii=False,indent=2),encoding="utf-8")
 
-print("="*86)
-print("STEP13 MACRO RISK v10.4")
-print("="*86)
-print("Source mix       :",source_used)
-print("Latest date      :",payload["current"]["date"])
-print("Macro Tension    :",payload["current"]["score"],payload["current"]["state"])
-print("Display points   :",len(points))
-if errors:
-    print("Source warnings  :",errors)
-print("PASS: macro risk composite generated.")
+print("Available series  :",available)
+print("STEP3 current     :",current)
+print("Macro Tension     :",macro_score,state(macro_score))
+print("Display points    :",len(points))
+print("External network  : NOT USED")
+print("PASS: macro chart generated from repository data / git last-known-good history.")

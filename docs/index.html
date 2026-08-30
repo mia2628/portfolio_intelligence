@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>포트폴리오 정책 자동화</title>
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="stylesheet" href="./assets/style.css?v=10">
+  <link rel="stylesheet" href="./assets/style.css?v=105">
 </head>
 <body>
 <main class="app">
@@ -76,10 +76,10 @@
     </div>
 
     <div class="macro-current-grid">
-      <div><span>미 10Y</span><b id="macroUs10y">--</b><em id="macroUs10yN">--</em></div>
-      <div><span>VIX</span><b id="macroVix">--</b><em id="macroVixN">--</em></div>
-      <div><span>HY Spread</span><b id="macroHy">--</b><em id="macroHyN">--</em></div>
-      <div><span>USD/KRW</span><b id="macroFx">--</b><em id="macroFxN">--</em></div>
+      <div><span>미 10Y 변화</span><b id="macroUs10y">--</b><em id="macroUs10yN">--</em></div>
+      <div><span>VIX 변화</span><b id="macroVix">--</b><em id="macroVixN">--</em></div>
+      <div><span>HY Spread 변화</span><b id="macroHy">--</b><em id="macroHyN">--</em></div>
+      <div><span>USD/KRW 변화</span><b id="macroFx">--</b><em id="macroFxN">--</em></div>
     </div>
 
     <div class="macro-foot">
@@ -303,7 +303,7 @@
   </footer>
 
 </main>
-<script src="./assets/app.js?v=10"></script>
+<script src="./assets/app.js?v=105"></script>
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('./sw.js').catch(()=>{});

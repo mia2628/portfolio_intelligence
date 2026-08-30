@@ -298,10 +298,9 @@ function renderAlerts(a){
 function macroRawText(obj,key){
   const x=obj?.current?.raw?.[key];
   if(!x || x.value==null)return "--";
-  if(key==="USDKRW")return `${Number(x.value).toLocaleString("ko-KR",{maximumFractionDigits:1})}원`;
-  if(key==="US10Y")return `${Number(x.value).toFixed(2)}%`;
-  if(key==="HY_SPREAD")return `${Number(x.value).toFixed(2)}%p`;
-  return Number(x.value).toFixed(1);
+  const v=Number(x.value);
+  if(key==="US10Y" || key==="US_HY_SPREAD")return `${v>=0?"+":""}${v.toFixed(1)}bp`;
+  return `${v>=0?"+":""}${v.toFixed(2)}%`;
 }
 
 function macroNormText(obj,key){
