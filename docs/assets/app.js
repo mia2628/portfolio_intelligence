@@ -365,7 +365,7 @@ function buildIssueUrl(kind, amount){
       `LAST_REVIEW_DATE=${todayYYYYMMDD()}`,
       `NONCE=${nonce}`,
       "CONFIRM=SCENARIO"
-    ].join("\\n");
+    ].join("\n");
   }else{
     title="[PORTFOLIO_COMMAND] ACTUAL";
     body=[
@@ -374,7 +374,7 @@ function buildIssueUrl(kind, amount){
       `AMOUNT=${amount}`,
       `NONCE=${nonce}`,
       "CONFIRM=CONFIRM_ACTUAL"
-    ].join("\\n");
+    ].join("\n");
   }
   const u=new URL(COMMAND_ISSUE_URL);
   u.searchParams.set("title",title);
