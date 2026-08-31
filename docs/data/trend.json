@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generated_at": "2026-08-30T21:37:35+09:00",
-    "history_rows": 1,
+    "generated_at": "2026-08-31T09:45:38+09:00",
+    "history_rows": 2,
     "retention_days": 365,
     "same_day_policy": "REPLACE",
     "version": "STEP13_TREND_v9"
@@ -14,14 +14,22 @@
       "health": 74.02,
       "opportunity_asset": "Gold",
       "opportunity_score": 60.2
+    },
+    {
+      "date": "2026-08-31",
+      "generated_at": "2026-08-31T09:45:38+09:00",
+      "risk": 49.67,
+      "health": 74.02,
+      "opportunity_asset": "Gold",
+      "opportunity_score": 60.2
     }
   ],
   "summary": {
     "7": {
       "days_requested": 7,
-      "points": 1,
+      "points": 2,
       "from": "2026-08-30",
-      "to": "2026-08-30",
+      "to": "2026-08-31",
       "risk": {
         "current": 49.67,
         "delta": 0.0,
@@ -50,9 +58,9 @@
     },
     "30": {
       "days_requested": 30,
-      "points": 1,
+      "points": 2,
       "from": "2026-08-30",
-      "to": "2026-08-30",
+      "to": "2026-08-31",
       "risk": {
         "current": 49.67,
         "delta": 0.0,
