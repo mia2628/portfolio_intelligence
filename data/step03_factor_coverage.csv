@@ -1,5 +1,5 @@
 ﻿Factor_Group,Available_Indicators,Total_Indicators,Count_Coverage_Pct,Weighted_Coverage_Pct,Data_Confidence_Score,Data_Confidence_Label,Factor_Weight
-RATE,8,8,100.0,100.0,100.0,HIGH,1.0
+RATE,6,8,75.0,75.0,75.0,MEDIUM,1.0
 INFLATION,4,5,80.0,85.71,82.81,HIGH,0.9
 FX,2,2,100.0,100.0,100.0,HIGH,0.9
 RISK,3,5,60.0,63.64,61.79,MEDIUM,1.0
