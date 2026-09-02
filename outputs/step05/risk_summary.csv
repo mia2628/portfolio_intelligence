@@ -1,2 +1,2 @@
 ﻿Portfolio_Risk_Score,Portfolio_Risk_State,Active_Indicators,OK_Signals,Missing_Current,Missing_History,Top_Risk_Contributor_1,Top_Risk_Contributor_1_Comment,Top_Risk_Contributor_2,Top_Risk_Contributor_2_Comment,Top_Risk_Contributor_3,Top_Risk_Contributor_3_Comment
-49.55,NEUTRAL,6,6,0,0,US_HY_SPREAD,미국 하이일드 스프레드가 상승해 기업 신용위험과 자금조달 부담 변화를 반영하며 위험을 높였습니다.,VIX,"VIX가 하락했고, 현재 조정 위험점수 37.04점 기준으로 시장 변동성 위험을 낮췄습니다.",US_REAL10Y,미국 실질금리가 상승해 주식의 할인율과 금의 기회비용 변화가 위험점수에 반영됐습니다.
+48.54,NEUTRAL,6,6,0,0,US_HY_SPREAD,미국 하이일드 스프레드가 상승해 기업 신용위험과 자금조달 부담 변화를 반영하며 위험을 높였습니다.,VIX,"VIX가 하락했고, 현재 조정 위험점수 37.04점 기준으로 시장 변동성 위험을 낮췄습니다.",FCI_TIGHTENING,금융여건지수가 하락해 금융시장 유동성과 자금조달 환경 변화를 반영하며 위험을 낮췄습니다.

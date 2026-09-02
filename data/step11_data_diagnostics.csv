@@ -1,19 +1,19 @@
 ﻿Indicator,Status,Observation_Date,Age_Months,Message
-US10Y,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US2Y,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_REAL10Y,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_10Y2Y_SPREAD,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+US10Y,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+US2Y,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+US_REAL10Y,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+US_10Y2Y_SPREAD,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 KR3Y,STALE,2026-05-01,4,latest value is 4 months old
 KR10Y,ACTUAL,2026-06-01,3,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-FED_HIKE_EXPECTATION,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+FED_HIKE_EXPECTATION,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 BOK_HIKE_EXPECTATION,STALE,2026-05-01,4,latest value is 4 months old
 US_CPI,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 US_CORE_CPI,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 US_CORE_PCE,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_BREAKEVEN_10Y,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+US_BREAKEVEN_10Y,ACTUAL,2026-09-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 KR_CPI,UNAVAILABLE,,,historical_data에 유효값 없음
-USDKRW,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-DXY,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+USDKRW,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+DXY,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 VIX,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 MOVE,UNAVAILABLE,,,historical_data에 유효값 없음
 US_HY_SPREAD,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
