@@ -14,9 +14,9 @@ US_BREAKEVEN_10Y,ACTUAL,2026-09-01,0,OK: STEP4에서 이미 변환된 최신값�
 KR_CPI,UNAVAILABLE,,,historical_data에 유효값 없음
 USDKRW,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 DXY,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-VIX,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+VIX,ACTUAL,2026-09-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 MOVE,UNAVAILABLE,,,historical_data에 유효값 없음
-US_HY_SPREAD,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+US_HY_SPREAD,ACTUAL,2026-09-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 FCI_TIGHTENING,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 GEOPOLITICAL_RISK,UNAVAILABLE,,,historical_data에 유효값 없음
 US_ISM_MFG,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
