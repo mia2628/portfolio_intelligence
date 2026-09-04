@@ -1,6 +1,6 @@
 ﻿Asset,Risk_Score,Risk_State,Risk_Sensitivity
-PORTFOLIO,51.27,NEUTRAL,1.0
-Domestic_Equity,51.27,NEUTRAL,1.0
-Foreign_Equity,51.33,NEUTRAL,1.05
-Bond,50.89,NEUTRAL,0.7
-Gold,50.7,NEUTRAL,0.55
+PORTFOLIO,50.15,NEUTRAL,1.0
+Domestic_Equity,50.15,NEUTRAL,1.0
+Foreign_Equity,50.16,NEUTRAL,1.05
+Bond,50.11,NEUTRAL,0.7
+Gold,50.08,NEUTRAL,0.55
