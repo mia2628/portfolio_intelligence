@@ -1,5 +1,5 @@
 ﻿Asset,Raw_STEP3_Macro,Normalized_Macro_0_100,Source,Scale_Detection,Status
-Domestic_Equity,0.2594,52.59,LONG:Score,STEP3_-5_TO_5,ACTUAL
+Domestic_Equity,0.2062,52.06,LONG:Score,STEP3_-5_TO_5,ACTUAL
 Foreign_Equity,-0.5415,44.59,LONG:Score,STEP3_-5_TO_5,ACTUAL
-Bond,-0.1544,48.46,LONG:Score,STEP3_-5_TO_5,ACTUAL
+Bond,-0.2342,47.66,LONG:Score,STEP3_-5_TO_5,ACTUAL
 Gold,-0.227,47.73,LONG:Score,STEP3_-5_TO_5,ACTUAL
