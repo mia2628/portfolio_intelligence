@@ -7,8 +7,8 @@ KR3Y,ACTUAL,2026-06-01,3,OK: STEP4에서 이미 변환된 최신값을 직접 �
 KR10Y,ACTUAL,2026-06-01,3,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 FED_HIKE_EXPECTATION,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 BOK_HIKE_EXPECTATION,ACTUAL,2026-06-01,3,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_CPI,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
-US_CORE_CPI,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+US_CPI,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
+US_CORE_CPI,ACTUAL,2026-08-01,1,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 US_CORE_PCE,ACTUAL,2026-07-01,2,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 US_BREAKEVEN_10Y,ACTUAL,2026-09-01,0,OK: STEP4에서 이미 변환된 최신값을 직접 사용
 KR_CPI,UNAVAILABLE,,,historical_data에 유효값 없음
