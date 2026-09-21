@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generated_at": "2026-09-18T09:37:29+09:00",
-    "history_rows": 16,
+    "generated_at": "2026-09-21T09:25:02+09:00",
+    "history_rows": 17,
     "retention_days": 365,
     "same_day_policy": "REPLACE",
     "version": "STEP13_TREND_v9"
@@ -134,21 +134,29 @@
       "health": 74.0,
       "opportunity_asset": "Gold",
       "opportunity_score": 60.54
+    },
+    {
+      "date": "2026-09-21",
+      "generated_at": "2026-09-21T09:25:02+09:00",
+      "risk": 49.63,
+      "health": 74.0,
+      "opportunity_asset": "Gold",
+      "opportunity_score": 60.55
     }
   ],
   "summary": {
     "7": {
       "days_requested": 7,
       "points": 7,
-      "from": "2026-09-10",
-      "to": "2026-09-18",
+      "from": "2026-09-11",
+      "to": "2026-09-21",
       "risk": {
-        "current": 49.73,
-        "delta": 0.83,
+        "current": 49.63,
+        "delta": 0.39,
         "direction": "UP",
-        "min": 48.9,
+        "min": 49.24,
         "max": 49.73,
-        "avg": 49.43
+        "avg": 49.54
       },
       "health": {
         "current": 74.0,
@@ -159,24 +167,24 @@
         "avg": 74.01
       },
       "opportunity": {
-        "current": 60.54,
-        "delta": -0.32,
+        "current": 60.55,
+        "delta": -0.27,
         "direction": "DOWN",
         "min": 60.54,
         "max": 60.86,
-        "avg": 60.74
+        "avg": 60.7
       },
       "dominant_opportunity_asset": "Gold"
     },
     "30": {
       "days_requested": 30,
-      "points": 16,
+      "points": 17,
       "from": "2026-08-30",
-      "to": "2026-09-18",
+      "to": "2026-09-21",
       "risk": {
-        "current": 49.73,
-        "delta": 0.06,
-        "direction": "UP",
+        "current": 49.63,
+        "delta": -0.04,
+        "direction": "FLAT",
         "min": 48.54,
         "max": 51.27,
         "avg": 49.5
@@ -187,11 +195,11 @@
         "direction": "FLAT",
         "min": 73.99,
         "max": 74.02,
-        "avg": 74.02
+        "avg": 74.01
       },
       "opportunity": {
-        "current": 60.54,
-        "delta": 0.34,
+        "current": 60.55,
+        "delta": 0.35,
         "direction": "UP",
         "min": 60.2,
         "max": 60.87,
