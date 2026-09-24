@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-09-23T09:50:02+09:00",
+    "generated_at": "2026-09-24T09:43:00+09:00",
     "basis": "INVESTED_PRINCIPAL",
     "privacy_amounts": true,
     "version": "STEP13_v8_2",
@@ -48,13 +48,13 @@
     "total_invested": 20951735
   },
   "risk": {
-    "score": 49.3,
+    "score": 49.12,
     "label": "NEUTRAL",
     "contributors": [
       {
         "indicator": "VIX",
-        "adjusted": 53.15,
-        "contribution": 14.26,
+        "adjusted": 52.37,
+        "contribution": 14.0515,
         "explanation": ""
       },
       {
@@ -65,8 +65,8 @@
       },
       {
         "indicator": "FCI_TIGHTENING",
-        "adjusted": 46.09,
-        "contribution": 7.8691,
+        "adjusted": 46.23,
+        "contribution": 7.893,
         "explanation": ""
       }
     ]
@@ -74,7 +74,7 @@
   "opportunity": [
     {
       "asset": "Gold",
-      "score": 60.59,
+      "score": 60.51,
       "label": "ATTRACTIVE",
       "components": {
         "target": 80.75,
@@ -87,7 +87,7 @@
     },
     {
       "asset": "Domestic_Equity",
-      "score": 55.16,
+      "score": 55.37,
       "label": "ATTRACTIVE",
       "components": {
         "target": 50.0,
@@ -100,7 +100,7 @@
     },
     {
       "asset": "Bond",
-      "score": 49.79,
+      "score": 49.76,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
@@ -113,7 +113,7 @@
     },
     {
       "asset": "Foreign_Equity",
-      "score": 48.62,
+      "score": 48.83,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
