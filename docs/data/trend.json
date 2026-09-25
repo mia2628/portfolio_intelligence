@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generated_at": "2026-09-24T09:43:01+09:00",
-    "history_rows": 20,
+    "generated_at": "2026-09-25T09:40:38+09:00",
+    "history_rows": 21,
     "retention_days": 365,
     "same_day_policy": "REPLACE",
     "version": "STEP13_TREND_v9"
@@ -166,52 +166,60 @@
       "health": 74.0,
       "opportunity_asset": "Gold",
       "opportunity_score": 60.51
+    },
+    {
+      "date": "2026-09-25",
+      "generated_at": "2026-09-25T09:40:38+09:00",
+      "risk": 49.12,
+      "health": 74.0,
+      "opportunity_asset": "Gold",
+      "opportunity_score": 60.51
     }
   ],
   "summary": {
     "7": {
       "days_requested": 7,
       "points": 7,
-      "from": "2026-09-16",
-      "to": "2026-09-24",
+      "from": "2026-09-17",
+      "to": "2026-09-25",
       "risk": {
         "current": 49.12,
-        "delta": -0.37,
+        "delta": -0.46,
         "direction": "DOWN",
         "min": 49.12,
         "max": 49.73,
-        "avg": 49.47
+        "avg": 49.42
       },
       "health": {
         "current": 74.0,
-        "delta": 0.01,
+        "delta": 0.0,
         "direction": "FLAT",
-        "min": 73.99,
+        "min": 74.0,
         "max": 74.0,
         "avg": 74.0
       },
       "opportunity": {
         "current": 60.51,
-        "delta": -0.26,
-        "direction": "DOWN",
+        "delta": -0.05,
+        "direction": "FLAT",
         "min": 60.51,
-        "max": 60.77,
-        "avg": 60.58
+        "max": 60.59,
+        "avg": 60.55
       },
       "dominant_opportunity_asset": "Gold"
     },
     "30": {
       "days_requested": 30,
-      "points": 20,
+      "points": 21,
       "from": "2026-08-30",
-      "to": "2026-09-24",
+      "to": "2026-09-25",
       "risk": {
         "current": 49.12,
         "delta": -0.55,
         "direction": "DOWN",
         "min": 48.54,
         "max": 51.27,
-        "avg": 49.47
+        "avg": 49.46
       },
       "health": {
         "current": 74.0,
