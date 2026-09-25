@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-09-25T00:31:54+09:00",
+    "generated_at": "2026-09-25T10:40:10+09:00",
     "source": "REPOSITORY_DATA_ONLY",
     "historical_source": {
       "source": "CURRENT_FILE",
@@ -17,7 +17,7 @@
     "external_network_required": false
   },
   "current": {
-    "score": 36.0,
+    "score": 35.9,
     "state": "CALM",
     "date": "2026-09-25",
     "raw": {
@@ -35,7 +35,7 @@
       },
       "US_HY_SPREAD": {
         "name": "하이일드 스프레드 변화",
-        "value": -13.324,
+        "value": -14.003,
         "unit": "bp",
         "source": "STEP3_CURRENT"
       },
@@ -49,7 +49,7 @@
     "normalized": {
       "US10Y": 68.45,
       "VIX": 61.7,
-      "US_HY_SPREAD": 13.83,
+      "US_HY_SPREAD": 13.3,
       "USDKRW": 0.0
     }
   },
