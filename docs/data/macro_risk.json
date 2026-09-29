@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-09-29T03:17:15+09:00",
+    "generated_at": "2026-09-29T11:37:33+09:00",
     "source": "REPOSITORY_DATA_ONLY",
     "historical_source": {
       "source": "CURRENT_FILE",
@@ -35,7 +35,7 @@
       },
       "US_HY_SPREAD": {
         "name": "하이일드 스프레드 변화",
-        "value": -14.602,
+        "value": -14.746,
         "unit": "bp",
         "source": "STEP3_CURRENT"
       },
