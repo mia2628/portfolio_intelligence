@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-09-30T23:25:11+09:00",
+    "generated_at": "2026-10-01T01:01:21+09:00",
     "source": "REPOSITORY_DATA_ONLY",
     "historical_source": {
       "source": "CURRENT_FILE",
@@ -19,7 +19,7 @@
   "current": {
     "score": 34.8,
     "state": "CALM",
-    "date": "2026-09-30",
+    "date": "2026-10-01",
     "raw": {
       "US10Y": {
         "name": "미국 10년물 변화",
