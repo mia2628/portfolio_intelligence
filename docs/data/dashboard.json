@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-09T11:24:33+09:00",
+    "generated_at": "2026-10-12T10:33:00+09:00",
     "basis": "INVESTED_PRINCIPAL",
     "privacy_amounts": true,
     "version": "STEP13_v8_2",
@@ -48,19 +48,19 @@
     "total_invested": 20951735
   },
   "risk": {
-    "score": 50.88,
+    "score": 50.92,
     "label": "NEUTRAL",
     "contributors": [
       {
         "indicator": "VIX",
-        "adjusted": 45.95,
-        "contribution": 12.3292,
+        "adjusted": 45.89,
+        "contribution": 12.3128,
         "explanation": ""
       },
       {
         "indicator": "US_HY_SPREAD",
-        "adjusted": 52.43,
-        "contribution": 11.5091,
+        "adjusted": 52.66,
+        "contribution": 11.5599,
         "explanation": ""
       },
       {
@@ -87,7 +87,7 @@
     },
     {
       "asset": "Domestic_Equity",
-      "score": 53.68,
+      "score": 53.67,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
