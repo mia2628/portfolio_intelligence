@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-15T09:43:37+09:00",
+    "generated_at": "2026-10-16T09:34:17+09:00",
     "basis": "INVESTED_PRINCIPAL",
     "privacy_amounts": true,
     "version": "STEP13_v8_2",
@@ -48,19 +48,19 @@
     "total_invested": 20951735
   },
   "risk": {
-    "score": 50.6,
+    "score": 50.76,
     "label": "NEUTRAL",
     "contributors": [
       {
         "indicator": "VIX",
-        "adjusted": 45.08,
-        "contribution": 12.0941,
+        "adjusted": 46.16,
+        "contribution": 12.384,
         "explanation": ""
       },
       {
         "indicator": "US_HY_SPREAD",
-        "adjusted": 52.23,
-        "contribution": 11.4646,
+        "adjusted": 51.89,
+        "contribution": 11.3905,
         "explanation": ""
       },
       {
@@ -74,7 +74,7 @@
   "opportunity": [
     {
       "asset": "Gold",
-      "score": 59.67,
+      "score": 59.65,
       "label": "ATTRACTIVE",
       "components": {
         "target": 80.75,
@@ -87,40 +87,40 @@
     },
     {
       "asset": "Domestic_Equity",
-      "score": 53.65,
+      "score": 53.6,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
         "macro": null,
         "risk_adj": null,
         "history": null,
-        "drawdown": 77.43
+        "drawdown": 73.55
       },
       "explanation": ""
     },
     {
       "asset": "Bond",
-      "score": 49.41,
+      "score": 49.11,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
         "macro": null,
         "risk_adj": null,
         "history": null,
-        "drawdown": 52.84
+        "drawdown": 53.76
       },
       "explanation": ""
     },
     {
       "asset": "Foreign_Equity",
-      "score": 47.1,
+      "score": 47.36,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
         "macro": null,
         "risk_adj": null,
         "history": null,
-        "drawdown": 45.0
+        "drawdown": 48.0
       },
       "explanation": ""
     }
@@ -149,7 +149,7 @@
       },
       {
         "name": "Correlation_Diversification",
-        "score": 75.87,
+        "score": 75.89,
         "effective_weight": 0.1667,
         "status": "SCORED"
       },
