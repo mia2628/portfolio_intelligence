@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-16T09:34:17+09:00",
+    "generated_at": "2026-10-19T09:21:22+09:00",
     "basis": "INVESTED_PRINCIPAL",
     "privacy_amounts": true,
     "version": "STEP13_v8_2",
@@ -48,19 +48,19 @@
     "total_invested": 20951735
   },
   "risk": {
-    "score": 50.76,
+    "score": 50.87,
     "label": "NEUTRAL",
     "contributors": [
       {
         "indicator": "VIX",
-        "adjusted": 46.16,
-        "contribution": 12.384,
+        "adjusted": 46.78,
+        "contribution": 12.5507,
         "explanation": ""
       },
       {
         "indicator": "US_HY_SPREAD",
-        "adjusted": 51.89,
-        "contribution": 11.3905,
+        "adjusted": 51.62,
+        "contribution": 11.3311,
         "explanation": ""
       },
       {
@@ -74,20 +74,20 @@
   "opportunity": [
     {
       "asset": "Gold",
-      "score": 59.65,
+      "score": 58.78,
       "label": "ATTRACTIVE",
       "components": {
         "target": 80.75,
         "macro": null,
         "risk_adj": null,
         "history": null,
-        "drawdown": 71.56
+        "drawdown": 62.92
       },
       "explanation": ""
     },
     {
       "asset": "Domestic_Equity",
-      "score": 53.6,
+      "score": 53.58,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
@@ -100,7 +100,7 @@
     },
     {
       "asset": "Bond",
-      "score": 49.11,
+      "score": 49.1,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
@@ -113,7 +113,7 @@
     },
     {
       "asset": "Foreign_Equity",
-      "score": 47.36,
+      "score": 47.34,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
@@ -126,7 +126,7 @@
     }
   ],
   "health": {
-    "score": 74.0,
+    "score": 74.01,
     "label": "GOOD",
     "components": [
       {
@@ -149,7 +149,7 @@
       },
       {
         "name": "Correlation_Diversification",
-        "score": 75.89,
+        "score": 75.9,
         "effective_weight": 0.1667,
         "status": "SCORED"
       },
