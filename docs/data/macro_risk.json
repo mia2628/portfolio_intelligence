@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-10-25T23:36:58+09:00",
+    "generated_at": "2026-10-26T10:25:56+09:00",
     "source": "REPOSITORY_DATA_ONLY",
     "historical_source": {
       "source": "CURRENT_FILE",
@@ -17,9 +17,9 @@
     "external_network_required": false
   },
   "current": {
-    "score": 51.1,
+    "score": 52.6,
     "state": "ELEVATED",
-    "date": "2026-10-25",
+    "date": "2026-10-26",
     "raw": {
       "US10Y": {
         "name": "미국 10년물 변화",
@@ -29,13 +29,13 @@
       },
       "VIX": {
         "name": "VIX 변화",
-        "value": 3.025,
+        "value": 4.125,
         "unit": "%",
         "source": "STEP3_CURRENT"
       },
       "US_HY_SPREAD": {
         "name": "하이일드 스프레드 변화",
-        "value": -2.357,
+        "value": -2.343,
         "unit": "bp",
         "source": "STEP3_CURRENT"
       },
@@ -48,8 +48,8 @@
     },
     "normalized": {
       "US10Y": 94.15,
-      "VIX": 59.26,
-      "US_HY_SPREAD": 46.03,
+      "VIX": 65.08,
+      "US_HY_SPREAD": 46.56,
       "USDKRW": 4.79
     }
   },
