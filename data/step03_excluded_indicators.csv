@@ -1,4 +1,6 @@
 ﻿Indicator,Status,Reason
+KR3Y,STALE,실제 최신값이 아니므로 계산 제외
+BOK_HIKE_EXPECTATION,STALE,실제 최신값이 아니므로 계산 제외
 KR_CPI,UNAVAILABLE,실제 최신값이 아니므로 계산 제외
 MOVE,UNAVAILABLE,실제 최신값이 아니므로 계산 제외
 GEOPOLITICAL_RISK,UNAVAILABLE,실제 최신값이 아니므로 계산 제외
