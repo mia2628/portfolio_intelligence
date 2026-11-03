@@ -1,14 +1,14 @@
 {
   "meta": {
-    "generated_at": "2026-11-03T05:32:23+09:00",
+    "generated_at": "2026-11-03T12:57:56+09:00",
     "source": "REPOSITORY_DATA_ONLY",
     "historical_source": {
       "source": "CURRENT_FILE",
       "counts": {
-        "US10Y": 188,
+        "US10Y": 189,
         "VIX": 189,
         "US_HY_SPREAD": 189,
-        "USDKRW": 188
+        "USDKRW": 189
       }
     },
     "normalization": "percentile of STEP04 transformed macro signals; high = higher upward pressure",
@@ -17,51 +17,43 @@
     "external_network_required": false
   },
   "current": {
-    "score": 53.8,
+    "score": 52.9,
     "state": "ELEVATED",
     "date": "2026-11-03",
     "raw": {
       "US10Y": {
         "name": "미국 10년물 변화",
-        "value": 31.0,
+        "value": 14.0,
         "unit": "bp",
         "source": "STEP3_CURRENT"
       },
       "VIX": {
         "name": "VIX 변화",
-        "value": 6.341,
+        "value": 7.103,
         "unit": "%",
         "source": "STEP3_CURRENT"
       },
       "US_HY_SPREAD": {
         "name": "하이일드 스프레드 변화",
-        "value": -2.343,
+        "value": -2.0,
         "unit": "bp",
         "source": "STEP3_CURRENT"
       },
       "USDKRW": {
         "name": "USD/KRW 변화",
-        "value": -3.136,
+        "value": -1.607,
         "unit": "%",
         "source": "STEP3_CURRENT"
       }
     },
     "normalized": {
-      "US10Y": 94.15,
-      "VIX": 69.84,
-      "US_HY_SPREAD": 46.56,
-      "USDKRW": 4.79
+      "US10Y": 76.72,
+      "VIX": 71.43,
+      "US_HY_SPREAD": 47.62,
+      "USDKRW": 15.87
     }
   },
   "points": [
-    {
-      "date": "2019-04-01",
-      "us10y": 37.9,
-      "vix": 22.7,
-      "hy": 21.7,
-      "usdkrw": 70.2,
-      "macro_tension": 38.1
-    },
     {
       "date": "2019-05-01",
       "us10y": 21.5,
@@ -773,6 +765,14 @@
       "hy": 12.1,
       "usdkrw": 6.2,
       "macro_tension": 43.3
+    },
+    {
+      "date": "2026-10-01",
+      "us10y": 73.3,
+      "vix": 71.2,
+      "hy": 49.6,
+      "usdkrw": 14.6,
+      "macro_tension": 52.2
     }
   ]
 }
