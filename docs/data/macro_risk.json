@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-10T06:09:00+09:00",
+    "generated_at": "2026-11-10T13:42:04+09:00",
     "source": "REPOSITORY_DATA_ONLY",
     "historical_source": {
       "source": "CURRENT_FILE",
@@ -17,7 +17,7 @@
     "external_network_required": false
   },
   "current": {
-    "score": 66.4,
+    "score": 67.1,
     "state": "HIGH",
     "date": "2026-11-10",
     "raw": {
@@ -29,13 +29,13 @@
       },
       "VIX": {
         "name": "VIX 변화",
-        "value": 28.389,
+        "value": 33.062,
         "unit": "%",
         "source": "STEP3_CURRENT"
       },
       "US_HY_SPREAD": {
         "name": "하이일드 스프레드 변화",
-        "value": 7.857,
+        "value": 8.257,
         "unit": "bp",
         "source": "STEP3_CURRENT"
       },
@@ -48,8 +48,8 @@
     },
     "normalized": {
       "US10Y": 76.72,
-      "VIX": 92.11,
-      "US_HY_SPREAD": 81.05,
+      "VIX": 94.21,
+      "US_HY_SPREAD": 81.58,
       "USDKRW": 15.87
     }
   },
