@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generated_at": "2026-11-09T10:50:28+09:00",
-    "history_rows": 51,
+    "generated_at": "2026-11-10T13:14:34+09:00",
+    "history_rows": 52,
     "retention_days": 365,
     "same_day_policy": "REPLACE",
     "version": "STEP13_TREND_v9"
@@ -414,21 +414,29 @@
       "health": 74.01,
       "opportunity_asset": "Gold",
       "opportunity_score": 58.86
+    },
+    {
+      "date": "2026-11-10",
+      "generated_at": "2026-11-10T13:14:34+09:00",
+      "risk": 57.01,
+      "health": 74.01,
+      "opportunity_asset": "Gold",
+      "opportunity_score": 58.85
     }
   ],
   "summary": {
     "7": {
       "days_requested": 7,
       "points": 7,
-      "from": "2026-10-30",
-      "to": "2026-11-09",
+      "from": "2026-11-02",
+      "to": "2026-11-10",
       "risk": {
-        "current": 56.91,
-        "delta": 3.88,
+        "current": 57.01,
+        "delta": 3.9,
         "direction": "UP",
-        "min": 53.03,
-        "max": 56.91,
-        "avg": 55.21
+        "min": 53.11,
+        "max": 57.01,
+        "avg": 55.78
       },
       "health": {
         "current": 74.01,
@@ -439,27 +447,27 @@
         "avg": 74.01
       },
       "opportunity": {
-        "current": 58.86,
+        "current": 58.85,
         "delta": 0.32,
         "direction": "UP",
         "min": 58.53,
         "max": 58.87,
-        "avg": 58.7
+        "avg": 58.74
       },
       "dominant_opportunity_asset": "Gold"
     },
     "30": {
       "days_requested": 30,
       "points": 30,
-      "from": "2026-09-28",
-      "to": "2026-11-09",
+      "from": "2026-09-29",
+      "to": "2026-11-10",
       "risk": {
-        "current": 56.91,
-        "delta": 7.79,
+        "current": 57.01,
+        "delta": 7.89,
         "direction": "UP",
         "min": 48.98,
-        "max": 56.91,
-        "avg": 52.06
+        "max": 57.01,
+        "avg": 52.33
       },
       "health": {
         "current": 74.01,
@@ -470,12 +478,12 @@
         "avg": 74.01
       },
       "opportunity": {
-        "current": 58.86,
-        "delta": -1.65,
+        "current": 58.85,
+        "delta": -1.66,
         "direction": "DOWN",
         "min": 58.53,
         "max": 60.52,
-        "avg": 59.24
+        "avg": 59.18
       },
       "dominant_opportunity_asset": "Gold"
     }
