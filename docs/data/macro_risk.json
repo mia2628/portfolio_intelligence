@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-12T03:10:06+09:00",
+    "generated_at": "2026-11-12T12:57:45+09:00",
     "source": "REPOSITORY_DATA_ONLY",
     "historical_source": {
       "source": "CURRENT_FILE",
@@ -17,7 +17,7 @@
     "external_network_required": false
   },
   "current": {
-    "score": 66.6,
+    "score": 66.2,
     "state": "HIGH",
     "date": "2026-11-12",
     "raw": {
@@ -29,7 +29,7 @@
       },
       "VIX": {
         "name": "VIX 변화",
-        "value": 30.535,
+        "value": 28.34,
         "unit": "%",
         "source": "STEP3_CURRENT"
       },
@@ -48,7 +48,7 @@
     },
     "normalized": {
       "US10Y": 76.72,
-      "VIX": 93.68,
+      "VIX": 92.11,
       "US_HY_SPREAD": 80.0,
       "USDKRW": 15.87
     }
