@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-16T11:19:17+09:00",
+    "generated_at": "2026-11-17T13:42:06+09:00",
     "basis": "INVESTED_PRINCIPAL",
     "privacy_amounts": true,
     "version": "STEP13_v8_2",
@@ -48,7 +48,7 @@
     "total_invested": 20951735
   },
   "risk": {
-    "score": 56.35,
+    "score": 56.18,
     "label": "NEUTRAL",
     "contributors": [
       {
@@ -59,8 +59,8 @@
       },
       {
         "indicator": "US_HY_SPREAD",
-        "adjusted": 61.64,
-        "contribution": 13.5302,
+        "adjusted": 60.9,
+        "contribution": 13.3678,
         "explanation": ""
       },
       {
@@ -74,7 +74,7 @@
   "opportunity": [
     {
       "asset": "Gold",
-      "score": 58.56,
+      "score": 58.58,
       "label": "ATTRACTIVE",
       "components": {
         "target": 80.75,
@@ -87,46 +87,46 @@
     },
     {
       "asset": "Domestic_Equity",
-      "score": 52.2,
+      "score": 53.71,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
         "macro": null,
         "risk_adj": null,
         "history": null,
-        "drawdown": 73.55
+        "drawdown": 86.86
       },
       "explanation": ""
     },
     {
       "asset": "Bond",
-      "score": 48.82,
+      "score": 49.03,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
         "macro": null,
         "risk_adj": null,
         "history": null,
-        "drawdown": 53.76
+        "drawdown": 51.17
       },
       "explanation": ""
     },
     {
       "asset": "Foreign_Equity",
-      "score": 47.1,
+      "score": 47.21,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
         "macro": null,
         "risk_adj": null,
         "history": null,
-        "drawdown": 48.0
+        "drawdown": 48.7
       },
       "explanation": ""
     }
   ],
   "health": {
-    "score": 74.01,
+    "score": 74.09,
     "label": "GOOD",
     "components": [
       {
@@ -149,7 +149,7 @@
       },
       {
         "name": "Correlation_Diversification",
-        "score": 75.9,
+        "score": 76.41,
         "effective_weight": 0.1667,
         "status": "SCORED"
       },
