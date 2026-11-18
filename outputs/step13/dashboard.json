@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-17T13:42:06+09:00",
+    "generated_at": "2026-11-18T12:47:26+09:00",
     "basis": "INVESTED_PRINCIPAL",
     "privacy_amounts": true,
     "version": "STEP13_v8_2",
@@ -48,7 +48,7 @@
     "total_invested": 20951735
   },
   "risk": {
-    "score": 56.18,
+    "score": 56.13,
     "label": "NEUTRAL",
     "contributors": [
       {
@@ -59,8 +59,8 @@
       },
       {
         "indicator": "US_HY_SPREAD",
-        "adjusted": 60.9,
-        "contribution": 13.3678,
+        "adjusted": 60.65,
+        "contribution": 13.3141,
         "explanation": ""
       },
       {
@@ -74,20 +74,20 @@
   "opportunity": [
     {
       "asset": "Gold",
-      "score": 58.58,
+      "score": 58.95,
       "label": "ATTRACTIVE",
       "components": {
         "target": 80.75,
         "macro": null,
         "risk_adj": null,
         "history": null,
-        "drawdown": 62.92
+        "drawdown": 66.64
       },
       "explanation": ""
     },
     {
       "asset": "Domestic_Equity",
-      "score": 53.71,
+      "score": 53.72,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
@@ -113,7 +113,7 @@
     },
     {
       "asset": "Foreign_Equity",
-      "score": 47.21,
+      "score": 47.22,
       "label": "NEUTRAL",
       "components": {
         "target": 50.0,
@@ -126,7 +126,7 @@
     }
   ],
   "health": {
-    "score": 74.09,
+    "score": 74.1,
     "label": "GOOD",
     "components": [
       {
@@ -149,7 +149,7 @@
       },
       {
         "name": "Correlation_Diversification",
-        "score": 76.41,
+        "score": 76.44,
         "effective_weight": 0.1667,
         "status": "SCORED"
       },
