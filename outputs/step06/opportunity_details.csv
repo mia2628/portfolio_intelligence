@@ -1,5 +1,5 @@
 ﻿Asset,Current_Weight,Target_Weight,Lower_Bound_Pct,Upper_Bound_Pct,Target_Gap,Target_Gap_Score,Macro_Environment_Score,Macro_Source,Risk_Score,Risk_Adjustment_Score,Historical_Context_Score,Drawdown_Score,Opportunity_Score,Opportunity_State,Korean_Comment
-Domestic_Equity,25.1454,,,,,50.0,47.18,STEP3_ACTUAL,56.38,43.62,62.22,86.86,53.54,NEUTRAL,"국내주식: 고점 대비 낙폭이 있어 분할매수 매력이 높아졌습니다, 유사한 과거 국면 이후 수익흐름이 상대적으로 우호적이었습니다."
-Foreign_Equity,17.384,,,,,50.0,42.23,STEP3_ACTUAL,56.7,43.3,53.27,48.7,47.08,NEUTRAL,해외주식: 정책·거시환경·위험·과거 국면이 전반적으로 중립적입니다.
-Bond,48.6436,,,,,50.0,48.38,STEP3_ACTUAL,54.47,45.53,52.47,51.17,49.19,NEUTRAL,채권: 정책·거시환경·위험·과거 국면이 전반적으로 중립적입니다.
-Gold,6.9285,20.0,18.0,22.0,13.0715,80.75,46.17,STEP3_ACTUAL,53.51,46.49,48.15,66.64,58.95,ATTRACTIVE,"금: 현재 6.9%로 정책 하한 18.0%보다 11.1%p 낮아 신규자금 보충 우선순위가 높습니다, 고점 대비 낙폭이 있어 분할매수 매력이 높아졌습니다."
+Domestic_Equity,25.1454,,,,,50.0,46.47,STEP3_ACTUAL,56.68,43.32,62.22,86.86,53.3,NEUTRAL,"국내주식: 고점 대비 낙폭이 있어 분할매수 매력이 높아졌습니다, 유사한 과거 국면 이후 수익흐름이 상대적으로 우호적이었습니다."
+Foreign_Equity,17.384,,,,,50.0,41.52,STEP3_ACTUAL,57.01,42.99,53.27,48.7,46.84,NEUTRAL,해외주식: 현재 거시환경이 비우호적입니다.
+Bond,48.6436,,,,,50.0,48.62,STEP3_ACTUAL,54.67,45.33,52.47,51.17,49.21,NEUTRAL,채권: 정책·거시환경·위험·과거 국면이 전반적으로 중립적입니다.
+Gold,6.9285,20.0,18.0,22.0,13.0715,80.75,46.58,STEP3_ACTUAL,53.67,46.33,48.15,66.64,59.02,ATTRACTIVE,"금: 현재 6.9%로 정책 하한 18.0%보다 11.1%p 낮아 신규자금 보충 우선순위가 높습니다, 고점 대비 낙폭이 있어 분할매수 매력이 높아졌습니다."
